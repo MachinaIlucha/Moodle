@@ -1,6 +1,5 @@
 package com.illiapinchukmoodle.service;
 
-import com.illiapinchukmoodle.data.model.Course;
 import com.illiapinchukmoodle.data.model.Task;
 import com.illiapinchukmoodle.data.model.TaskProgress;
 import com.illiapinchukmoodle.data.model.User;
@@ -15,8 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
+/**
+ * Implementation for {@link com.illiapinchukmoodle.service.interfacies.TaskProgressService}
+ * @author Illia Pinchuk
+ */
 @Service
 public class TaskProgressImpl implements TaskProgressService {
 
@@ -61,6 +65,7 @@ public class TaskProgressImpl implements TaskProgressService {
         taskProgress.setAttachments(taskProgressRequest.getAttachments());
         taskProgress.setScore(taskProgressRequest.getScore());
         taskProgress.setVerified(taskProgress.isVerified());
+        taskProgress.setUpdated(new Date());
         return taskProgressRepository.save(taskProgress);
     }
 

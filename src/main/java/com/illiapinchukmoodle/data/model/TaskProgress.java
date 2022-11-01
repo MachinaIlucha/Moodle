@@ -4,14 +4,10 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-@Data
 @Entity
-@Table(name = "tasks_progress")
-public class TaskProgress {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+@Table(name = "task_progresses")
+@Data
+public class TaskProgress extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -27,7 +23,7 @@ public class TaskProgress {
     @Column(name = "score")
     private int score;
 
-    @Column(name = "is_verified")
+    @Column(name = "verified")
     private boolean verified;
 
 }

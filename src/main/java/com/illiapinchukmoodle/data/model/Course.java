@@ -9,15 +9,11 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "courses")
+@Data
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "users"})
-public class Course {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class Course extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -27,7 +23,7 @@ public class Course {
 
     @ManyToMany
     @JoinTable(
-            name = "users_courses",
+            name = "user_courses",
             joinColumns = { @JoinColumn(name = "course_id") },
             inverseJoinColumns = { @JoinColumn(name = "user_id") })
     @EqualsAndHashCode.Exclude

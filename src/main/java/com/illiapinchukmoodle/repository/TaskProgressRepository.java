@@ -11,6 +11,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Illia Pinchuk
+ */
 public interface TaskProgressRepository extends JpaRepository<TaskProgress, Long> {
     List<TaskProgress> getTaskProgressesByUserId(Long userId);
 

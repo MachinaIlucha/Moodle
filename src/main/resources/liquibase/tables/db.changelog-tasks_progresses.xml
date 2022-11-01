@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1.1.1" author="illia.pinchuk">
+        <createTable tableName="task_progresses">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="attachments" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="score" type="integer">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="verified" type="boolean" defaultValue="false"/>
+
+            <column name="task_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created" type="timestamp" defaultValue="now()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="timestamp" defaultValue="now()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="varchar(25)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            DROP TABLE task_progresses;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.1.2" author="illia.pinchuk">
+        <addForeignKeyConstraint baseTableName="task_progresses"
+                                 baseColumnNames="task_id"
+                                 constraintName="fk_task_progresses_tasks"
+                                 referencedTableName="tasks"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <rollback>
+            ALTER TABLE task_progresses DROP CONSTRAINT fk_task_progresses_tasks;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.1.3" author="illia.pinchuk">
+        <addForeignKeyConstraint baseTableName="task_progresses"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_task_progresses_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <rollback>
+            ALTER TABLE task_progresses DROP CONSTRAINT fk_task_progresses_users;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

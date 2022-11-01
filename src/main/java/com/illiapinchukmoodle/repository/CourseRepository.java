@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Illia Pinchuk
+ */
 public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("select course from Course course join fetch course.courseUsers")
     List<Course> getCoursesWithUsers();

@@ -17,8 +17,6 @@ import javax.validation.constraints.Size;
 @Data
 public class UserDTO {
     @JsonProperty(required = true)
-    @NotEmpty
-    @NotBlank
     private Long id;
 
     @JsonProperty(required = true)

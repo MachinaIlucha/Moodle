@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1.1.5" author="illia.pinchuk">
+        <insert tableName="users">
+            <column name="id" value="1" />
+            <column name="email" value="student@gmail.com" />
+            <column name="first_name" value="student first name" />
+            <column name="last_name" value="student last name" />
+            <column name="password" value="$2a$04$7KAvJQtQo1qCuvxGx6Vib.ff8bdrZo1KVznCz.0z01ehOzf.oFAO2" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="2" />
+            <column name="email" value="teacher@gmail.com" />
+            <column name="first_name" value="teacher first name" />
+            <column name="last_name" value="teacher last name" />
+            <column name="password" value="$2a$04$7KAvJQtQo1qCuvxGx6Vib.ff8bdrZo1KVznCz.0z01ehOzf.oFAO2" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="3" />
+            <column name="email" value="admin@gmail.com" />
+            <column name="first_name" value="admin first name" />
+            <column name="last_name" value="admin last name" />
+            <column name="password" value="$2a$04$7KAvJQtQo1qCuvxGx6Vib.ff8bdrZo1KVznCz.0z01ehOzf.oFAO2" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <rollback>
+            Delete from users;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.1.6" author="illia.pinchuk">
+        <insert tableName="user_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" value="2"/>
+            <column name="role_id" value="2"/>
+        </insert>
+        <insert tableName="user_roles">
+            <column name="user_id" value="3"/>
+            <column name="role_id" value="3"/>
+        </insert>
+
+        <rollback>
+            Delete from user_roles;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

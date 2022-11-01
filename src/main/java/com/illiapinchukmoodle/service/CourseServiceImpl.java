@@ -1,6 +1,7 @@
 package com.illiapinchukmoodle.service;
 
 import com.illiapinchukmoodle.data.model.Course;
+import com.illiapinchukmoodle.data.model.Status;
 import com.illiapinchukmoodle.data.model.TaskProgress;
 import com.illiapinchukmoodle.data.model.User;
 import com.illiapinchukmoodle.exception.CourseNotFoundException;
@@ -13,9 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation for {@link com.illiapinchukmoodle.service.interfacies.CourseService}
+ * @author Illia Pinchuk
+ */
 @Service
 public class CourseServiceImpl implements CourseService {
 
@@ -54,10 +60,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourse(Long courseId) {
+    public Course deleteCourse(Long courseId) {
         Course course = getCourseById(courseId)
                 .orElseThrow(() -> new CourseNotFoundException(courseId));
-        courseRepository.delete(course);
+        course.setStatus(Status.DELETED);
+        course.setUpdated(new Date());
+        return courseRepository.save(course);
     }
 
     @Override

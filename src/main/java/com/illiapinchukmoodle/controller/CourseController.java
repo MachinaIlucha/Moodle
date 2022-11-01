@@ -1,8 +1,8 @@
 package com.illiapinchukmoodle.controller;
 
+import com.illiapinchukmoodle.data.dto.AdminCourseDTO;
 import com.illiapinchukmoodle.data.dto.CourseDTO;
 import com.illiapinchukmoodle.data.dto.UserDTO;
-import com.illiapinchukmoodle.data.model.User;
 import com.illiapinchukmoodle.exception.CourseNotFoundException;
 import com.illiapinchukmoodle.exception.UserNotFoundException;
 import com.illiapinchukmoodle.data.model.Course;
@@ -13,12 +13,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,11 +32,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(path = "/api/courses", produces = APPLICATION_JSON_VALUE)
+@Slf4j
 public class CourseController {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(CourseController.class);
-
     private static final String ID = "courseId";
     private static final String NEW_COURSE_LOG = "New course was created id: {}";
     private static final String COURSE_GET_LOG = "Course with id: {} was found";
@@ -58,12 +55,13 @@ public class CourseController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Course progress was calculated",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = Integer.class))}),
             @ApiResponse(responseCode = "404", description = "Course or user were not found", content = @Content)})
+    @Secured({"ROLE_STUDENT", "ROLE_TEACHER", "ROLE_ADMIN"})
     @GetMapping(path = "/{courseId}/{userId}")
     public ResponseEntity<Integer> getCourseProgressByUser(@PathVariable(name = ID) Long courseId,
                                                            @PathVariable(name = "userId") Long userId){
         Integer res = courseService.getCourseProgressByUser(courseId, userId);
 
-        logger.info(COURSE_GET_PROGRESS_OF_USER_LOG, courseId, userId);
+        log.info(COURSE_GET_PROGRESS_OF_USER_LOG, courseId, userId);
 
         return ResponseEntity.ok(res);
     }
@@ -71,14 +69,15 @@ public class CourseController {
 
     @Operation(summary = "Add course to user")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Course was added",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = CourseDTO.class))}),
+            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminCourseDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Course or user were not found", content = @Content)})
+    @Secured("ROLE_ADMIN")
     @PutMapping(path = "/{courseId}/{userId}", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CourseDTO> addCourseToUser(@PathVariable(name = "userId") Long userId, @PathVariable(name = ID) Long courseId) {
+    public ResponseEntity<AdminCourseDTO> addCourseToUser(@PathVariable(name = "userId") Long userId, @PathVariable(name = ID) Long courseId) {
         Course course = courseService.addCourseToUser(courseId, userId);
-        CourseDTO courseResponse = modelMapper.map(course, CourseDTO.class);
+        AdminCourseDTO courseResponse = modelMapper.map(course, AdminCourseDTO.class);
 
-        logger.info(COURSE_ADD_TO_USER_LOG, courseId, userId);
+        log.info(COURSE_ADD_TO_USER_LOG, courseId, userId);
 
         return ResponseEntity.ok().body(courseResponse);
     }
@@ -87,12 +86,13 @@ public class CourseController {
     @ApiResponse(responseCode = "200", description = "Course was deleted",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = String.class)))})
+    @Secured("ROLE_ADMIN")
     @DeleteMapping(path = "/{courseId}/{userId}")
     public ResponseEntity<String> deleteCourseFromUser(@PathVariable(name = ID) Long courseId,
                                                        @PathVariable(name = "userId") Long userId) {
         courseService.deleteCourseFromUser(courseId, userId);
 
-        logger.info(COURSE_DELETED_FROM_USER_LOG, courseId, userId);
+        log.info(COURSE_DELETED_FROM_USER_LOG, courseId, userId);
 
         return ResponseEntity.ok("Course was successfully deleted from user");
     }
@@ -101,6 +101,7 @@ public class CourseController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Got course users",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))}),
             @ApiResponse(responseCode = "404", description = "Course was not found", content = @Content)})
+    @Secured({"ROLE_TEACHER", "ROLE_ADMIN"})
     @GetMapping(path = "/{courseId}/users")
     public ResponseEntity<List<UserDTO>> getCourseUsers(@PathVariable(name = ID) Long courseId){
         Course course = courseService.getCourseWithUsers(courseId)
@@ -109,7 +110,7 @@ public class CourseController {
         List<UserDTO> courseUsers = course.getCourseUsers().stream()
                 .map(user -> modelMapper.map(user, UserDTO.class)).toList();
 
-        logger.info(COURSE_GET_USERS_LOG, courseId);
+        log.info(COURSE_GET_USERS_LOG, courseId);
 
         return ResponseEntity.ok(courseUsers);
     }
@@ -117,40 +118,43 @@ public class CourseController {
     @Operation(summary = "Get all courses")
     @ApiResponse(responseCode = "200", description = "Found courses",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = CourseDTO.class)))})
+                    array = @ArraySchema(schema = @Schema(implementation = AdminCourseDTO.class)))})
+    @Secured("ROLE_ADMIN")
     @GetMapping
-    public ResponseEntity<List<CourseDTO>> getAllCourses() {
-        logger.info(COURSES_GET_LOG);
+    public ResponseEntity<List<AdminCourseDTO>> getAllCourses() {
+        log.info(COURSES_GET_LOG);
         return ResponseEntity.ok(courseService.getAllCourses().stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .map(course -> modelMapper.map(course, AdminCourseDTO.class))
                 .collect(Collectors.toList()));
     }
 
     @Operation(summary = "Crate a new course")
     @ApiResponse(responseCode = "201", description = "Course is created",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = CourseDTO.class))})
+            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminCourseDTO.class))})
+    @Secured("ROLE_ADMIN")
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
+    public ResponseEntity<AdminCourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO) {
         Course courseRequest = modelMapper.map(courseDTO, Course.class);
         Course course = courseService.createCourse(courseRequest);
-        CourseDTO courseResponse = modelMapper.map(course, CourseDTO.class);
+        AdminCourseDTO courseResponse = modelMapper.map(course, AdminCourseDTO.class);
 
-        logger.info(NEW_COURSE_LOG, course.toString());
+        log.info(NEW_COURSE_LOG, course.toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(courseResponse);
     }
 
     @Operation(summary = "Get course by its id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found course",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = CourseDTO.class))}),
+            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminCourseDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content)})
+    @Secured("ROLE_ADMIN")
     @GetMapping(path = "/{courseId}")
-    public ResponseEntity<CourseDTO> getCourseById(@PathVariable(name = ID) Long courseId){
+    public ResponseEntity<AdminCourseDTO> getCourseById(@PathVariable(name = ID) Long courseId){
         Course course = courseService.getCourseById(courseId)
                 .orElseThrow(() -> new UserNotFoundException(courseId));
-        CourseDTO courseResponse = modelMapper.map(course, CourseDTO.class);
+        AdminCourseDTO courseResponse = modelMapper.map(course, AdminCourseDTO.class);
 
-        logger.info(COURSE_GET_LOG, courseId);
+        log.info(COURSE_GET_LOG, courseId);
 
         return ResponseEntity.ok(courseResponse);
     }
@@ -159,27 +163,30 @@ public class CourseController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Course was updated",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = CourseDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content)})
+    @Secured({"ROLE_TEACHER", "ROLE_ADMIN"})
     @PutMapping(path = "/{courseId}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseDTO> updateCourse(@Valid @RequestBody CourseDTO courseDTO, @PathVariable(name = ID) Long courseId) {
         Course courseRequest = modelMapper.map(courseDTO, Course.class);
         Course course = courseService.updateCourse(courseRequest, courseId);
         CourseDTO courseResponse = modelMapper.map(course, CourseDTO.class);
 
-        logger.info(COURSE_UPDATED_LOG, course.toString());
+        log.info(COURSE_UPDATED_LOG, course.toString());
 
         return ResponseEntity.ok().body(courseResponse);
     }
 
     @Operation(summary = "Delete course by its id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Course was deleted",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class))}),
+            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminCourseDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Course not found", content = @Content)})
+    @Secured("ROLE_ADMIN")
     @DeleteMapping(path = "/{courseId}")
-    public ResponseEntity<String> updateCourse(@PathVariable(name = ID) Long courseId) {
-        courseService.deleteCourse(courseId);
+    public ResponseEntity<AdminCourseDTO> deleteCourse(@PathVariable(name = ID) Long courseId) {
+        Course course = courseService.deleteCourse(courseId);
+        AdminCourseDTO courseResponse = modelMapper.map(course, AdminCourseDTO.class);
 
-        logger.info(COURSE_DELETED_LOG, courseId);
+        log.info(COURSE_DELETED_LOG, courseId);
 
-        return ResponseEntity.ok("Course was successfully deleted");
+        return ResponseEntity.ok().body(courseResponse);
     }
 }

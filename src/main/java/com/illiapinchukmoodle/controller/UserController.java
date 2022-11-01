@@ -1,9 +1,8 @@
 package com.illiapinchukmoodle.controller;
 
+import com.illiapinchukmoodle.data.dto.AdminUserDTO;
 import com.illiapinchukmoodle.data.dto.CourseDTO;
 import com.illiapinchukmoodle.data.dto.UserDTO;
-import com.illiapinchukmoodle.data.model.Course;
-import com.illiapinchukmoodle.exception.CourseNotFoundException;
 import com.illiapinchukmoodle.exception.UserNotFoundException;
 import com.illiapinchukmoodle.data.model.User;
 import com.illiapinchukmoodle.service.interfacies.UserService;
@@ -13,14 +12,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,10 +33,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(path = "/api/users", produces = APPLICATION_JSON_VALUE)
+@Slf4j
 public class UserController {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(UserController.class);
 
     private static final String ID = "userId";
     private static final String NEW_USER_LOG = "New user was created id: {}";
@@ -45,7 +44,6 @@ public class UserController {
     private static final String USER_DELETED_LOG = "User with id: {} was deleted";
     private static final String USER_GET_COURSES_LOG = "Courses of user with id: {} were found";
 
-
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -54,6 +52,7 @@ public class UserController {
     @Operation(summary = "Get user courses")
     @ApiResponse(responseCode = "200", description = "Found courses of user",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = CourseDTO.class)))})
+    @Secured({ "ROLE_STUDENT", "ROLE_TEACHER","ROLE_ADMIN" })
     @GetMapping(path = "/{userId}/courses")
     public ResponseEntity<List<CourseDTO>> getCoursesOfUser(@PathVariable(name = ID) Long userId) {
         User user = userService.getUserWithCourses(userId)
@@ -62,18 +61,19 @@ public class UserController {
         List<CourseDTO> userCourses = user.getUserCourses().stream()
                 .map(course -> modelMapper.map(course, CourseDTO.class)).toList();
 
-        logger.info(USER_GET_COURSES_LOG, userId);
+        log.info(USER_GET_COURSES_LOG, userId);
 
         return ResponseEntity.ok(userCourses);
     }
 
     @Operation(summary = "Get all users")
     @ApiResponse(responseCode = "200", description = "Found users",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = UserDTO.class)))})
+            content = {@Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = AdminUserDTO.class)))})
+    @Secured("ROLE_ADMIN")
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        logger.info(USERS_GET_LOG);
-        return ResponseEntity.ok(userService.getAllUsers().stream().map(user -> modelMapper.map(user, UserDTO.class))
+    public ResponseEntity<List<AdminUserDTO>> getAllUsers() {
+        log.info(USERS_GET_LOG);
+        return ResponseEntity.ok(userService.getAllUsers().stream().map(user -> modelMapper.map(user, AdminUserDTO.class))
                 .collect(Collectors.toList()));
     }
 
@@ -81,53 +81,57 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "User is created",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDTO.class))})
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody UserDTO userDTO) {
         User userRequest = modelMapper.map(userDTO, User.class);
         User user = userService.createUser(userRequest);
         UserDTO userResponse = modelMapper.map(user, UserDTO.class);
 
-        logger.info(NEW_USER_LOG, user.toString());
+        log.info(NEW_USER_LOG, user.toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     @Operation(summary = "Get user by its id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found user", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDTO.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found user", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminUserDTO.class))}),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    @Secured("ROLE_ADMIN")
     @GetMapping(path = "/{userId}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable(value = ID) Long userId){
+    public ResponseEntity<AdminUserDTO> getUserById(@PathVariable(value = ID) Long userId){
         User user = userService.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-        UserDTO userResponse = modelMapper.map(user, UserDTO.class);
+        AdminUserDTO userResponse = modelMapper.map(user, AdminUserDTO.class);
 
-        logger.info(USER_GET_LOG, userId);
+        log.info(USER_GET_LOG, userId);
 
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok().body(userResponse);
     }
 
     @Operation(summary = "Update user by its id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User was updated", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDTO.class))}),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    @Secured({ "ROLE_STUDENT", "ROLE_TEACHER","ROLE_ADMIN" })
     @PutMapping(path = "/{userId}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO, @PathVariable(name = ID) Long userId) {
         User userRequest = modelMapper.map(userDTO, User.class);
         User user = userService.updateUser(userRequest, userId);
         UserDTO userResponse = modelMapper.map(user, UserDTO.class);
 
-        logger.info(USER_UPDATED_LOG, user.toString());
+        log.info(USER_UPDATED_LOG, user.toString());
 
         return ResponseEntity.ok().body(userResponse);
     }
 
     @Operation(summary = "Delete user by its id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User was deleted", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User was deleted", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminUserDTO.class))}),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)})
+    @Secured("ROLE_ADMIN")
     @DeleteMapping(path = "/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable(name = ID) Long userId) {
-        userService.deleteUser(userId);
+    public ResponseEntity<AdminUserDTO> deleteUser(@PathVariable(name = ID) Long userId) {
+        User user = userService.deleteUser(userId);
+        AdminUserDTO userResponse = modelMapper.map(user, AdminUserDTO.class);
 
-        logger.info(USER_DELETED_LOG, userId);
+        log.info(USER_DELETED_LOG, userId);
 
-        return ResponseEntity.ok("User was successfully deleted");
+        return ResponseEntity.ok().body(userResponse);
     }
 }

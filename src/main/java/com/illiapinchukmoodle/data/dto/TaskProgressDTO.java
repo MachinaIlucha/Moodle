@@ -8,6 +8,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 
+/**
+ * Incoming DTO to create a new record of {@link com.illiapinchukmoodle.data.model.TaskProgress}
+ *
+ * @author Illia Pinchuk
+ */
 @Data
 public class TaskProgressDTO {
 

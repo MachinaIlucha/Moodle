@@ -1,6 +1,7 @@
 package com.illiapinchukmoodle.service;
 
 import com.illiapinchukmoodle.data.model.Course;
+import com.illiapinchukmoodle.data.model.Status;
 import com.illiapinchukmoodle.data.model.Task;
 import com.illiapinchukmoodle.data.model.TaskProgress;
 import com.illiapinchukmoodle.exception.CourseNotFoundException;
@@ -12,9 +13,14 @@ import com.illiapinchukmoodle.service.interfacies.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation for {@link com.illiapinchukmoodle.service.interfacies.TaskService}
+ * @author Illia Pinchuk
+ */
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -62,6 +68,7 @@ public class TaskServiceImpl implements TaskService {
         Course course = courseService.getCourseById(courseId)
                 .orElseThrow(() -> new TaskNotFoundException(courseId));
         task.setCourse(course);
+        task.setUpdated(new Date());
         return taskRepository.save(task);
     }
 
@@ -71,11 +78,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteTask(Long taskId) {
+    public Task deleteTask(Long taskId) {
         Task task = getTaskById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException(taskId));
         /* We also need to delete all task progresses of this task for all users*/
         taskProgressService.deleteTaskProgressesByTaskId(taskId);
-        taskRepository.delete(task);
+
+        task.setStatus(Status.DELETED);
+        task.setUpdated(new Date());
+        return taskRepository.save(task);
     }
 }

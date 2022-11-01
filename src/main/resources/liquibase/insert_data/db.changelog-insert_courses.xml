@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1.1.7" author="illia.pinchuk">
+        <insert tableName="courses">
+            <column name="id" value="1" />
+            <column name="name" value="course1" />
+            <column name="description" value="course1 description" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="courses">
+            <column name="id" value="2" />
+            <column name="name" value="course2" />
+            <column name="description" value="course2 description" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <rollback>
+            Delete from courses;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.1.8" author="illia.pinchuk">
+        <insert tableName="user_courses">
+            <column name="user_id" value="1"/>
+            <column name="course_id" value="1"/>
+        </insert>
+        <insert tableName="user_courses">
+            <column name="user_id" value="1"/>
+            <column name="course_id" value="2"/>
+        </insert>
+        <insert tableName="user_courses">
+            <column name="user_id" value="2"/>
+            <column name="course_id" value="1"/>
+        </insert>
+        <insert tableName="user_courses">
+            <column name="user_id" value="2"/>
+            <column name="course_id" value="2"/>
+        </insert>
+
+        <rollback>
+            Delete from user_courses;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

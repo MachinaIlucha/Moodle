@@ -8,15 +8,10 @@ import javax.validation.constraints.NotBlank;
 /**
  * @author Illia Pinchuk
  */
-@Data
 @Entity
 @Table(name = "tasks")
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
+@Data
+public class Task extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;

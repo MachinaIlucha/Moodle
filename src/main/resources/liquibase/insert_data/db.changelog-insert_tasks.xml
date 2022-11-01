@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1.1.9" author="illia.pinchuk">
+        <insert tableName="tasks">
+            <column name="id" value="1" />
+            <column name="name" value="task1" />
+            <column name="description" value="task1 for course1 description" />
+            <column name="course_id" value="1" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="tasks">
+            <column name="id" value="2" />
+            <column name="name" value="task2" />
+            <column name="description" value="task2 for course1 description" />
+            <column name="course_id" value="1" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="tasks">
+            <column name="id" value="3" />
+            <column name="name" value="task3" />
+            <column name="description" value="task3 for course2 description" />
+            <column name="course_id" value="2" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="tasks">
+            <column name="id" value="4" />
+            <column name="name" value="task4" />
+            <column name="description" value="task4 for course2 description" />
+            <column name="course_id" value="2" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <rollback>
+            Delete from tasks;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.2.0" author="illia.pinchuk">
+        <insert tableName="task_progresses">
+            <column name="id" value="1" />
+            <column name="attachments" value="null" />
+            <column name="score" value="0" />
+            <column name="task_id" value="1" />
+            <column name="user_id" value="1" />
+            <column name="verified" value="false" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="task_progresses">
+            <column name="id" value="2" />
+            <column name="attachments" value="null" />
+            <column name="score" value="0" />
+            <column name="task_id" value="1" />
+            <column name="user_id" value="2" />
+            <column name="verified" value="false" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="task_progresses">
+            <column name="id" value="3" />
+            <column name="attachments" value="null" />
+            <column name="score" value="0" />
+            <column name="task_id" value="2" />
+            <column name="user_id" value="1" />
+            <column name="verified" value="false" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="task_progresses">
+            <column name="id" value="4" />
+            <column name="attachments" value="null" />
+            <column name="score" value="0" />
+            <column name="task_id" value="3" />
+            <column name="user_id" value="1" />
+            <column name="verified" value="false" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="task_progresses">
+            <column name="id" value="5" />
+            <column name="attachments" value="null" />
+            <column name="score" value="0" />
+            <column name="task_id" value="4" />
+            <column name="user_id" value="2" />
+            <column name="verified" value="false" />
+            <column name="created" value="now()"/>
+            <column name="updated" value="now()"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <rollback>
+            Delete from task_progresses;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

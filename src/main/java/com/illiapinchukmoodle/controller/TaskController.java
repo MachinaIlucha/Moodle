@@ -1,5 +1,6 @@
 package com.illiapinchukmoodle.controller;
 
+import com.illiapinchukmoodle.data.dto.AdminTaskDTO;
 import com.illiapinchukmoodle.data.model.Task;
 import com.illiapinchukmoodle.exception.TaskNotFoundException;
 import com.illiapinchukmoodle.data.dto.TaskDTO;
@@ -9,12 +10,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,10 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 @RestController
 @RequestMapping(path = "/api/tasks", produces = APPLICATION_JSON_VALUE)
+@Slf4j
 public class TaskController {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(TaskController.class);
 
     private static final String ID = "taskId";
     private static final String NEW_TASK_LOG = "New task was created id: {}";
@@ -49,65 +48,71 @@ public class TaskController {
 
     @Operation(summary = "Get all tasks")
     @ApiResponse(responseCode = "200", description = "Found tasks",
-            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = TaskDTO.class))})
+            content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminTaskDTO.class))})
+    @Secured("ROLE_ADMIN")
     @GetMapping
-    public ResponseEntity<List<TaskDTO>> getAllTasks() {
-        logger.info(TASKS_GET_LOG);
-        return ResponseEntity.ok(taskService.getAllTasks().stream().map(task -> modelMapper.map(task, TaskDTO.class))
+    public ResponseEntity<List<AdminTaskDTO>> getAllTasks() {
+        log.info(TASKS_GET_LOG);
+        return ResponseEntity.ok(taskService.getAllTasks().stream().map(task -> modelMapper.map(task, AdminTaskDTO.class))
                 .collect(Collectors.toList()));
     }
 
     @Operation(summary = "Crate a new task")
     @ApiResponse(responseCode = "201", description = "Task is created",
             content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = TaskDTO.class))})
+    @Secured({"ROLE_TEACHER", "ROLE_ADMIN"})
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskDTO taskDTO) {
         Task taskRequest = modelMapper.map(taskDTO, Task.class);
         Task task = taskService.createTask(taskRequest);
         TaskDTO taskResponse = modelMapper.map(task, TaskDTO.class);
 
-        logger.info(NEW_TASK_LOG, task.toString());
+        log.info(NEW_TASK_LOG, task.toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(taskResponse);
     }
 
     @Operation(summary = "Get task by its id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found task", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = TaskDTO.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found task", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = AdminTaskDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Task not found", content = @Content)})
+    @Secured("ROLE_ADMIN")
     @GetMapping(path = "/{taskId}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable(value = ID) Long taskId){
+    public ResponseEntity<AdminTaskDTO> getTaskById(@PathVariable(value = ID) Long taskId){
         Task task = taskService.getTaskById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException(taskId));
-        TaskDTO taskResponse = modelMapper.map(task, TaskDTO.class);
+        AdminTaskDTO taskResponse = modelMapper.map(task, AdminTaskDTO.class);
 
-        logger.info(TASK_GET_LOG, taskId);
+        log.info(TASK_GET_LOG, taskId);
 
-        return ResponseEntity.ok(taskResponse);
+        return ResponseEntity.ok().body(taskResponse);
     }
 
     @Operation(summary = "Update task by its id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task was updated", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = TaskDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Task not found", content = @Content)})
+    @Secured({"ROLE_TEACHER", "ROLE_ADMIN"})
     @PutMapping(path = "/{taskId}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<TaskDTO> updateTask(@Valid @RequestBody TaskDTO taskDTO, @PathVariable(name = ID) Long taskId) {
         Task taskRequest = modelMapper.map(taskDTO, Task.class);
         Task task = taskService.updateTask(taskRequest, taskId);
         TaskDTO taskResponse = modelMapper.map(task, TaskDTO.class);
 
-        logger.info(TASK_UPDATED_LOG, task.toString());
+        log.info(TASK_UPDATED_LOG, task.toString());
 
         return ResponseEntity.ok().body(taskResponse);
     }
 
     @Operation(summary = "Delete task by its id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task was deleted", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = String.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Task was deleted", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = TaskDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Task not found", content = @Content)})
+    @Secured({"ROLE_TEACHER", "ROLE_ADMIN"})
     @DeleteMapping(path = "/{taskId}")
-    public ResponseEntity<String> deleteTask(@PathVariable(name = ID) Long taskId) {
-        taskService.deleteTask(taskId);
+    public ResponseEntity<TaskDTO> deleteTask(@PathVariable(name = ID) Long taskId) {
+        Task task = taskService.deleteTask(taskId);
+        TaskDTO taskResponse = modelMapper.map(task, TaskDTO.class);
 
-        logger.info(TASK_DELETED_LOG, taskId);
+        log.info(TASK_DELETED_LOG, taskId);
 
-        return ResponseEntity.ok("Task was successfully deleted");
+        return ResponseEntity.ok().body(taskResponse);
     }
 }

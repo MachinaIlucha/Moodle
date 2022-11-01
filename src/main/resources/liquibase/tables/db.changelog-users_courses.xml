@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1.0.8" author="illia.pinchuk">
+        <createTable tableName="user_courses">
+            <column name="user_id" type="bigint"/>
+            <column name="course_id" type="bigint"/>
+
+        </createTable>
+
+        <rollback>
+            DROP TABLE user_courses
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.0.9" author="illia.pinchuk">
+        <addForeignKeyConstraint baseTableName="user_courses"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_courses_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <rollback>
+            ALTER TABLE user_courses DROP CONSTRAINT fk_user_courses_user;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.1.0" author="illia.pinchuk">
+        <addForeignKeyConstraint baseTableName="user_courses"
+                                 baseColumnNames="course_id"
+                                 constraintName="fk_user_courses_courses"
+                                 referencedTableName="courses"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <rollback>
+            ALTER TABLE user_courses DROP CONSTRAINT fk_user_courses_courses;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

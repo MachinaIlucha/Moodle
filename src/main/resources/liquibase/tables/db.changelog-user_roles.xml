@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1.0.2" author="illia.pinchuk">
+        <createTable tableName="user_roles">
+            <column name="user_id" type="bigint"/>
+            <column name="role_id" type="bigint"/>
+
+        </createTable>
+
+        <rollback>
+            DROP TABLE users
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.0.3" author="illia.pinchuk">
+        <addForeignKeyConstraint baseTableName="user_roles"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_roles_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <rollback>
+            ALTER TABLE user_roles DROP CONSTRAINT fk_user_roles_user;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="1.0.4" author="illia.pinchuk">
+        <addForeignKeyConstraint baseTableName="user_roles"
+                                 baseColumnNames="role_id"
+                                 constraintName="fk_user_roles_roles"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"/>
+
+        <rollback>
+            ALTER TABLE user_roles DROP CONSTRAINT fk_user_roles_roles;
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

@@ -1,5 +1,6 @@
 package com.illiapinchukmoodle.exception;
 
+import com.illiapinchukmoodle.security.jwt.JwtAuthenticationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,12 +8,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
@@ -23,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @author Illia Pinchuk
+ */
 @ControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String ACCESS_DENIED = "Access denied!";
@@ -39,6 +45,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String TIMESTAMP = "timestamp";
     private static final String TYPE = "type";
 
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException exception,
@@ -52,15 +59,6 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         return getExceptionResponseEntity(exception, HttpStatus.BAD_REQUEST, request, validationErrors);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException exception,
-            HttpHeaders headers, HttpStatus status,
-            WebRequest request) {
-        return getExceptionResponseEntity(exception, status, request,
-                Collections.singletonList(exception.getLocalizedMessage()));
-    }
-
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(
             ConstraintViolationException exception, WebRequest request) {
@@ -71,6 +69,16 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         return getExceptionResponseEntity(exception, HttpStatus.BAD_REQUEST, request, validationErrors);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public final ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        final HttpStatus status = HttpStatus.FORBIDDEN;
+        final String localizedMessage = ex.getLocalizedMessage();
+        final String path = request.getDescription(false);
+        String message = (StringUtils.isNotEmpty(localizedMessage) ? localizedMessage:status.getReasonPhrase());
+        logger.error(String.format(ERROR_MESSAGE_TEMPLATE, message, path), ex);
+        return getExceptionResponseEntity(ex, status, request, Collections.singletonList(message));
+    }
+
     /**
      * A general handler for all uncaught exceptions
      */
@@ -79,7 +87,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         ResponseStatus responseStatus =
                 exception.getClass().getAnnotation(ResponseStatus.class);
         final HttpStatus status =
-                responseStatus!=null ? responseStatus.value():HttpStatus.INTERNAL_SERVER_ERROR;
+                responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
         final String localizedMessage = exception.getLocalizedMessage();
         final String path = request.getDescription(false);
         String message = (StringUtils.isNotEmpty(localizedMessage) ? localizedMessage:status.getReasonPhrase());
