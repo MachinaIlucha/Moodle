@@ -16,15 +16,14 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 /**
- * Incoming DTO to represent {@link User}.
+ * Incoming DTO to user creation {@link User}.
  */
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-
+public class UserCreationDto {
   @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_SURNAME,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_SURNAME,
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.SURNAME_ERROR_MESSAGE)
@@ -47,6 +46,12 @@ public class UserDto {
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_LOGIN,
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.LOGIN_SIZE_ERROR_MESSAGE)
   String login;
+
+  @NotBlank(message = ApplicationConstants.Web.DataValidation.ErrorMessage.PASSWORD_BLANK_ERROR_MESSAGE)
+  @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_PASSWORD,
+      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_PASSWORD,
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.PASSWORD_SIZE_ERROR_MESSAGE)
+  String password;
 
   @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_BIO,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_BIO,
