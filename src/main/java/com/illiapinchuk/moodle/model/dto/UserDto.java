@@ -1,11 +1,7 @@
-package com.illiapinchuk.moodle.persistence.entity;
+package com.illiapinchuk.moodle.model.dto;
 
 import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.illiapinchuk.moodle.persistence.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -19,19 +15,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-/** User class represents a user in the db. */
-@Entity
-@Table(name = "users")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+/** Incoming DTO to represent {@link User}. */
+@Data
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class User {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
+public class UserDto {
 
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_SURNAME,
@@ -61,14 +51,6 @@ public class User {
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_LOGIN,
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.LOGIN_SIZE_ERROR_MESSAGE)
   String login;
-
-  @NotBlank(
-      message = ApplicationConstants.Web.DataValidation.ErrorMessage.PASSWORD_BLANK_ERROR_MESSAGE)
-  @Size(
-      min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_PASSWORD,
-      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_PASSWORD,
-      message = ApplicationConstants.Web.DataValidation.ErrorMessage.PASSWORD_SIZE_ERROR_MESSAGE)
-  String password;
 
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_BIO,
