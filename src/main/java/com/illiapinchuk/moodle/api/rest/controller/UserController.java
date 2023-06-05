@@ -2,12 +2,10 @@ package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
-import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.UserCreationDto;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.UserService;
-import jakarta.persistence.PersistenceException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for user.
- */
+/** REST controller for user. */
 @RestController
 @RequestMapping(value = "/users")
 @RequiredArgsConstructor
@@ -60,12 +56,12 @@ public class UserController {
   }
 
   /**
-   * Registers a new user by creating a new {@link User} with
-   * the information provided in the request body.
+   * Registers a new user by creating a new {@link User} with the information provided in the
+   * request body.
    *
    * @param userCreationDto a {@link UserCreationDto} object containing the user's information
-   * @return a {@link ResponseEntity} object with a status of 201 (Created) and
-   * the created {@link UserDto} object in the body.
+   * @return a {@link ResponseEntity} object with a status of 201 (Created) and the created {@link
+   *     UserDto} object in the body.
    */
   @PostMapping
   public ResponseEntity<UserDto> createUser(
@@ -97,8 +93,8 @@ public class UserController {
    * Deletes the user with the given login.
    *
    * @param login the login of the user to delete
-   * @return a response with an HTTP status of OK if the user was successfully deleted,
-   * or an HTTP status of NOT_FOUND if the user was not found
+   * @return a response with an HTTP status of OK if the user was successfully deleted, or an HTTP
+   *     status of NOT_FOUND if the user was not found
    */
   @DeleteMapping
   public ResponseEntity<Void> deleteUserByLoginOrEmail(

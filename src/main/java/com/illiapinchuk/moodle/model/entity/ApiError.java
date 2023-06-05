@@ -18,9 +18,9 @@ import org.springframework.validation.ObjectError;
 
 /**
  * Represents an API error response.
- * <p>
- * This class encapsulates information about an API error response. It includes details such as the HTTP status,
- * timestamp, error message, debug message, and sub-errors (if applicable).
+ *
+ * <p>This class encapsulates information about an API error response. It includes details such as
+ * the HTTP status, timestamp, error message, debug message, and sub-errors (if applicable).
  */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
@@ -28,8 +28,10 @@ import org.springframework.validation.ObjectError;
 public class ApiError {
 
   HttpStatus status;
+
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
   LocalDateTime timestamp;
+
   String message;
   String debugMessage;
   List<ApiSubError> subErrors;
@@ -66,20 +68,20 @@ public class ApiError {
 
   /**
    * Utility methods for adding validation errors to the API error.
-   * <p>
-   * This class provides utility methods to add validation errors to the {@link ApiError} object. These methods are used
-   * when handling validation errors in the API and adding corresponding sub-errors or error details to the API error response.
+   *
+   * <p>This class provides utility methods to add validation errors to the {@link ApiError} object.
+   * These methods are used when handling validation errors in the API and adding corresponding
+   * sub-errors or error details to the API error response.
    */
-  private void addValidationError(final String object, final String field,
-                                  final Object rejectedValue,
-                                  final String message) {
+  private void addValidationError(
+      final String object, final String field, final Object rejectedValue, final String message) {
     addSubError(new ApiValidationError(object, field, rejectedValue, message));
   }
 
   /**
    * Utility method for adding a validation error with only the object name and message.
    *
-   * @param object  the name of the object being validated
+   * @param object the name of the object being validated
    * @param message the error message
    */
   private void addValidationError(final String object, final String message) {
@@ -114,9 +116,7 @@ public class ApiError {
    * @param objectError the ObjectError object representing the validation error
    */
   private void addValidationError(@NotNull final ObjectError objectError) {
-    this.addValidationError(
-        objectError.getObjectName(),
-        objectError.getDefaultMessage());
+    this.addValidationError(objectError.getObjectName(), objectError.getDefaultMessage());
   }
 
   /**
@@ -129,7 +129,8 @@ public class ApiError {
   }
 
   /**
-   * Utility method for adding error of ConstraintViolation. Usually when a @Validated validation fails.
+   * Utility method for adding error of ConstraintViolation. Usually when a @Validated validation
+   * fails.
    *
    * @param cv the ConstraintViolation
    */
@@ -141,7 +142,6 @@ public class ApiError {
         cv.getMessage());
   }
 
-
   /**
    * Utility method for adding multiple validation errors based on a set of ConstraintViolations.
    *
@@ -150,5 +150,4 @@ public class ApiError {
   public void addValidationErrors(@NotNull final Set<ConstraintViolation<?>> constraintViolations) {
     constraintViolations.forEach(this::addValidationError);
   }
-
 }

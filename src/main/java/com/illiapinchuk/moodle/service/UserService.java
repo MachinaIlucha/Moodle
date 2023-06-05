@@ -3,9 +3,7 @@ package com.illiapinchuk.moodle.service;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 
-/**
- * Service interface for managing users.
- */
+/** Service interface for managing users. */
 public interface UserService {
 
   /**
@@ -15,7 +13,7 @@ public interface UserService {
    * @return the user object of specified username
    * @see User
    */
-  User getUserByLoginOrEmail(final String login, final String email);
+  User getUserByLoginOrEmail(String login, String email);
 
   /**
    * Creates a new user.
@@ -24,7 +22,7 @@ public interface UserService {
    * @return the created user
    * @see User
    */
-  User createUser(final User user);
+  User createUser(User user);
 
   /**
    * Updates the user information based on the provided UserDto object.
@@ -32,7 +30,7 @@ public interface UserService {
    * @param userDto The UserDto object containing the updated user information.
    * @return The updated User object.
    */
-  User updateUser(final UserDto userDto);
+  User updateUser(UserDto userDto);
 
   /**
    * Deletes a user by login or email.
@@ -40,5 +38,5 @@ public interface UserService {
    * @param login the login of the user to delete
    * @param email the email of the user to delete
    */
-  void deleteUserByLoginOrEmail(final String login, final String email);
+  void deleteUserByLoginOrEmail(String login, String email);
 }

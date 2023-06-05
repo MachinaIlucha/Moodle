@@ -14,9 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Implementation of {@link UserService} interface.
- */
+/** Implementation of {@link UserService} interface. */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -28,19 +26,18 @@ public class UserServiceImpl implements UserService {
   @Override
   @Nullable
   public User getUserByLoginOrEmail(final String login, final String email) {
-    return userRepository.findUserByLoginOrEmail(login, email)
-        .orElseThrow(() -> new UserNotFoundException("User with current login/email not found"));
+    final var userOptional = userRepository.findUserByLoginOrEmail(login, email);
+    return userOptional.orElseThrow(
+        () -> new UserNotFoundException("User with current login/email not found"));
   }
 
   @Override
   public User createUser(@NotNull final User user) {
-    final var userLogin = user.getLogin();
-    final var userEmail = user.getEmail();
-    if (userValidator.isLoginExistInDb(userLogin)) {
-      throw new EntityExistsException("User with current login already exist in db.");
+    if (userValidator.isLoginExistInDb(user.getLogin())) {
+      throw new EntityExistsException("User with current login already exists in the database.");
     }
-    if (userValidator.isEmailExistInDb(userEmail)) {
-      throw new EntityExistsException("User with current email already exist in db.");
+    if (userValidator.isEmailExistInDb(user.getEmail())) {
+      throw new EntityExistsException("User with current email already exists in the database.");
     }
 
     return userRepository.save(user);
