@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.model.dto;
 
-import com.illiapinchuk.moodle.common.ApplicationConstants;
+import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -17,13 +17,13 @@ import lombok.ToString;
 @Builder
 public class AuthRequestDto {
 
-  @Size(min = ApplicationConstants.Web.Security.MIN_SIZE_OF_EMAIL,
-      max = ApplicationConstants.Web.Security.MAX_SIZE_OF_EMAIL)
+  @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_EMAIL,
+      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_EMAIL)
   @NotBlank
-  private String email;
+  private String loginOrEmail;
 
-  @Size(min = ApplicationConstants.Web.Security.MIN_SIZE_OF_PASSWORD,
-      max = ApplicationConstants.Web.Security.MAX_SIZE_OF_PASSWORD)
+  @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_PASSWORD,
+      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_PASSWORD)
   @NotBlank
   private String password;
 }

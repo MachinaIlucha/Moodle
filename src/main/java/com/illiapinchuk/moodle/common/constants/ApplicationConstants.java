@@ -1,5 +1,7 @@
 package com.illiapinchuk.moodle.common.constants;
 
+import java.util.Calendar;
+import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
 
 /** Contains various constants used in the messenger application. */
@@ -11,11 +13,41 @@ public class ApplicationConstants {
   public class Validation {
     /** A regular expression for validating phone number. */
     public static final String PHONE_REGEX = "\\+?[0-9]+";
+    /** A regular expression for validating email addresses. */
+    public static final String EMAIL_REGEX =
+        "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    public static final Pattern EMAIL_PATTERN = Pattern.compile(Validation.EMAIL_REGEX);
   }
 
   /** Inner utility class for web-related constants. */
   @UtilityClass
   public class Web {
+
+    /** Inner utility class for web-related paths. */
+    @UtilityClass
+    public class Path {
+      public static final String LOGIN_PATH = "/auth/login";
+      public static final String REGISTER_PATH = "/users/**";
+    }
+
+    /** Inner utility class for constants related to security part. */
+    @UtilityClass
+    public class Security {
+      public static final String TOKEN_HEADER_NAME = "token";
+      public static final String SERVER_TIMEZONE_ID =
+          Calendar.getInstance().getTimeZone().toZoneId().toString();
+
+      /** Inner utility class for constants related to security jwt claims part. */
+      @UtilityClass
+      public class JwtClaims {
+        public static final String ROLES = "roles";
+        public static final String LOGIN = "login";
+        public static final String EMAIL = "email";
+        public static final String TIME_ZONE_ID = "timeZoneId";
+      }
+    }
 
     /** Inner utility class for dto validation. */
     @UtilityClass

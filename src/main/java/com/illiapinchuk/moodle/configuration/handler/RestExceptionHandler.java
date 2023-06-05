@@ -2,9 +2,15 @@ package com.illiapinchuk.moodle.configuration.handler;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
 import com.illiapinchuk.moodle.model.entity.ApiError;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -142,6 +148,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(NotValidInputException.class)
   protected ResponseEntity<Object> handleNotValidInput(NotValidInputException ex) {
     final var apiError = new ApiError(BAD_REQUEST);
+    apiError.setMessage(ex.getMessage());
+    apiError.setDebugMessage(ex.getMessage());
+    return buildResponseEntity(apiError);
+  }
+
+  /**
+   * Handles Jwt exceptions.
+   *
+   * @param ex the InvalidJwtTokenException
+   * @return the ApiError object
+   */
+  @ExceptionHandler(InvalidJwtTokenException.class)
+  protected ResponseEntity<Object> handleNotValidJwt(InvalidJwtTokenException ex) {
+    final var apiError = new ApiError(UNAUTHORIZED);
     apiError.setMessage(ex.getMessage());
     apiError.setDebugMessage(ex.getMessage());
     return buildResponseEntity(apiError);

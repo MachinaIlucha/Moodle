@@ -9,3 +9,8 @@ spring:
       ddl-auto: update
   h2:
     console.enabled: true
+  security:
+    # Secret used for signing JWT token.
+    secret: moodle_secret_key_for_user_authentication
+    #Validity time of JWT token in milliseconds.
+    expirationTime: 36000000

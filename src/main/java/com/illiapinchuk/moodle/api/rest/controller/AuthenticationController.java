@@ -1,6 +1,7 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
+import com.illiapinchuk.moodle.service.AuthenticationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
@@ -21,10 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthenticationController {
 
+  private final AuthenticationService authenticationService;
+
   @PostMapping("/login")
   public ResponseEntity<Map<Object, Object>> login(
       @Valid @NotNull @RequestBody final AuthRequestDto requestDto) {
-    return null;
+    return ResponseEntity.ok(authenticationService.login(requestDto));
   }
 
 }
