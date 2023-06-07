@@ -1,8 +1,11 @@
 package com.illiapinchuk.moodle.configuration.handler;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
 import com.illiapinchuk.moodle.model.entity.ApiError;
 import jakarta.persistence.EntityExistsException;
@@ -18,9 +21,10 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -34,9 +38,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *
  * <p>This class is annotated with {@code @ControllerAdvice} to handle exceptions globally in the
  * application. It extends {@code ResponseEntityExceptionHandler} to provide custom exception
- * handling for Spring. The {@code @Order} annotation with {@code Ordered.HIGHEST_PRECEDENCE}
- * ensures that this exception handler takes precedence over others when multiple handlers are
- * present.
+ * handling for Spring.
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -134,6 +136,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   /**
+   * Handles AccessDeniedException.
+   *
+   * @param ex the AccessDeniedException
+   * @return the ApiError object
+   */
+  @ExceptionHandler(AccessDeniedException.class)
+  protected ResponseEntity<Object> handleEntityNotFound(AccessDeniedException ex) {
+    final var apiError = new ApiError(FORBIDDEN);
+    apiError.setMessage(ex.getMessage());
+    apiError.setDebugMessage(ex.getMessage());
+    return buildResponseEntity(apiError);
+  }
+
+  /**
    * Handles NotValidInputException.
    *
    * @param ex the NotValidInputException
@@ -142,6 +158,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(NotValidInputException.class)
   protected ResponseEntity<Object> handleNotValidInput(NotValidInputException ex) {
     final var apiError = new ApiError(BAD_REQUEST);
+    apiError.setMessage(ex.getMessage());
+    apiError.setDebugMessage(ex.getMessage());
+    return buildResponseEntity(apiError);
+  }
+
+  /**
+   * Handles AuthenticationException exceptions.
+   *
+   * @param ex the InvalidJwtTokenException, AuthenticationException
+   * @return the ApiError object
+   */
+  @ExceptionHandler({InvalidJwtTokenException.class, AuthenticationException.class})
+  protected ResponseEntity<Object> handleNotValidJwt(RuntimeException ex) {
+    final var apiError = new ApiError(UNAUTHORIZED);
     apiError.setMessage(ex.getMessage());
     apiError.setDebugMessage(ex.getMessage());
     return buildResponseEntity(apiError);

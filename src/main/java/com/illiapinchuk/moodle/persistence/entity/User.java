@@ -1,10 +1,18 @@
 package com.illiapinchuk.moodle.persistence.entity;
 
 import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.model.entity.RoleName;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +20,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.Date;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -97,4 +106,10 @@ public class User {
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_CITY,
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.CITY_SIZE_ERROR_MESSAGE)
   String city;
+
+  @ElementCollection(targetClass = RoleName.class, fetch = FetchType.EAGER)
+  @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+  @Column(name = "user_role", nullable = false)
+  @Enumerated(EnumType.STRING)
+  Set<RoleName> roles;
 }

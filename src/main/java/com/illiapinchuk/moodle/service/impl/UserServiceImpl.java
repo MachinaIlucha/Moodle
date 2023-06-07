@@ -4,13 +4,16 @@ import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
+import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
 import com.illiapinchuk.moodle.service.UserService;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityExistsException;
 import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final UserValidator userValidator;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   @Nullable
@@ -39,7 +43,9 @@ public class UserServiceImpl implements UserService {
     if (userValidator.isEmailExistInDb(user.getEmail())) {
       throw new EntityExistsException("User with current email already exists in the database.");
     }
-
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    // By default user role is USER
+    user.setRoles(Set.of(RoleName.USER));
     return userRepository.save(user);
   }
 
