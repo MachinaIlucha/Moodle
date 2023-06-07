@@ -21,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -33,6 +35,7 @@ class UserServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private UserMapper userMapper;
   @Mock private UserValidator userValidator;
+  @Mock private PasswordEncoder passwordEncoder;
   @InjectMocks private UserServiceImpl userService;
 
   @Test
@@ -49,14 +52,17 @@ class UserServiceImplTest {
 
   @Test
   void testGetUserByLoginOrEmail_WhenUserDoesNotExist_ShouldThrowException() {
-    when(userRepository.findUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL)).thenReturn(Optional.empty());
+    when(userRepository.findUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL))
+        .thenReturn(Optional.empty());
 
     assertThrows(
-        UserNotFoundException.class, () -> userService.getUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL));
+        UserNotFoundException.class,
+        () -> userService.getUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL));
     verify(userRepository, times(1)).findUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL);
   }
 
   @Test
+  @WithMockUser(roles = "USER")
   void testCreateUser_WhenUserDoesNotExist_ShouldSaveUser() {
     final var user = new User();
     when(userValidator.isLoginExistInDb(user.getLogin())).thenReturn(false);
@@ -101,7 +107,8 @@ class UserServiceImplTest {
 
     final var existingUser = new User();
     when(userValidator.isLoginExistInDb(userDto.getLogin())).thenReturn(true);
-    when(userRepository.findUserByLoginOrEmail(EXISTING_LOGIN, null)).thenReturn(Optional.of(existingUser));
+    when(userRepository.findUserByLoginOrEmail(EXISTING_LOGIN, null))
+        .thenReturn(Optional.of(existingUser));
     when(userRepository.save(existingUser)).thenReturn(existingUser);
 
     final var result = userService.updateUser(userDto);
@@ -140,9 +147,12 @@ class UserServiceImplTest {
     when(userValidator.isLoginExistInDb(NON_EXISTING_LOGIN)).thenReturn(false);
     when(userValidator.isEmailExistInDb(NON_EXISTING_EMAIL)).thenReturn(true);
 
-    assertThrows(UserNotFoundException.class, () -> userService.deleteUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL));
+    assertThrows(
+        UserNotFoundException.class,
+        () -> userService.deleteUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL));
     verify(userValidator, times(1)).isLoginExistInDb(NON_EXISTING_LOGIN);
     verify(userValidator, times(1)).isEmailExistInDb(NON_EXISTING_EMAIL);
-    verify(userRepository, never()).deleteUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL);
+    verify(userRepository, never())
+        .deleteUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL);
   }
 }

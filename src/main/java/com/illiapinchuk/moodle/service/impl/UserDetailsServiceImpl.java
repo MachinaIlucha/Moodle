@@ -1,6 +1,5 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.common.validator.EmailValidator;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;

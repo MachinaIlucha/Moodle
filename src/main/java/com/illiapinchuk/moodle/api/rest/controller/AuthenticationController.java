@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for authentication requests (login, logout, register, etc.)
- */
+/** REST controller for authentication requests (login, logout, register, etc.) */
 @RestController
 @RequestMapping(value = "/auth")
 @RequiredArgsConstructor
@@ -29,5 +27,4 @@ public class AuthenticationController {
       @Valid @NotNull @RequestBody final AuthRequestDto requestDto) {
     return ResponseEntity.ok(authenticationService.login(requestDto));
   }
-
 }

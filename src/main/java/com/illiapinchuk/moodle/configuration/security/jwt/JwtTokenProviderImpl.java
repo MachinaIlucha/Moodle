@@ -8,11 +8,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
-import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -69,28 +67,21 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
   }
 
   @Override
-  public String getLoginOrEmail(String token) {
-    return Jwts.parserBuilder()
-        .requireAudience(secretProvider.getEncodedSecret())
-        .build()
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject();
+  public String getLoginOrEmail(@NotNull final String token) {
+    return Jwts.parser().setSigningKey(secretProvider.getEncodedSecret()).parseClaimsJws(token)
+        .getBody().getSubject();
   }
 
   @Override
-  public String resolveToken(HttpServletRequest request) {
+  public String resolveToken(@NotNull final HttpServletRequest request) {
     return request.getHeader(ApplicationConstants.Web.Security.TOKEN_HEADER_NAME);
   }
 
   @Override
-  public boolean validateToken(String token) {
+  public boolean validateToken(@NotNull final String token) {
     try {
       final var claims =
-          Jwts.parserBuilder()
-              .requireAudience(secretProvider.getEncodedSecret())
-              .build()
-              .parseClaimsJws(token);
+          Jwts.parser().setSigningKey(secretProvider.getEncodedSecret()).parseClaimsJws(token);
       final var timeZoneId =
           claims.getBody().get(ApplicationConstants.Web.Security.JwtClaims.TIME_ZONE_ID).toString();
 

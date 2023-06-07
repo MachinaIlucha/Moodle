@@ -220,6 +220,7 @@
                                 <exclude>/*com/illiapinchuk/moodle/model/entity/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/model/dto/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/common/constants/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/jwt/JwtUser.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>

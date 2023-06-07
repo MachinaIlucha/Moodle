@@ -29,7 +29,6 @@ public class ApplicationConstants {
     @UtilityClass
     public class Path {
       public static final String LOGIN_PATH = "/auth/login";
-      public static final String REGISTER_PATH = "/users/**";
     }
 
     /** Inner utility class for constants related to security part. */
@@ -43,8 +42,6 @@ public class ApplicationConstants {
       @UtilityClass
       public class JwtClaims {
         public static final String ROLES = "roles";
-        public static final String LOGIN = "login";
-        public static final String EMAIL = "email";
         public static final String TIME_ZONE_ID = "timeZoneId";
       }
     }

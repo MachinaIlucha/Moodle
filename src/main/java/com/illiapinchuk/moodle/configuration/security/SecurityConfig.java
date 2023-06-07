@@ -5,10 +5,10 @@ import com.illiapinchuk.moodle.configuration.handler.FilterChainExceptionHandler
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtConfigurer;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -40,19 +40,16 @@ public class SecurityConfig {
 
   /** Configuration of security. */
   @Bean
-  public SecurityFilterChain filterChain(
-      @NotNull final HttpSecurity http, @NotNull final List<HttpSecurityConfig> httpConfigurations)
-      throws Exception {
-    httpConfigurations.forEach(config -> config.configuration().accept(http));
-
+  public SecurityFilterChain filterChain(@NotNull final HttpSecurity http) throws Exception {
     http
         // disable CSRF as we do not serve browser clients
         .csrf()
         .disable()
         .authorizeRequests()
         // authenticate requests
-        .requestMatchers(
-            ApplicationConstants.Web.Path.LOGIN_PATH, ApplicationConstants.Web.Path.REGISTER_PATH)
+        .requestMatchers(ApplicationConstants.Web.Path.LOGIN_PATH)
+        .permitAll()
+        .requestMatchers(HttpMethod.POST, "/users")
         .permitAll()
         .anyRequest()
         .authenticated()
