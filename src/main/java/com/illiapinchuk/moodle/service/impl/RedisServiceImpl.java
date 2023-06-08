@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+/** The RedisServiceImpl class is an implementation of the {@link RedisService} interface. */
 @Service
 @RequiredArgsConstructor
 public class RedisServiceImpl implements RedisService {
@@ -22,4 +23,3 @@ public class RedisServiceImpl implements RedisService {
     return redisTemplate.hasKey(token);
   }
 }
-
