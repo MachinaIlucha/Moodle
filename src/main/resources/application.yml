@@ -14,3 +14,7 @@ spring:
     secret: moodle_secret_key_for_user_authentication
     #Validity time of JWT token in milliseconds.
     expirationTime: 36000000
+  data:
+    redis:
+      host: localhost
+      port: 6379

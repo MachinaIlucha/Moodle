@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
+import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
 import com.illiapinchuk.moodle.model.entity.ApiError;
 import jakarta.persistence.EntityExistsException;
@@ -169,7 +170,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
    * @param ex the InvalidJwtTokenException, AuthenticationException
    * @return the ApiError object
    */
-  @ExceptionHandler({InvalidJwtTokenException.class, AuthenticationException.class})
+  @ExceptionHandler({
+    InvalidJwtTokenException.class,
+    AuthenticationException.class,
+    JwtTokenExpiredException.class
+  })
   protected ResponseEntity<Object> handleNotValidJwt(RuntimeException ex) {
     final var apiError = new ApiError(UNAUTHORIZED);
     apiError.setMessage(ex.getMessage());

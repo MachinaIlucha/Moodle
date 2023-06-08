@@ -2,7 +2,9 @@ package com.illiapinchuk.moodle.configuration.security.jwt;
 
 import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
+import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.model.entity.RoleName;
+import com.illiapinchuk.moodle.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProviderImpl implements JwtTokenProvider {
   private final SecretProvider secretProvider;
   private final UserDetailsService userDetailsService;
+  private final RedisService redisService;
 
   @Value("${spring.security.expirationTime}")
   private long validityInMilliseconds;
@@ -79,6 +82,11 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
   @Override
   public boolean validateToken(@NotNull final String token) {
+    if (redisService.isBlacklisted(token)) {
+      log.error("Jwt token was expired.");
+      throw new JwtTokenExpiredException("Jwt token was expired and can't be used again.");
+    }
+
     try {
       final var claims =
           Jwts.parser().setSigningKey(secretProvider.getEncodedSecret()).parseClaimsJws(token);

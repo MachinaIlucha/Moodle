@@ -10,7 +10,9 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
+import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.model.entity.RoleName;
+import com.illiapinchuk.moodle.service.RedisService;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 class JwtTokenProviderImplTest {
 
   private static final String VALID_TOKEN = "valid_token";
+  private static final String INVALID_TOKEN = "invalidToken";
   private static final String USERNAME = "testUsername";
   private static final Set<RoleName> ROLES = Set.of(RoleName.USER);
   private static final String HEADER = "token";
@@ -31,7 +34,7 @@ class JwtTokenProviderImplTest {
   @MockBean private MockHttpServletRequest mockHttpServletRequest;
   @MockBean private UserDetailsService userDetailsService;
   @MockBean private UserDetails userDetails;
-  @Autowired private SecretProvider secretProvider;
+  @MockBean private RedisService redisService;
   @Autowired private JwtTokenProviderImpl jwtTokenProvider;
 
   @Test
@@ -108,20 +111,32 @@ class JwtTokenProviderImplTest {
   void validateTokenShouldThrowInvalidJwtTokenExceptionWhenTokenIsMalformed() {
     final var malformedToken = "malformed_token";
 
-    assertThrows(InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(malformedToken));
+    assertThrows(
+        InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(malformedToken));
   }
 
   @Test
   void validateTokenShouldThrowInvalidJwtTokenExceptionWhenTokenIsUnsupported() {
     final var unsupportedToken = "unsupported_token";
 
-    assertThrows(InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(unsupportedToken));
+    assertThrows(
+        InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(unsupportedToken));
   }
 
   @Test
   void validateTokenShouldThrowInvalidJwtTokenExceptionWhenTokenHasInvalidCompact() {
     final var invalidCompactToken = "invalid_compact_token";
 
-    assertThrows(InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(invalidCompactToken));
+    assertThrows(
+        InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(invalidCompactToken));
+  }
+
+  @Test
+  void validateInvalidTokenTest() {
+    when(redisService.isBlacklisted(INVALID_TOKEN)).thenReturn(true);
+
+    assertThrows(JwtTokenExpiredException.class, () -> {
+      jwtTokenProvider.validateToken(INVALID_TOKEN);
+    });
   }
 }
