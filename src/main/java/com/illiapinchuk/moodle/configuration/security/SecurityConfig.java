@@ -26,7 +26,6 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @EnableMethodSecurity
 @RequiredArgsConstructor
-@Order(2)
 public class SecurityConfig {
 
   private final JwtTokenProvider jwtTokenProvider;
