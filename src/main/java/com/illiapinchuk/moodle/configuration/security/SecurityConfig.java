@@ -5,9 +5,13 @@ import com.illiapinchuk.moodle.configuration.handler.FilterChainExceptionHandler
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtConfigurer;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -40,12 +44,16 @@ public class SecurityConfig {
 
   /** Configuration of security. */
   @Bean
-  public SecurityFilterChain filterChain(@NotNull final HttpSecurity http) throws Exception {
+  public SecurityFilterChain filterChain(
+      @NotNull final HttpSecurity http, @NotNull final List<HttpSecurityConfig> httpConfigurations)
+      throws Exception {
+    httpConfigurations.forEach(config -> config.configuration().accept(http));
+
     http
         // disable CSRF as we do not serve browser clients
         .csrf()
         .disable()
-        .authorizeRequests()
+        .authorizeHttpRequests()
         // authenticate requests
         .requestMatchers(ApplicationConstants.Web.Path.LOGIN_PATH)
         .permitAll()

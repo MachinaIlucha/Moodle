@@ -31,6 +31,16 @@ public class ApplicationConstants {
       public static final String LOGIN_PATH = "/auth/login";
     }
 
+    /**
+     * Const's for Swagger docs.
+     */
+    @UtilityClass
+    public class Swagger {
+      public static final String API_DOCS_PATH = "/v3/api-docs/**";
+      public static final String UI_PATH = "/swagger-ui/**";
+      public static final String UI_HTML_PATH = "/swagger-ui.html";
+    }
+
     /** Inner utility class for constants related to security part. */
     @UtilityClass
     public class Security {

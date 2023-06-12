@@ -7,5 +7,7 @@ public enum RoleName {
   /** Teacher role. */
   TEACHER,
   /** Privilege role. */
-  ADMIN
+  ADMIN,
+  /** Developer role. */
+  DEVELOPER
 }
