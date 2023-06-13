@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Illia Pinchuk
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(255)
+              - column:
+                  name: lastname
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: login
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bio
+                  type: varchar(255)
+              - column:
+                  name: phone_number
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_of_birth
+                  type: varchar(255)
+              - column:
+                  name: country
+                  type: varchar(255)
+              - column:
+                  name: city
+                  type: varchar(255)
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_roles_users
+                    references: users(id)
+              - column:
+                  name: user_role
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
