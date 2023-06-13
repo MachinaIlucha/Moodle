@@ -3,9 +3,11 @@ package com.illiapinchuk.moodle.model.dto;
 import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -15,6 +17,8 @@ import lombok.ToString;
 @Getter
 @ToString
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthRequestDto {
 
   @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_EMAIL,

@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: Illia Pinchuk
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: surname
+                  value: "Admin"
+              - column:
+                  name: lastname
+                  value: "User"
+              - column:
+                  name: email
+                  value: "admin@example.com"
+              - column:
+                  name: login
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "$2a$12$5XwRjrAcTE/Dm67wEYZJgOYFOrn0ShQrRUmljQTsvkizJRYLcGIem"
+              - column:
+                  name: phone_number
+                  value: "1234567890"
+              - column:
+                  name: country
+                  value: "Country"
+              - column:
+                  name: city
+                  value: "City"
+        - insert:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: user_role
+                  value: "ADMIN"
