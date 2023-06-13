@@ -19,6 +19,11 @@ spring:
       host: localhost
       port: 6379
 
+# Configuring the server servlet context path(add "/api" to all endpoints)
+server:
+  servlet:
+    context-path: /api
+
 #Credentials for basic authentication
 basic:
   name: developer
