@@ -13,22 +13,29 @@ spring:
   security:
     # Secret used for signing JWT token.
     secret: moodle_secret_key_for_user_authentication
-    #Validity time of JWT token in milliseconds.
+    # Validity time of JWT token in milliseconds.
     expirationTime: 36000000
   data:
     redis:
       host: localhost
       port: 6379
-  #LiquidBase settings
+  # LiquidBase settings
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+
+# MongoDB
+de:
+  flap-doodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
 
 # Configuring the server servlet context path(add "/api" to all endpoints)
 server:
   servlet:
     context-path: /api
 
-#Credentials for basic authentication
+# Credentials for basic authentication
 basic:
   name: developer
   password: 123456
