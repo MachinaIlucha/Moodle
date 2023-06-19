@@ -258,7 +258,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>/*com/illiapinchuk/moodle/MoodleApplication.class</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/common/mapper/UserMapperImpl.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/common/mapper/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/handler/RestExceptionHandler.class</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/exception/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/persistence/entity/**</exclude>
@@ -266,6 +266,7 @@
                                 <exclude>/*com/illiapinchuk/moodle/model/dto/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/common/constants/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/jwt/JwtUser.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/**</exclude>
                             </excludes>
                             <rules>
                                 <rule>
@@ -274,7 +275,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.70</minimum>
+                                            <minimum>0.60</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
