@@ -2,7 +2,6 @@ package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
-import com.illiapinchuk.moodle.model.dto.UserCreationDto;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.UserService;
@@ -61,20 +60,18 @@ class UserControllerTest {
 
   @Test
   void testCreateUser_ShouldReturnCreatedUserDto() {
-    final var userCreationDto = new UserCreationDto();
     final var user = new User();
     final var userDto = new UserDto();
     final var expectedResponse = ResponseEntity.status(HttpStatus.CREATED).body(userDto);
 
-    when(userMapper.userCreationDtoToUser(userCreationDto)).thenReturn(user);
+    when(userMapper.userDtoToUser(userDto)).thenReturn(user);
     when(userService.createUser(user)).thenReturn(user);
     when(userMapper.userToUserDto(user)).thenReturn(userDto);
 
-    final var actualResponse = userController.createUser(userCreationDto);
+    final var actualResponse = userController.createUser(userDto);
 
     assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
     assertEquals(expectedResponse.getBody(), actualResponse.getBody());
-    verify(userMapper).userCreationDtoToUser(userCreationDto);
     verify(userService).createUser(user);
     verify(userMapper).userToUserDto(user);
   }

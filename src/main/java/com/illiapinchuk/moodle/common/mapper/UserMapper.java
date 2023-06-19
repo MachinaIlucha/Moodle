@@ -1,14 +1,12 @@
 package com.illiapinchuk.moodle.common.mapper;
 
-import com.illiapinchuk.moodle.model.dto.UserCreationDto;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 /**
- * This interface defines methods for mapping between the {@link User}, {@link UserDto}
- * and {@link UserCreationDto} classes.
+ * This interface defines methods for mapping between the {@link User}, {@link UserDto}.
  */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -28,14 +26,6 @@ public interface UserMapper {
    * @return The resulting {@link User} object.
    */
   User userDtoToUser(UserDto userDto);
-
-  /**
-   * Maps a {@link UserCreationDto} object to a {@link User} object.
-   *
-   * @param userCreationDto The {@link UserCreationDto} object to be mapped.
-   * @return The resulting {@link User} object.
-   */
-  User userCreationDtoToUser(UserCreationDto userCreationDto);
 
   /**
    * This method updates the User object with the data from the UserDto.

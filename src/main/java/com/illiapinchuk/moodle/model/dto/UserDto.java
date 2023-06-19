@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import jakarta.validation.constraints.Email;
@@ -51,6 +52,15 @@ public class UserDto {
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_LOGIN,
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.LOGIN_SIZE_ERROR_MESSAGE)
   String login;
+
+  @NotBlank(
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.PASSWORD_BLANK_ERROR_MESSAGE)
+  @Size(
+      min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_PASSWORD,
+      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_PASSWORD,
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.PASSWORD_SIZE_ERROR_MESSAGE)
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  String password;
 
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_BIO,

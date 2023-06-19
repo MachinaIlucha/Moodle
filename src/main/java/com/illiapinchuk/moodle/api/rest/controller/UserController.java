@@ -2,7 +2,6 @@ package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
-import com.illiapinchuk.moodle.model.dto.UserCreationDto;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.UserService;
@@ -59,14 +58,14 @@ public class UserController {
    * Registers a new user by creating a new {@link User} with the information provided in the
    * request body.
    *
-   * @param userCreationDto a {@link UserCreationDto} object containing the user's information
+   * @param userDto a {@link UserDto} object containing the user's information
    * @return a {@link ResponseEntity} object with a status of 201 (Created) and the created {@link
    *     UserDto} object in the body.
    */
   @PostMapping
   public ResponseEntity<UserDto> createUser(
-      @Valid @RequestBody final UserCreationDto userCreationDto) {
-    final var userRequest = userMapper.userCreationDtoToUser(userCreationDto);
+      @Valid @RequestBody final UserDto userDto) {
+    final var userRequest = userMapper.userDtoToUser(userDto);
     final var user = userService.createUser(userRequest);
     final var userResponse = userMapper.userToUserDto(user);
 
