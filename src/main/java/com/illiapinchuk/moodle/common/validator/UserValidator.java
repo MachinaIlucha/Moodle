@@ -5,9 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/**
- * Validation for user-related information.
- */
+/** Validation for user-related information. */
 @Component
 @RequiredArgsConstructor
 public class UserValidator {

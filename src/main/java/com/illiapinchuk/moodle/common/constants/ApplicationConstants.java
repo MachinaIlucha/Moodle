@@ -75,6 +75,11 @@ public class ApplicationConstants {
       public static final int MAX_SIZE_OF_COUNTRY = 100;
       public static final int MIN_SIZE_OF_CITY = 3;
       public static final int MAX_SIZE_OF_CITY = 100;
+      public static final int MIN_SIZE_OF_TASK_TITLE = 5;
+      public static final int MAX_SIZE_OF_TASK_TITLE = 255;
+
+      public static final int MIN_SIZE_OF_TASK_DESCRIPTION = 5;
+      public static final int MAX_SIZE_OF_TASK_DESCRIPTION = 255;
 
       /** Inner utility class for dto validation errors. */
       @UtilityClass
