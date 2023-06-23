@@ -4,12 +4,15 @@ import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.common.date.DateService;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
+import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
+import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class TaskServiceImpl implements TaskService {
   private final TaskMapper taskMapper;
   private final TaskValidator taskValidator;
   private final DateService dateService;
+  private final UserValidator userValidator;
 
   @Override
   public Task getTaskById(@NotNull final String id) {
@@ -33,6 +37,11 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public Task createTask(@NotNull final Task task) {
+    final var authorId = task.getAuthorId();
+    if (!userValidator.isUserExistInDbById(authorId))
+      throw new UserNotFoundException(
+          String.format("The author with id: %s does not exist.", authorId));
+
     task.setCreationDate(
         dateService.getCurrentZonedDateTime(ApplicationConstants.Web.Security.SERVER_TIMEZONE_ID));
     return taskRepository.save(task);
@@ -53,5 +62,10 @@ public class TaskServiceImpl implements TaskService {
   @Override
   public void deleteTaskById(@NotNull final String id) {
     taskRepository.deleteById(id);
+  }
+
+  @Override
+  public List<Task> getTasksByCourseId(@NotNull String courseId) {
+    return taskRepository.getTasksByCourseId(courseId);
   }
 }

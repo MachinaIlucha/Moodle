@@ -31,4 +31,14 @@ public class UserValidator {
   public boolean isEmailExistInDb(@NotNull final String email) {
     return userRepository.existsUserByEmail(email);
   }
+
+  /**
+   * Check if the given user with id exists in the database.
+   *
+   * @param id the id to check
+   * @return true if the user exists in the database, false otherwise
+   */
+  public boolean isUserExistInDbById(@NotNull final String id) {
+    return userRepository.existsById(Long.valueOf(id));
+  }
 }

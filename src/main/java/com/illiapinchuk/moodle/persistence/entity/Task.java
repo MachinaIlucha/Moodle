@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /** Task class represents a Task in the mongo db. */
@@ -26,37 +27,37 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class Task {
 
-  @Id private String id;
+  @Id String id;
 
   @NotBlank(message = "Title is mandatory")
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_TASK_TITLE,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_TASK_TITLE,
       message = "Title should have between 1 and 255 characters")
-  private String title;
+  String title;
 
   @NotBlank(message = "Description is mandatory")
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_TASK_DESCRIPTION,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_TASK_DESCRIPTION,
       message = "Description should have between 1 and 255 characters")
-  private String description;
+  String description;
 
   @FutureOrPresent(message = "Due Date must be in the present or future")
-  private Date dueDate;
+  Date dueDate;
 
   @PastOrPresent(message = "Creation Date must be in the past or present")
-  private Date creationDate;
+  Date creationDate;
 
-  // TODO create course
-  //  @NotBlank(message = "Course ID is mandatory")
-  //  private String courseId;
+  @NotNull(message = "Course is mandatory")
+  @DBRef
+  Course course;
 
   @NotBlank(message = "Author ID is mandatory")
-  private String authorId;
+  String authorId;
 
   @NotNull(message = "Status is mandatory")
-  private TaskStatus status;
+  TaskStatus status;
 
   // TODO create attachments
   //  private List<String> attachments;
