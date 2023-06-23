@@ -77,9 +77,12 @@ public class ApplicationConstants {
       public static final int MAX_SIZE_OF_CITY = 100;
       public static final int MIN_SIZE_OF_TASK_TITLE = 5;
       public static final int MAX_SIZE_OF_TASK_TITLE = 255;
-
       public static final int MIN_SIZE_OF_TASK_DESCRIPTION = 5;
       public static final int MAX_SIZE_OF_TASK_DESCRIPTION = 255;
+      public static final int MIN_SIZE_OF_COURSE_NAME = 5;
+      public static final int MAX_SIZE_OF_COURSE_NAME = 200;
+      public static final int MIN_SIZE_OF_COURSE_DESCRIPTION = 1;
+      public static final int MAX_SIZE_OF_COURSE_DESCRIPTION = 2000;
 
       /** Inner utility class for dto validation errors. */
       @UtilityClass
@@ -108,6 +111,27 @@ public class ApplicationConstants {
         public static final String PASSWORD_BLANK_ERROR_MESSAGE = "Password is mandatory";
         public static final String PASSWORD_SIZE_ERROR_MESSAGE =
             "City should be between 6 and 255 characters";
+        public static final String TASK_TITLE_BLANK_ERROR_MESSAGE = "Title is mandatory";
+        public static final String TASK_DESCRIPTION_BLANK_ERROR_MESSAGE = "Description is mandatory";
+        public static final String TASK_COURSE_BLANK_ERROR_MESSAGE = "Course is mandatory";
+        public static final String TASK_AUTHOR_BLANK_ERROR_MESSAGE = "Author is mandatory";
+        public static final String TASK_STATUS_BLANK_ERROR_MESSAGE = "Status is mandatory";
+        public static final String TASK_DESCRIPTION_SIZE_ERROR_MESSAGE =
+            "Description should have between 1 and 255 characters";
+        public static final String TASK_TITLE_SIZE_ERROR_MESSAGE =
+            "Title should have between 1 and 200 characters";
+        public static final String TASK_DUEDATE_ERROR_MESSAGE =
+            "Due Date must be in the present or future";
+        public static final String TASK_CREATIONDATE_ERROR_MESSAGE =
+            "Creation Date must be in the past or present";
+        public static final String COURSE_NAME_BLANK_ERROR_MESSAGE = "Name is mandatory";
+        public static final String COURSE_NAME_SIZE_ERROR_MESSAGE =
+            "Name should have between 1 and 200 characters";
+        public static final String COURSE_DESCRIPTION_BLANK_ERROR_MESSAGE = "Description is mandatory";
+        public static final String COURSE_DESCRIPTION_SIZE_ERROR_MESSAGE =
+            "Description should have between 1 and 2000 characters";
+        public static final String COURSE_AUTHORS_EMPTY_ERROR_MESSAGE =
+            "There must be at least one author";
       }
     }
   }

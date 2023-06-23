@@ -8,8 +8,7 @@ import java.io.Serial;
  * the {@link EntityNotFoundException} class.
  */
 public class TaskNotFoundException extends EntityNotFoundException {
-  @Serial
-  private static final long serialVersionUID = 2996373584732211343L;
+  @Serial private static final long serialVersionUID = 2996373584732211343L;
 
   public TaskNotFoundException(String message) {
     super(message);

@@ -3,7 +3,9 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.common.date.DateService;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
+import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
+import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
@@ -23,6 +25,8 @@ class TaskServiceImplTest {
 
   private static final String EXISTING_TASK_ID = "1";
   private static final String NON_EXISTING_TASK_ID = "2";
+  private static final String VALID_AUTHOR_ID = "validAuthorId";
+  private static final String INVALID_AUTHOR_ID = "invalidAuthorId";
 
   @Mock
   private TaskRepository taskRepository;
@@ -32,6 +36,9 @@ class TaskServiceImplTest {
 
   @Mock
   private TaskValidator taskValidator;
+
+  @Mock
+  private  UserValidator userValidator;
 
   @Mock
   private DateService dateService;
@@ -60,13 +67,30 @@ class TaskServiceImplTest {
   }
 
   @Test
-  void testCreateTask() {
+  void createTask_validAuthor_taskSaved() {
     Task task = new Task();
+    task.setAuthorId(VALID_AUTHOR_ID);
+
     when(taskRepository.save(any(Task.class))).thenReturn(task);
+    when(userValidator.isUserExistInDbById(VALID_AUTHOR_ID)).thenReturn(true);
 
-    Task result = taskService.createTask(new Task());
+    Task createdTask = taskService.createTask(task);
 
-    assertEquals(task, result);
+    assertNotNull(createdTask);
+    verify(userValidator, times(1)).isUserExistInDbById(VALID_AUTHOR_ID);
+    verify(taskRepository, times(1)).save(task);
+  }
+
+  @Test
+  void createTask_invalidAuthor_userNotFoundExceptionThrown() {
+    Task task = new Task();
+    task.setAuthorId(INVALID_AUTHOR_ID);
+
+    when(userValidator.isUserExistInDbById(INVALID_AUTHOR_ID)).thenReturn(false);
+
+    assertThrows(UserNotFoundException.class, () -> taskService.createTask(task));
+    verify(userValidator, times(1)).isUserExistInDbById(INVALID_AUTHOR_ID);
+    verify(taskRepository, never()).save(any(Task.class));
   }
 
   @Test

@@ -16,6 +16,7 @@ public interface TaskMapper {
    * @param task The {@link Task} object to be mapped.
    * @return The resulting {@link TaskDto} object.
    */
+  @Mapping(source = "course.id", target = "courseId")
   TaskDto taskToTaskDto(Task task);
 
   /**

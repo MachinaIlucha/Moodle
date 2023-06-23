@@ -3,6 +3,7 @@ package com.illiapinchuk.moodle.api.rest.controller;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
+import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class TaskController {
 
   private final TaskMapper taskMapper;
   private final TaskService taskService;
+  private final CourseService courseService;
 
   /**
    * Retrieves a task with the given id.
@@ -56,6 +58,7 @@ public class TaskController {
   @PostMapping
   public ResponseEntity<TaskDto> createTask(@Valid @RequestBody final TaskDto taskDto) {
     final var taskRequest = taskMapper.taskDtoToTask(taskDto);
+    taskRequest.setCourse(courseService.getCourseById(taskDto.getCourseId()));
     final var task = taskService.createTask(taskRequest);
     final var taskResponse = taskMapper.taskToTaskDto(task);
 
