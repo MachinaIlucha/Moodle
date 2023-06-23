@@ -29,34 +29,47 @@ public class Task {
 
   @Id String id;
 
-  @NotBlank(message = "Title is mandatory")
+  @NotBlank(
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_TITLE_BLANK_ERROR_MESSAGE)
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_TASK_TITLE,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_TASK_TITLE,
-      message = "Title should have between 1 and 255 characters")
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_TITLE_SIZE_ERROR_MESSAGE)
   String title;
 
-  @NotBlank(message = "Description is mandatory")
+  @NotBlank(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_DESCRIPTION_BLANK_ERROR_MESSAGE)
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_TASK_DESCRIPTION,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_TASK_DESCRIPTION,
-      message = "Description should have between 1 and 255 characters")
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_DESCRIPTION_SIZE_ERROR_MESSAGE)
   String description;
 
-  @FutureOrPresent(message = "Due Date must be in the present or future")
+  @FutureOrPresent(
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_DUEDATE_ERROR_MESSAGE)
   Date dueDate;
 
-  @PastOrPresent(message = "Creation Date must be in the past or present")
+  @PastOrPresent(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_CREATIONDATE_ERROR_MESSAGE)
   Date creationDate;
 
-  @NotNull(message = "Course is mandatory")
+  @NotNull(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_COURSE_BLANK_ERROR_MESSAGE)
   @DBRef
   Course course;
 
-  @NotBlank(message = "Author ID is mandatory")
+  @NotBlank(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_AUTHOR_BLANK_ERROR_MESSAGE)
   String authorId;
 
-  @NotNull(message = "Status is mandatory")
+  @NotNull(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_STATUS_BLANK_ERROR_MESSAGE)
   TaskStatus status;
 
   // TODO create attachments

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
+import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,9 +24,8 @@ class TaskControllerTest {
   private static final String TASK_ID = "1";
 
   @Mock private TaskService taskService;
-
   @Mock private TaskMapper taskMapper;
-
+  @Mock private CourseService courseService;
   @InjectMocks private TaskController taskController;
 
   @Test

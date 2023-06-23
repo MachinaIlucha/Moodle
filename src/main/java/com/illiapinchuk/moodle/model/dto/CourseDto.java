@@ -1,6 +1,7 @@
 package com.illiapinchuk.moodle.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -24,15 +25,30 @@ public class CourseDto {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String id;
 
-  @NotBlank(message = "Name is mandatory")
-  @Size(min = 1, max = 200, message = "Name should have between 1 and 200 characters")
+  @NotBlank(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_NAME_BLANK_ERROR_MESSAGE)
+  @Size(
+      min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_COURSE_NAME,
+      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_COURSE_NAME,
+      message = ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_NAME_SIZE_ERROR_MESSAGE)
   String name;
 
-  @NotBlank(message = "Description is mandatory")
-  @Size(min = 1, max = 2000, message = "Description should have between 1 and 2000 characters")
+  @NotBlank(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage
+              .COURSE_DESCRIPTION_BLANK_ERROR_MESSAGE)
+  @Size(
+      min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_COURSE_DESCRIPTION,
+      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_COURSE_DESCRIPTION,
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage
+              .COURSE_DESCRIPTION_SIZE_ERROR_MESSAGE)
   String description;
 
-  @NotEmpty(message = "There must be at least one author")
+  @NotEmpty(
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
   List<@NotBlank String> authorIds;
 
   List<@NotBlank String> students;
