@@ -19,7 +19,7 @@ public class EmbeddedRedisConfiguration {
   private String redisHost;
 
   public EmbeddedRedisConfiguration(@Value("${spring.data.redis.port}") int redisPort) {
-    this.redisServer = new RedisServer(redisPort);
+    this.redisServer = RedisServer.builder().port(redisPort).setting("maxheap 128M").build();
   }
 
   @PostConstruct
