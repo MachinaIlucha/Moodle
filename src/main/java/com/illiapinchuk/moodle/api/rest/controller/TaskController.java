@@ -3,9 +3,13 @@ package com.illiapinchuk.moodle.api.rest.controller;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
+import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.service.CourseService;
+import com.illiapinchuk.moodle.service.FileUploadService;
+import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /** REST controller for task. */
 @RestController
@@ -29,6 +35,8 @@ public class TaskController {
   private final TaskMapper taskMapper;
   private final TaskService taskService;
   private final CourseService courseService;
+  private final FileUploadService fileUploadService;
+  private final TaskAttachmentService taskAttachmentService;
 
   /**
    * Retrieves a task with the given id.
@@ -64,6 +72,41 @@ public class TaskController {
 
     log.info("New task was created with id: {}", task.getId());
     return ResponseEntity.status(HttpStatus.CREATED).body(taskResponse);
+  }
+
+  /**
+   * Controller method for adding an attachment to a task.
+   *
+   * @param file The MultipartFile representing the attachment file.
+   * @param id The ID of the task to which the attachment is being added.
+   * @return ResponseEntity containing the updated TaskDto after adding the attachment.
+   */
+  @PostMapping("/{id}/upload")
+  public ResponseEntity<TaskDto> addAttachmentToTask(
+      @NotNull @RequestParam("file") final MultipartFile file,
+      @PathVariable("id") final String id) {
+    final var task = taskService.getTaskById(id);
+
+    // Upload the file and get the file name
+    final var fileName = fileUploadService.uploadFile(file);
+
+    // Create and save taskAttachment in MongoDB
+    final var taskAttachment = TaskAttachment.builder().task(task).fileName(fileName).build();
+    taskAttachmentService.saveTaskAttachment(taskAttachment);
+
+    // Update task (add new file to attachments)
+    task.getAttachments().add(taskAttachment);
+
+    // Convert task to TaskDto
+    final var taskDto = taskMapper.taskToTaskDto(task);
+
+    // Update the task in the database
+    final var taskAfterUpdate = taskService.updateTask(taskDto);
+
+    // Convert the updated task to TaskDto for response
+    final var taskResponse = taskMapper.taskToTaskDto(taskAfterUpdate);
+
+    return ResponseEntity.ok(taskResponse);
   }
 
   /**

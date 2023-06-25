@@ -28,7 +28,7 @@ class ImageUploadServiceImplTest {
 
   @Mock private WritableResource s3Resource;
 
-  @InjectMocks private ImageUploadServiceImpl imageUploadService;
+  @InjectMocks private FileUploadServiceImpl fileUploadService;
 
   @Test
   void uploadImage_Success() throws IOException {
@@ -41,7 +41,7 @@ class ImageUploadServiceImplTest {
     when(s3Resource.getOutputStream()).thenReturn(outputStream);
     doNothing().when(outputStream).write(image.getBytes());
 
-    String result = imageUploadService.uploadImage(image);
+    String result = fileUploadService.uploadFile(image);
 
     verify(outputStream).write(new byte[] {1, 2, 3});
     assertEquals(imageFileName, result);
@@ -53,7 +53,7 @@ class ImageUploadServiceImplTest {
     Resource mockResource = Mockito.mock(Resource.class);
     when(resourceLoader.getResource(anyString())).thenReturn(mockResource);
 
-    Resource downloadedResource = imageUploadService.downloadImage(filename);
+    Resource downloadedResource = fileUploadService.downloadFile(filename);
 
     assertEquals(mockResource, downloadedResource);
   }
