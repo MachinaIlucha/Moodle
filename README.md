@@ -6,7 +6,8 @@
 - Build
 - Swagger
     - Dependency Management
-    - Navigation
+- AWS services with Docker
+- Auth credentials
 
 ## Build
 
@@ -43,6 +44,25 @@ using [Spring Doc](https://springdoc.org/index.html) library.
 
 >[springdoc-openapi-starter-webmvc-ui-2.0.2](https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui/2.0.2)
 *- SpringDoc OpenAPI WebMVC UI starter.*
+
+---
+
+
+## Run AWS services with Docker
+Please download docker to run these commands.
+
+You can download docker here for Windows.
+- Windows https://www.docker.com/products/docker-desktop/
+
+You can read manual and install on other systems here.
+- Linux manual https://docs.docker.com/desktop/install/linux-install/
+- Mac manual https://docs.docker.com/desktop/install/mac-install/
+
+1) Run these commands in cmd to run AWS services in Docker.
+
+   `cd docker`
+
+   `docker compose up`
 
 ---
 When entering each link, the HTTP authentication method is called. The username and password for
