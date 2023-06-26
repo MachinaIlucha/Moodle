@@ -1,12 +1,12 @@
 package com.illiapinchuk.moodle.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /** Task class represents a Task in the mongo db. */
@@ -18,8 +18,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class TaskAttachment {
 
-  @DBRef
-  Task task;
+  @JsonIgnore
+  String taskId;
 
   String fileName;
 }

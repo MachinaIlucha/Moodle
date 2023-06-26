@@ -1,6 +1,5 @@
 package com.illiapinchuk.moodle.service;
 
-import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import java.util.List;
 
@@ -8,12 +7,12 @@ import java.util.List;
 public interface TaskAttachmentService {
 
   /**
-   * Retrieves a list of attachments associated with a given task.
+   * Retrieves a list of attachments associated with a given task id.
    *
-   * @param task The task for which attachments are to be retrieved.
+   * @param taskId The task id for which attachments are to be retrieved.
    * @return A list of TaskAttachment objects representing the attachments.
    */
-  List<TaskAttachment> getAttachmentsByTask(Task task);
+  List<TaskAttachment> getAttachmentsByTaskId(String taskId);
 
   /**
    * Saves a task attachment.

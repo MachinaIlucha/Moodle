@@ -17,7 +17,6 @@ public interface TaskMapper {
    * @return The resulting {@link TaskDto} object.
    */
   @Mapping(source = "course.id", target = "courseId")
-  @Mapping(target = "attachments", ignore = true)
   TaskDto taskToTaskDto(Task task);
 
   /**
@@ -26,7 +25,6 @@ public interface TaskMapper {
    * @param taskDto The {@link TaskDto} object to be mapped.
    * @return The resulting {@link Task} object.
    */
-  @Mapping(target = "attachments", ignore = true)
   Task taskDtoToTask(TaskDto taskDto);
 
   /**

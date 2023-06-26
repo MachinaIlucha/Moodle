@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.model.entity.TaskStatus;
 import com.illiapinchuk.moodle.persistence.entity.Task;
+import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +18,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.core.io.Resource;
 
 /** Incoming DTO to represent {@link Task}. */
 @Data
@@ -73,5 +73,5 @@ public class TaskDto {
   TaskStatus status;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  List<Resource> attachments;
+  List<TaskAttachment> attachments;
 }

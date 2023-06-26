@@ -49,6 +49,8 @@ public class TaskController {
 
     final var task = taskService.getTaskById(taskId);
 
+    task.setAttachments(taskAttachmentService.getAttachmentsByTaskId(taskId));
+
     final var taskResponse = taskMapper.taskToTaskDto(task);
 
     log.info("Task with id: {} was found", taskId);
@@ -78,20 +80,20 @@ public class TaskController {
    * Controller method for adding an attachment to a task.
    *
    * @param file The MultipartFile representing the attachment file.
-   * @param id The ID of the task to which the attachment is being added.
+   * @param taskId The ID of the task to which the attachment is being added.
    * @return ResponseEntity containing the updated TaskDto after adding the attachment.
    */
   @PostMapping("/{id}/upload")
   public ResponseEntity<TaskDto> addAttachmentToTask(
       @NotNull @RequestParam("file") final MultipartFile file,
-      @PathVariable("id") final String id) {
-    final var task = taskService.getTaskById(id);
+      @PathVariable("id") final String taskId) {
+    final var task = taskService.getTaskById(taskId);
 
     // Upload the file and get the file name
     final var fileName = fileUploadService.uploadFile(file);
 
     // Create and save taskAttachment in MongoDB
-    final var taskAttachment = TaskAttachment.builder().task(task).fileName(fileName).build();
+    final var taskAttachment = TaskAttachment.builder().taskId(taskId).fileName(fileName).build();
     taskAttachmentService.saveTaskAttachment(taskAttachment);
 
     // Update task (add new file to attachments)
@@ -102,6 +104,9 @@ public class TaskController {
 
     // Update the task in the database
     final var taskAfterUpdate = taskService.updateTask(taskDto);
+
+    // Get task attachments
+    taskAfterUpdate.setAttachments(taskAttachmentService.getAttachmentsByTaskId(taskId));
 
     // Convert the updated task to TaskDto for response
     final var taskResponse = taskMapper.taskToTaskDto(taskAfterUpdate);
