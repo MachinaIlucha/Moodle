@@ -29,11 +29,29 @@ spring:
         endpoint: http://s3.localhost.localstack.cloud:4566
         region: eu-central-1
         bucket-name: s3://s3-image-bucket/
+        bucket-url: http://s3-image-bucket.s3.localhost.localstack.cloud:4566
       credentials:
         access-key: none
         secret-key: none
       region:
         static: eu-central-1
+
+#Spring Actuator
+management:
+  healthCheck:
+    enabled: true
+  health:
+    mongo:
+      enabled: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-components: always
+      show-details: always
 
 # MongoDB
 de:
