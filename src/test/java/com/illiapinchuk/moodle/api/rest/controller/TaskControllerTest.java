@@ -7,6 +7,7 @@ import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.service.CourseService;
+import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import com.illiapinchuk.moodle.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ class TaskControllerTest {
   @Mock private TaskService taskService;
   @Mock private TaskMapper taskMapper;
   @Mock private CourseService courseService;
+  @Mock private TaskAttachmentService taskAttachmentService;
   @InjectMocks private TaskController taskController;
 
   @Test

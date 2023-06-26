@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,8 +74,7 @@ public class Task {
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_STATUS_BLANK_ERROR_MESSAGE)
   TaskStatus status;
 
-  // TODO create attachments
-  //  private List<String> attachments;
+  List<TaskAttachment> attachments = new ArrayList<>();;
 
   // TODO create students submissions
   //  private List<Submission> submissions;

@@ -34,5 +34,6 @@ public interface TaskMapper {
    * @param taskDto The source of the updated data.
    */
   @Mapping(target = "creationDate", ignore = true)
+  @Mapping(target = "attachments", ignore = true)
   void updateTask(@MappingTarget Task task, TaskDto taskDto);
 }
