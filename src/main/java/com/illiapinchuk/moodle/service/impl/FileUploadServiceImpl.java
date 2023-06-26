@@ -26,7 +26,7 @@ public class FileUploadServiceImpl implements FileUploadService {
   private String imageBucketName;
 
   @Override
-  public String uploadFile(@NotNull MultipartFile file) {
+  public String uploadFile(@NotNull final MultipartFile file) {
     final var s3Resource = resourceLoader.getResource(imageBucketName + file.getOriginalFilename());
     try (OutputStream outputStream = ((WritableResource) s3Resource).getOutputStream()) {
       outputStream.write(file.getBytes());
@@ -37,7 +37,7 @@ public class FileUploadServiceImpl implements FileUploadService {
   }
 
   @Override
-  public Resource downloadFile(@NotNull String filename) {
+  public Resource downloadFile(@NotNull final String filename) {
     return resourceLoader.getResource(imageBucketName + filename);
   }
 }

@@ -29,11 +29,15 @@ public class ApplicationConstants {
     @UtilityClass
     public class Path {
       public static final String LOGIN_PATH = "/auth/login";
+
+      /** Inner utility class for actuator paths. */
+      @UtilityClass
+      public class Actuator {
+        public static final String EXTENDED_MAIN_PATH = "/actuator/**";
+      }
     }
 
-    /**
-     * Const's for Swagger docs.
-     */
+    /** Const's for Swagger docs. */
     @UtilityClass
     public class Swagger {
       public static final String API_DOCS_PATH = "/v3/api-docs/**";
@@ -112,7 +116,8 @@ public class ApplicationConstants {
         public static final String PASSWORD_SIZE_ERROR_MESSAGE =
             "City should be between 6 and 255 characters";
         public static final String TASK_TITLE_BLANK_ERROR_MESSAGE = "Title is mandatory";
-        public static final String TASK_DESCRIPTION_BLANK_ERROR_MESSAGE = "Description is mandatory";
+        public static final String TASK_DESCRIPTION_BLANK_ERROR_MESSAGE =
+            "Description is mandatory";
         public static final String TASK_COURSE_BLANK_ERROR_MESSAGE = "Course is mandatory";
         public static final String TASK_AUTHOR_BLANK_ERROR_MESSAGE = "Author is mandatory";
         public static final String TASK_STATUS_BLANK_ERROR_MESSAGE = "Status is mandatory";
@@ -127,7 +132,8 @@ public class ApplicationConstants {
         public static final String COURSE_NAME_BLANK_ERROR_MESSAGE = "Name is mandatory";
         public static final String COURSE_NAME_SIZE_ERROR_MESSAGE =
             "Name should have between 1 and 200 characters";
-        public static final String COURSE_DESCRIPTION_BLANK_ERROR_MESSAGE = "Description is mandatory";
+        public static final String COURSE_DESCRIPTION_BLANK_ERROR_MESSAGE =
+            "Description is mandatory";
         public static final String COURSE_DESCRIPTION_SIZE_ERROR_MESSAGE =
             "Description should have between 1 and 2000 characters";
         public static final String COURSE_AUTHORS_EMPTY_ERROR_MESSAGE =
