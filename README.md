@@ -1,5 +1,8 @@
 # Moodle Project
 
+The Moodle Project is a Java-based scalable educational management platform built using the Spring Boot framework.</br>
+It is a Maven project that uses Java 17, Spring Boot 3 and AWS services.</br>
+
 ## Table of Contents
 
 - Build
