@@ -2,7 +2,6 @@
 
 ## Table of Contents
 
----
 - Build
 - Swagger
     - Dependency Management
@@ -11,7 +10,6 @@
 
 ## Build
 
----
 ```bash
 cd path/to/moodle/
 
@@ -30,8 +28,6 @@ cd path/to/moodle/
 ```
 
 ## Swagger
-
----
 
 API documentation is generated in HTML, JSON and YAML formats
 using [Spring Doc](https://springdoc.org/index.html) library.
@@ -58,7 +54,7 @@ You can read manual and install on other systems here.
 - Linux manual https://docs.docker.com/desktop/install/linux-install/
 - Mac manual https://docs.docker.com/desktop/install/mac-install/
 
-1) Run these commands in cmd to run AWS services in Docker.
+1) Run these commands in cmd to run AWS services(for now we have S3 bucket and CloudWatch) in Docker.
 
    `cd docker`
 
