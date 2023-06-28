@@ -7,6 +7,7 @@ services:
       - "4566:4566"            # LocalStack endpoint
     #      - "4510-4559:4510-4559"  # external services port range
     environment:
+      - SERVICES=s3,cloudwatch
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - ./localstack-script:/etc/localstack/init/ready.d

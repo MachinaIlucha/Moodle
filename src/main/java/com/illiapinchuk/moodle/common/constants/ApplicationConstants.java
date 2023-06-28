@@ -25,6 +25,26 @@ public class ApplicationConstants {
   @UtilityClass
   public class Web {
 
+    /** Inner utility class for metrics constants. */
+    @UtilityClass
+    public class Metrics {
+
+      /** Inner utility class for metrics tags. */
+      @UtilityClass
+      public class Tag {
+        public static final String REQUEST_URI_TAG = "request_uri";
+        public static final String REQUEST_REPOSITORY_METHOD_NAME_TAG = "repository_method_name";
+      }
+
+      // Constants for metric names and descriptions
+      public static final String APP_REQUESTS_TOTAL = "moodle_requests_total";
+      public static final String TOTAL_REQUESTS_DESC = "Total number of HTTP requests";
+      public static final String APP_REQUEST_DURATION = "moodle_request_duration";
+      public static final String REQUEST_DURATION_DESC = "Duration of HTTP requests";
+      public static final String DB_QUERY_DURATION = "moodle_db_query_duration";
+      public static final String QUERY_DURATION_DESC = "Duration of database queries";
+    }
+
     /** Inner utility class for web-related paths. */
     @UtilityClass
     public class Path {
