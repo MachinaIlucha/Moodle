@@ -1,4 +1,4 @@
-package com.illiapinchuk.moodle.common.health;
+package com.illiapinchuk.moodle.configuration.metrics;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

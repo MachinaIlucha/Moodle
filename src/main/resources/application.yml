@@ -1,72 +1,80 @@
+# Database Configuration
 spring:
   datasource:
-    url: jdbc:h2:mem:moodle_db
-    username: admin
-    password: admin
-    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:moodle_db  # JDBC URL for H2 in-memory database
+    username: admin  # Database username
+    password: admin  # Database password
+    driver-class-name: org.h2.Driver  # Database driver class name
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: true
+      ddl-auto: none  # Hibernate DDL auto-generation mode
+    show-sql: true  # Show SQL statements in the console
   h2:
-    console.enabled: true
+    console:
+      enabled: true  # Enable H2 console for database administration
+
+# Security Configuration
   security:
-    # Secret used for signing JWT token.
-    secret: moodle_secret_key_for_user_authentication
-    # Validity time of JWT token in milliseconds.
-    expirationTime: 36000000
+    secret: moodle_secret_key_for_user_authentication  # Secret key for JWT token signing
+    expirationTime: 36000000  # JWT token validity time in milliseconds
+
+# Data Configuration
   data:
     redis:
-      host: localhost
-      port: 6379
-  # LiquidBase settings
+      host: localhost  # Redis host
+      port: 6379  # Redis port
+
+# Liquibase Configuration
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-  # AWS
+    change-log: classpath:db/changelog/db.changelog-master.yaml  # Liquibase changelog file location
+
+# AWS Configuration
   cloud:
     aws:
+      cloudwatch:
+        uri: http://localhost:4566  # AWS CloudWatch URI
       s3:
-        endpoint: http://s3.localhost.localstack.cloud:4566
-        region: eu-central-1
-        bucket-name: s3://s3-image-bucket/
-        bucket-url: http://s3-image-bucket.s3.localhost.localstack.cloud:4566
+        endpoint: http://s3.localhost.localstack.cloud:4566  # AWS S3 endpoint
+        region: eu-central-1  # AWS S3 region
+        bucket-name: s3://s3-image-bucket/  # Name of the S3 bucket
+        bucket-url: http://s3-image-bucket.s3.localhost.localstack.cloud:4566  # URL of the S3 bucket
       credentials:
-        access-key: none
-        secret-key: none
+        access-key: none  # AWS access key
+        secret-key: none  # AWS secret key
       region:
-        static: eu-central-1
+        static: eu-central-1  # AWS region
 
-#Spring Actuator
+# Management Configuration
 management:
   healthCheck:
-    enabled: true
+    enabled: true  # Enable health check endpoints
   health:
     mongo:
-      enabled: true
+      enabled: true  # Enable MongoDB health indicator
   endpoints:
-    enabled-by-default: true
+    enabled-by-default: true  # Enable all endpoints by default
     web:
       exposure:
-        include: "*"
+        include: "*"  # Expose all endpoints
   endpoint:
     health:
-      show-components: always
-      show-details: always
+      show-components: always  # Show health components
+      show-details: always  # Show health details
 
-# MongoDB
+# Embedded MongoDB Configuration
 de:
   flap-doodle:
     mongodb:
       embedded:
-        version: 4.0.2
+        version: 4.0.2  # Version of embedded MongoDB
 
-# Configuring the server servlet context path(add "/api" to all endpoints)
+# Server Configuration
 server:
   servlet:
-    context-path: /api
+    context-path: /api  # Configuring the server servlet context path (add "/api" to all endpoints)
 
-# Credentials for basic authentication
+# Basic Authentication Credentials
 basic:
-  name: developer
-  password: 123456
-  role: DEVELOPER
+  name: developer  # Basic authentication username
+  password: 123456  # Basic authentication password
+  role: DEVELOPER  # Role for basic authentication

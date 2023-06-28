@@ -156,6 +156,16 @@
             <artifactId>spring-cloud-aws-starter-s3</artifactId>
         </dependency>
 
+        <!--  Metrics  -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-cloudwatch2</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -289,6 +299,8 @@
                                 <exclude>/*com/illiapinchuk/moodle/common/health/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/jwt/JwtUser.class</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/metrics/RepositoryTimingAspect.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/metrics/MetricFilter.class</exclude>
                             </excludes>
                             <rules>
                                 <rule>
