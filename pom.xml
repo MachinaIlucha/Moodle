@@ -29,6 +29,7 @@
         <springdoc.version>2.1.0</springdoc.version>
         <mongoDB.version>4.7.0</mongoDB.version>
         <spring.cloud.aws.version>3.0.1</spring.cloud.aws.version>
+        <jackson.databind.version>2.12.4</jackson.databind.version>
     </properties>
 
     <dependencyManagement>
@@ -166,6 +167,8 @@
             <artifactId>micrometer-registry-cloudwatch2</artifactId>
         </dependency>
 
+
+        <!--  Mapstruct  -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -176,6 +179,14 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>${mapstruct.version}</version>
         </dependency>
+
+        <!--  Json  -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.databind.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -74,9 +74,8 @@ public class Task {
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_STATUS_BLANK_ERROR_MESSAGE)
   TaskStatus status;
 
-  List<TaskAttachment> attachments = new ArrayList<>();;
+  List<TaskAttachment> attachments = new ArrayList<>();
 
-  // TODO create students submissions
-  //  private List<Submission> submissions;
+  List<Submission> submissions = new ArrayList<>();
 
 }

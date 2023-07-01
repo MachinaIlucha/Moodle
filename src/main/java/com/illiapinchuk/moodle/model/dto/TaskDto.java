@@ -74,4 +74,7 @@ public class TaskDto {
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   List<TaskAttachment> attachments;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  List<SubmissionDto> submissions;
 }

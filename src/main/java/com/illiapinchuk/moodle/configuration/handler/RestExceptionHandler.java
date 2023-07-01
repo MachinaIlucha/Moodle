@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.illiapinchuk.moodle.exception.CannotReadJsonException;
 import com.illiapinchuk.moodle.exception.CannotWriteToS3Exception;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
@@ -263,16 +264,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   /**
-   * Exception handler method for handling {@link CannotWriteToS3Exception}. It returns a
-   * ResponseEntity containing an {@link ApiError} object with the appropriate HTTP status and error
-   * details.
+   * Exception handler for CannotWriteToS3Exception and CannotReadJsonException. Handles the runtime
+   * exception and returns a ResponseEntity with an appropriate error message.
    *
-   * @param ex The {@link CannotWriteToS3Exception} to handle.
-   * @return A ResponseEntity containing an {@link ApiError} object with the appropriate HTTP status
-   *     and error details.
+   * @param ex the runtime exception to handle
+   * @return a ResponseEntity containing the error message and HTTP status code
    */
-  @ExceptionHandler(CannotWriteToS3Exception.class)
-  protected ResponseEntity<Object> handleCannotWriteToS3Exception(CannotWriteToS3Exception ex) {
+  @ExceptionHandler({CannotWriteToS3Exception.class, CannotReadJsonException.class})
+  protected ResponseEntity<Object> handleCannotWriteToS3ExceptionAndCannotReadJsonException(
+      RuntimeException ex) {
     return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
   }
 
