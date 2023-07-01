@@ -10,6 +10,7 @@ import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
+import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -26,24 +27,37 @@ public class TaskServiceImpl implements TaskService {
   private final TaskValidator taskValidator;
   private final DateService dateService;
   private final UserValidator userValidator;
+  private final TaskAttachmentService taskAttachmentService;
 
   @Override
   public Task getTaskById(@NotNull final String id) {
-    return taskRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new TaskNotFoundException(String.format("Task with id: %s not found", id)));
+    final var task =
+        taskRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new TaskNotFoundException(String.format("Task with id: %s not found", id)));
+
+    task.setAttachments(taskAttachmentService.getAttachmentsByTaskId(id));
+    return task;
   }
 
   @Override
   public Task createTask(@NotNull final Task task) {
+    // Retrieve the author ID from the task
     final var authorId = task.getAuthorId();
-    if (!userValidator.isUserExistInDbById(authorId))
+
+    // Check if the author exists in the database
+    if (!userValidator.isUserExistInDbById(authorId)) {
       throw new UserNotFoundException(
           String.format("The author with id: %s does not exist.", authorId));
+    }
 
-    task.setCreationDate(
-        dateService.getCurrentZonedDateTime(ApplicationConstants.Web.Security.SERVER_TIMEZONE_ID));
+    // Set the creation date using the date service
+    final var creationDate =
+        dateService.getCurrentZonedDateTime(ApplicationConstants.Web.Security.SERVER_TIMEZONE_ID);
+    task.setCreationDate(creationDate);
+
+    // Save the task in the repository
     return taskRepository.save(task);
   }
 
@@ -61,6 +75,12 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public void deleteTaskById(@NotNull final String id) {
+    final var taskAttachments = taskAttachmentService.getAttachmentsByTaskId(id);
+
+    // Delete task attachments
+    taskAttachments.forEach(taskAttachmentService::deleteTaskAttachment);
+
+    // Delete the task
     taskRepository.deleteById(id);
   }
 

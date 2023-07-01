@@ -107,6 +107,8 @@ public class ApplicationConstants {
       public static final int MAX_SIZE_OF_COURSE_NAME = 200;
       public static final int MIN_SIZE_OF_COURSE_DESCRIPTION = 1;
       public static final int MAX_SIZE_OF_COURSE_DESCRIPTION = 2000;
+      public static final int MAX_SIZE_OF_TASK_GRADE = 10;
+      public static final int MAX_SIZE_OF_TASK_ANSWER = 1000;
 
       /** Inner utility class for dto validation errors. */
       @UtilityClass
@@ -115,6 +117,13 @@ public class ApplicationConstants {
             "Surname may not be longer than 100 characters";
         public static final String LASTNAME_ERROR_MESSAGE =
             "Surname may not be longer than 100 characters";
+        public static final String TASK_USERID_BLANK_ERROR_MESSAGE = "User ID cannot be blank";
+        public static final String TASK_USERID_NULL_ERROR_MESSAGE = "User ID cannot be null";
+
+        public static final String SUBMISSION_FILENAME_BLANK_ERROR_MESSAGE = "Filename cannot be blank";
+        public static final String SUBMISSION_FILENAME_NULL_ERROR_MESSAGE = "Filename cannot be null";
+        public static final String TASK_TASKID_BLANK_ERROR_MESSAGE = "Task ID cannot be blank";
+        public static final String TASK_TASKID_NULL_ERROR_MESSAGE = "Task ID cannot be null";
         public static final String EMAIL_BLANK_ERROR_MESSAGE = "Email is mandatory";
         public static final String EMAIL_ERROR_MESSAGE = "Email should be valid";
         public static final String EMAIL_SIZE_ERROR_MESSAGE =
@@ -158,6 +167,10 @@ public class ApplicationConstants {
             "Description should have between 1 and 2000 characters";
         public static final String COURSE_AUTHORS_EMPTY_ERROR_MESSAGE =
             "There must be at least one author";
+        public static final String TASK_GRADE_SIZE_ERROR_MESSAGE =
+            "Grade should be between 0 and 10";
+        public static final String TASK_ANSWER_SIZE_ERROR_MESSAGE =
+            "Answer should less then 1000 characters!";
       }
     }
   }
