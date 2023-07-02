@@ -54,6 +54,10 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public void deleteCourseById(@NotNull final String id) {
+    final var course = getCourseById(id);
+
+    course.getTasks().forEach(task -> taskService.deleteTaskById(task.getId()));
+
     courseRepository.deleteById(id);
   }
 }

@@ -85,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<Task> getTasksByCourseId(@NotNull String courseId) {
+  public List<Task> getTasksByCourseId(@NotNull final String courseId) {
     return taskRepository.getTasksByCourseId(courseId);
   }
 }

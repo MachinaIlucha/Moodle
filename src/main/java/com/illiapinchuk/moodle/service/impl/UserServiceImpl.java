@@ -8,7 +8,6 @@ import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
 import com.illiapinchuk.moodle.service.UserService;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityExistsException;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
@@ -28,7 +27,6 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  @Nullable
   public User getUserByLoginOrEmail(final String login, final String email) {
     final var userOptional = userRepository.findUserByLoginOrEmail(login, email);
     return userOptional.orElseThrow(
