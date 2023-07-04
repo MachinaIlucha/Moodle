@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

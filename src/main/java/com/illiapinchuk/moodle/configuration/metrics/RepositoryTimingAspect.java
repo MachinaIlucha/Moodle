@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.configuration.metrics;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import jakarta.validation.constraints.NotNull;

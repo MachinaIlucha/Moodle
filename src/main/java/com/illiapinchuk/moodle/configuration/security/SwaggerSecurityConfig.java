@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.configuration.security;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.model.entity.RoleName;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,8 @@
 package com.illiapinchuk.moodle.common.validator;
 
 import com.illiapinchuk.moodle.common.annotation.ValidEmail;
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
+import jakarta.annotation.Nullable;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.constraints.NotNull;
@@ -16,8 +17,8 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
   @Override
   public boolean isValid(
-      @NotNull final String email, @NotNull final ConstraintValidatorContext context) {
-    return validateEmail(email);
+      @NotNull final String email, @Nullable final ConstraintValidatorContext context) {
+    return email != null && validateEmail(email);
   }
 
   private boolean validateEmail(@NotNull final String email) {

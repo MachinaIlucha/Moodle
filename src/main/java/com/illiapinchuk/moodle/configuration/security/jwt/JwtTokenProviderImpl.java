@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.configuration.security.jwt;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.model.entity.RoleName;

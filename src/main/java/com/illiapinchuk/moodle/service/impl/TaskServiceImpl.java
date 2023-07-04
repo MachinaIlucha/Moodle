@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.common.date.DateService;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;

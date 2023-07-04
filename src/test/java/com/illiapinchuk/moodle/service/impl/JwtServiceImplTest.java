@@ -1,41 +1,33 @@
 package com.illiapinchuk.moodle.service.impl;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
 import com.illiapinchuk.moodle.service.RedisService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 @ExtendWith(MockitoExtension.class)
 class JwtServiceImplTest {
 
-  @Mock
-  private RedisService redisService;
-
-  @Mock
-  private JwtTokenProvider jwtTokenProvider;
-
-  @Mock
-  private HttpServletRequest httpServletRequest;
-
-  @InjectMocks
-  private JwtServiceImpl jwtService;
-
-  private static final String SAMPLE_TOKEN = "sampleToken";
+  @Mock private RedisService redisService;
+  @Mock private JwtTokenProvider jwtTokenProvider;
+  private MockHttpServletRequest request;
+  @InjectMocks private JwtServiceImpl jwtService;
 
   @Test
-  void expireJwtToken_shouldAddTokenToBlacklist() {
-    Mockito.when(jwtTokenProvider.resolveToken(httpServletRequest)).thenReturn(SAMPLE_TOKEN);
+  void expireJwtToken_ShouldAddTokenToBlackList() {
+    when(jwtTokenProvider.resolveToken(request))
+        .thenReturn(TestConstants.AuthConstants.VALID_TOKEN);
 
-    jwtService.expireJwtToken(httpServletRequest);
+    jwtService.expireJwtToken(request);
 
-    verify(jwtTokenProvider).resolveToken(httpServletRequest);
-    verify(redisService).addTokenToBlackList(SAMPLE_TOKEN);
+    verify(redisService).addTokenToBlackList(TestConstants.AuthConstants.VALID_TOKEN);
   }
 }

@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.configuration.security;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.configuration.handler.FilterChainExceptionHandler;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtConfigurer;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
