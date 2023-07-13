@@ -171,12 +171,11 @@ public class TestConstants {
             .loginOrEmail(UserConstants.USER_EMAIL)
             .password(UserConstants.USER_VALID_PASSWORD)
             .build();
-
     public static final String VALID_TOKEN =
         "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIl0sInRpbWVab25lSWQiOiJFdXJvcGUvS2lldiIsImlhdCI6MTY4ODIwOTg3MCwiZXhwIjoxNjg4MjQ1ODcwfQ.d6VgCzzJIWo0FzBF82OeV9lchyDYBXYM4hRgiBSIUHM";
-
     public static final String INVALID_TOKEN =
         "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIl0sInRpbWVab25lSWQiOiJFdXJvcGUvS2lldiIsImlhdCI6MTY4ODIwOTg3MCwiZXhwIjoxNjg4MjQ1ODcwfQ.d6VgCzzJIWo0FzBF82OeV9lchyDYBXYM4hRgiBSIUHM";
+    public static final String SECRET_KEY = "testMoodleSecretKeyForUserJWTAuthentication";
   }
 
   @UtilityClass

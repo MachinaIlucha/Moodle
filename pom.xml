@@ -30,6 +30,7 @@
         <mongoDB.version>4.7.0</mongoDB.version>
         <spring.cloud.aws.version>3.0.1</spring.cloud.aws.version>
         <jackson.databind.version>2.12.4</jackson.databind.version>
+        <mockito.inline.version>3.12.4</mockito.inline.version>
     </properties>
 
     <dependencyManagement>
@@ -185,6 +186,14 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.databind.version}</version>
+        </dependency>
+
+        <!--   Tests     -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.inline.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
