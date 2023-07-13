@@ -1,8 +1,8 @@
 package com.illiapinchuk.moodle.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +93,7 @@ public class ApiError {
    *
    * @param fieldError the FieldError object representing the validation error
    */
-  private void addValidationError(@NotNull final FieldError fieldError) {
+  private void addValidationError(@Nonnull final FieldError fieldError) {
     this.addValidationError(
         fieldError.getObjectName(),
         fieldError.getField(),
@@ -106,7 +106,7 @@ public class ApiError {
    *
    * @param fieldErrors the list of FieldError objects representing the validation errors
    */
-  public void addValidationErrors(@NotNull final List<FieldError> fieldErrors) {
+  public void addValidationErrors(@Nonnull final List<FieldError> fieldErrors) {
     fieldErrors.forEach(this::addValidationError);
   }
 
@@ -115,7 +115,7 @@ public class ApiError {
    *
    * @param objectError the ObjectError object representing the validation error
    */
-  private void addValidationError(@NotNull final ObjectError objectError) {
+  private void addValidationError(@Nonnull final ObjectError objectError) {
     this.addValidationError(objectError.getObjectName(), objectError.getDefaultMessage());
   }
 
@@ -124,7 +124,7 @@ public class ApiError {
    *
    * @param globalErrors the list of ObjectError objects representing the validation errors
    */
-  public void addValidationError(@NotNull final List<ObjectError> globalErrors) {
+  public void addValidationError(@Nonnull final List<ObjectError> globalErrors) {
     globalErrors.forEach(this::addValidationError);
   }
 
@@ -134,7 +134,7 @@ public class ApiError {
    *
    * @param cv the ConstraintViolation
    */
-  private void addValidationError(@NotNull final ConstraintViolation<?> cv) {
+  private void addValidationError(@Nonnull final ConstraintViolation<?> cv) {
     this.addValidationError(
         cv.getRootBeanClass().getSimpleName(),
         ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(),
@@ -147,7 +147,7 @@ public class ApiError {
    *
    * @param constraintViolations the set of ConstraintViolations representing the validation errors
    */
-  public void addValidationErrors(@NotNull final Set<ConstraintViolation<?>> constraintViolations) {
+  public void addValidationErrors(@Nonnull final Set<ConstraintViolation<?>> constraintViolations) {
     constraintViolations.forEach(this::addValidationError);
   }
 }

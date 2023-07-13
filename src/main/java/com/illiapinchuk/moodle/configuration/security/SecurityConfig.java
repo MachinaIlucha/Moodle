@@ -4,7 +4,7 @@ import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.configuration.handler.FilterChainExceptionHandler;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtConfigurer;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -35,14 +35,14 @@ public class SecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(
-      @NotNull final AuthenticationConfiguration authConfig) throws Exception {
+      @Nonnull final AuthenticationConfiguration authConfig) throws Exception {
     return authConfig.getAuthenticationManager();
   }
 
   /** Configuration of security. */
   @Bean
   public SecurityFilterChain filterChain(
-      @NotNull final HttpSecurity http, @NotNull final List<HttpSecurityConfig> httpConfigurations)
+      @Nonnull final HttpSecurity http, @Nonnull final List<HttpSecurityConfig> httpConfigurations)
       throws Exception {
     httpConfigurations.forEach(config -> config.configuration().accept(http));
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.illiapinchuk.moodle.exception.CannotReadJsonException;
 import com.illiapinchuk.moodle.model.dto.SubmissionDto;
 import com.illiapinchuk.moodle.persistence.entity.Submission;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -43,7 +43,7 @@ public interface SubmissionMapper {
    * @return the corresponding {@link SubmissionDto} object
    * @throws CannotReadJsonException if there is an error reading the JSON data
    */
-  default SubmissionDto fromJson(@NotNull final String json) {
+  default SubmissionDto fromJson(@Nonnull final String json) {
     try {
       return OBJECT_MAPPER.readValue(json, SubmissionDto.class);
     } catch (IOException ioException) {

@@ -4,7 +4,7 @@ import com.illiapinchuk.moodle.common.validator.EmailValidator;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
    * @throws UsernameNotFoundException if the user with the specified username or email is not found
    */
   @Override
-  public UserDetails loadUserByUsername(@NotNull final String loginOrEmail)
+  public UserDetails loadUserByUsername(@Nonnull final String loginOrEmail)
       throws UsernameNotFoundException {
     return JwtUser.build(
         emailValidator.isValid(loginOrEmail, null)

@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.common.validator;
 
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class TaskValidator {
    * @param id the id to check
    * @return true if the task with this id exists in the database, false otherwise
    */
-  public boolean isTaskExistsInDbById(@NotNull final String id) {
+  public boolean isTaskExistsInDbById(@Nonnull final String id) {
     return taskRepository.existsById(id);
   }
 }

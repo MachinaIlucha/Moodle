@@ -9,7 +9,7 @@ import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.TaskService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,24 +24,26 @@ public class CourseServiceImpl implements CourseService {
   private final TaskService taskService;
 
   @Override
-  public Course getCourseById(@NotNull final String id) {
-    final var course = courseRepository
-        .findById(id)
-        .orElseThrow(
-            () -> new CourseNotFoundException(String.format("Course with id: %s not found", id)));
+  public Course getCourseById(@Nonnull final String id) {
+    final var course =
+        courseRepository
+            .findById(id)
+            .orElseThrow(
+                () ->
+                    new CourseNotFoundException(String.format("Course with id: %s not found", id)));
     course.setTasks(taskService.getTasksByCourseId(id));
     return course;
   }
 
   @Override
-  public Course createCourse(@NotNull final Course course) {
+  public Course createCourse(@Nonnull final Course course) {
     if (!courseValidator.isAuthorsExistsInDbByIds(course.getAuthorIds()))
       throw new UserNotFoundException("One of the authors not exists.");
     return courseRepository.save(course);
   }
 
   @Override
-  public Course updateCourse(@NotNull final CourseDto courseDto) {
+  public Course updateCourse(@Nonnull final CourseDto courseDto) {
     final var courseId = courseDto.getId();
     if (!courseValidator.isCourseExistsInDbById(courseId)) {
       throw new CourseNotFoundException(String.format("Course with id: %s not found", courseId));
@@ -53,7 +55,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public void deleteCourseById(@NotNull final String id) {
+  public void deleteCourseById(@Nonnull final String id) {
     final var course = getCourseById(id);
 
     course.getTasks().forEach(task -> taskService.deleteTaskById(task.getId()));

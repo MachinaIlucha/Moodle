@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.configuration.security.jwt;
 
 import com.illiapinchuk.moodle.persistence.entity.User;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class JwtUser implements UserDetails {
 
   final Collection<? extends GrantedAuthority> authorities;
 
-  public static JwtUser build(@NotNull final User user) {
+  public static JwtUser build(@Nonnull final User user) {
     final var authorities =
         user.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority(role.name()))

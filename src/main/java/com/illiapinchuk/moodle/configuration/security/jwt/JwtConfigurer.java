@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.configuration.security.jwt;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +15,7 @@ public class JwtConfigurer
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
-  public void configure(@NotNull final HttpSecurity httpSecurity) {
+  public void configure(@Nonnull final HttpSecurity httpSecurity) {
     final var jwtTokenFilter = new JwtTokenFilter(jwtTokenProvider);
     httpSecurity.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
   }

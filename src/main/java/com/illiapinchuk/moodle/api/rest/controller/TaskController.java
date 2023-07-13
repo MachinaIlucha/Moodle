@@ -13,8 +13,8 @@ import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.FileUploadService;
 import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import com.illiapinchuk.moodle.service.TaskService;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +91,7 @@ public class TaskController {
    */
   @PostMapping("/{id}/upload")
   public ResponseEntity<TaskDto> addAttachmentToTask(
-      @NotNull @RequestParam("file") final MultipartFile file,
+      @Nonnull @RequestParam("file") final MultipartFile file,
       @PathVariable("id") final String taskId) {
     final var task = taskService.getTaskById(taskId);
 

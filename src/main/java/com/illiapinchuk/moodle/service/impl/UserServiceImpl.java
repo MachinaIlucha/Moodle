@@ -8,8 +8,8 @@ import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
 import com.illiapinchuk.moodle.service.UserService;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityExistsException;
-import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User createUser(@NotNull final User user) {
+  public User createUser(@Nonnull final User user) {
     if (userValidator.isLoginExistInDb(user.getLogin())) {
       throw new EntityExistsException("User with current login already exists in the database.");
     }
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User updateUser(@NotNull final UserDto userDto) {
+  public User updateUser(@Nonnull final UserDto userDto) {
     final var userLogin = userDto.getLogin();
     if (!userValidator.isLoginExistInDb(userLogin)) {
       throw new UserNotFoundException("User with current login not found");
