@@ -1,11 +1,11 @@
 package com.illiapinchuk.moodle.configuration.security.jwt;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +20,9 @@ public class JwtTokenFilter extends GenericFilterBean {
 
   @Override
   public void doFilter(
-      @NotNull final ServletRequest request,
-      @NotNull final ServletResponse response,
-      @NotNull final FilterChain chain)
+      @Nonnull final ServletRequest request,
+      @Nonnull final ServletResponse response,
+      @Nonnull final FilterChain chain)
       throws IOException, ServletException {
     final var token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
 

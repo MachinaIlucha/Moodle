@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.common.validator;
 
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class UserValidator {
    * @param login the login to check
    * @return true if the login exists in the database, false otherwise
    */
-  public boolean isLoginExistInDb(@NotNull final String login) {
+  public boolean isLoginExistInDb(@Nonnull final String login) {
     return userRepository.existsUserByLogin(login);
   }
 
@@ -28,7 +28,7 @@ public class UserValidator {
    * @param email the email to check
    * @return true if the email exists in the database, false otherwise
    */
-  public boolean isEmailExistInDb(@NotNull final String email) {
+  public boolean isEmailExistInDb(@Nonnull final String email) {
     return userRepository.existsUserByEmail(email);
   }
 
@@ -38,7 +38,7 @@ public class UserValidator {
    * @param id the id to check
    * @return true if the user exists in the database, false otherwise
    */
-  public boolean isUserExistInDbById(@NotNull final String id) {
+  public boolean isUserExistInDbById(@Nonnull final String id) {
     return userRepository.existsById(Long.valueOf(id));
   }
 }

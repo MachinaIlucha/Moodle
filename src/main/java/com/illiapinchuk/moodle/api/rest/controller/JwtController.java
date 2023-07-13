@@ -1,8 +1,8 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.service.JwtService;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class JwtController {
    * @return A response indicating that the token has been expired
    */
   @PostMapping("/expire")
-  public ResponseEntity<Void> expireToken(@NotNull final HttpServletRequest request) {
+  public ResponseEntity<Void> expireToken(@Nonnull final HttpServletRequest request) {
     jwtService.expireJwtToken(request);
     log.info("Token was successfully expired");
     return ResponseEntity.ok().build();

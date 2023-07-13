@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.common.date;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,7 +17,7 @@ public class DateServiceImpl implements DateService {
    * @return the current date and time in the specified time zone
    */
   @Override
-  public Date getCurrentZonedDateTime(@NotNull final String timeZoneId) {
+  public Date getCurrentZonedDateTime(@Nonnull final String timeZoneId) {
     return Date.from(ZonedDateTime.of(LocalDateTime.now(), ZoneId.of(timeZoneId)).toInstant());
   }
 }

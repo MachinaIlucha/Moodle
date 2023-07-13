@@ -2,8 +2,8 @@ package com.illiapinchuk.moodle.common.validator;
 
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class CourseValidator {
    * @param id the id to check
    * @return true if the course with this id exists in the database, false otherwise
    */
-  public boolean isCourseExistsInDbById(@NotNull final String id) {
+  public boolean isCourseExistsInDbById(@Nonnull final String id) {
     return courseRepository.existsById(id);
   }
 
@@ -32,7 +32,7 @@ public class CourseValidator {
    * @param authorIds a list of non-blank strings representing author IDs
    * @return true if all authors with the given IDs exist in the database, false otherwise
    */
-  public boolean isAuthorsExistsInDbByIds(@NotNull final List<@NotBlank String> authorIds) {
+  public boolean isAuthorsExistsInDbByIds(@Nonnull final List<@NotBlank String> authorIds) {
     return authorIds.stream().allMatch(id -> userRepository.existsById(Long.valueOf(id)));
   }
 }

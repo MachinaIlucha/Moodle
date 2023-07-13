@@ -11,8 +11,8 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -41,8 +41,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
 
   @Override
   public String createToken(
-      @NotNull final String loginOrEmail,
-      @NotNull final Set<RoleName> roles) {
+      @Nonnull final String loginOrEmail, @Nonnull final Set<RoleName> roles) {
     final var claims = Jwts.claims().setSubject(loginOrEmail);
     claims.put(ApplicationConstants.Web.Security.JwtClaims.ROLES, getRoleNames(roles));
 
@@ -64,24 +63,27 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
   }
 
   @Override
-  public Authentication getAuthentication(@NotNull final String token) {
+  public Authentication getAuthentication(@Nonnull final String token) {
     final var userDetails = this.userDetailsService.loadUserByUsername(getLoginOrEmail(token));
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
 
   @Override
-  public String getLoginOrEmail(@NotNull final String token) {
-    return Jwts.parser().setSigningKey(secretProvider.getEncodedSecret()).parseClaimsJws(token)
-        .getBody().getSubject();
+  public String getLoginOrEmail(@Nonnull final String token) {
+    return Jwts.parser()
+        .setSigningKey(secretProvider.getEncodedSecret())
+        .parseClaimsJws(token)
+        .getBody()
+        .getSubject();
   }
 
   @Override
-  public String resolveToken(@NotNull final HttpServletRequest request) {
+  public String resolveToken(@Nonnull final HttpServletRequest request) {
     return request.getHeader(ApplicationConstants.Web.Security.TOKEN_HEADER_NAME);
   }
 
   @Override
-  public boolean validateToken(@NotNull final String token) {
+  public boolean validateToken(@Nonnull final String token) {
     if (redisService.isBlacklisted(token)) {
       log.error("Jwt token was expired.");
       throw new JwtTokenExpiredException("Jwt token was expired and can't be used again.");
@@ -118,7 +120,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
    * @param userRoles the set of RoleName enums to convert
    * @return a set of strings containing the string representation of each RoleName
    */
-  private Set<String> getRoleNames(@NotNull final Set<RoleName> userRoles) {
+  private Set<String> getRoleNames(@Nonnull final Set<RoleName> userRoles) {
     final var result = new HashSet<String>();
 
     userRoles.forEach(role -> result.add(role.toString()));
@@ -132,7 +134,7 @@ public class JwtTokenProviderImpl implements JwtTokenProvider {
    * @param timeZoneId the ID of the time zone to use
    * @return the current date and time in the specified time zone
    */
-  private Date getCurrentZonedDateTime(@NotNull final String timeZoneId) {
+  private Date getCurrentZonedDateTime(@Nonnull final String timeZoneId) {
     return Date.from(ZonedDateTime.of(LocalDateTime.now(), ZoneId.of(timeZoneId)).toInstant());
   }
 }

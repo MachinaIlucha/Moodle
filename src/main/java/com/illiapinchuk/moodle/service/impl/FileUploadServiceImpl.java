@@ -2,7 +2,7 @@ package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.exception.CannotWriteToS3Exception;
 import com.illiapinchuk.moodle.service.FileUploadService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class FileUploadServiceImpl implements FileUploadService {
   private String imageBucketName;
 
   @Override
-  public String uploadFile(@NotNull final MultipartFile file) {
+  public String uploadFile(@Nonnull final MultipartFile file) {
     final var s3Resource = resourceLoader.getResource(imageBucketName + file.getOriginalFilename());
     try (OutputStream outputStream = ((WritableResource) s3Resource).getOutputStream()) {
       outputStream.write(file.getBytes());
@@ -37,7 +37,7 @@ public class FileUploadServiceImpl implements FileUploadService {
   }
 
   @Override
-  public Resource downloadFile(@NotNull final String filename) {
+  public Resource downloadFile(@Nonnull final String filename) {
     return resourceLoader.getResource(imageBucketName + filename);
   }
 }
