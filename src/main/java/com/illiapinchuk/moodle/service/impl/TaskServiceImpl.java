@@ -12,7 +12,7 @@ import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
 import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import com.illiapinchuk.moodle.service.TaskService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
   private final TaskAttachmentService taskAttachmentService;
 
   @Override
-  public Task getTaskById(@NotNull final String id) {
+  public Task getTaskById(@Nonnull final String id) {
     final var task =
         taskRepository
             .findById(id)
@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Task createTask(@NotNull final Task task) {
+  public Task createTask(@Nonnull final Task task) {
     // Retrieve the author ID from the task
     final var authorId = task.getAuthorId();
 
@@ -62,7 +62,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Task updateTask(@NotNull final TaskDto taskDto) {
+  public Task updateTask(@Nonnull final TaskDto taskDto) {
     final var taskId = taskDto.getId();
     if (!taskValidator.isTaskExistsInDbById(taskId)) {
       throw new TaskNotFoundException(String.format("Task with id: %s not found", taskId));
@@ -74,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public void deleteTaskById(@NotNull final String id) {
+  public void deleteTaskById(@Nonnull final String id) {
     final var taskAttachments = taskAttachmentService.getAttachmentsByTaskId(id);
 
     // Delete task attachments
@@ -85,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<Task> getTasksByCourseId(@NotNull final String courseId) {
+  public List<Task> getTasksByCourseId(@Nonnull final String courseId) {
     return taskRepository.getTasksByCourseId(courseId);
   }
 }

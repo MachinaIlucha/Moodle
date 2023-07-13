@@ -2,8 +2,8 @@ package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
 import com.illiapinchuk.moodle.service.AuthenticationService;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class AuthenticationController {
 
   @PostMapping("/login")
   public ResponseEntity<Map<Object, Object>> login(
-      @Valid @NotNull @RequestBody final AuthRequestDto requestDto) {
+      @Valid @Nonnull @RequestBody final AuthRequestDto requestDto) {
     return ResponseEntity.ok(authenticationService.login(requestDto));
   }
 }

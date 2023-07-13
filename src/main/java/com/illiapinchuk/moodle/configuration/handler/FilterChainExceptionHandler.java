@@ -1,9 +1,9 @@
 package com.illiapinchuk.moodle.configuration.handler;
 
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
@@ -26,9 +26,9 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
 
   @Override
   public void doFilterInternal(
-      @NotNull final HttpServletRequest request,
-      @NotNull final HttpServletResponse response,
-      @NotNull final FilterChain filterChain) {
+      @Nonnull final HttpServletRequest request,
+      @Nonnull final HttpServletResponse response,
+      @Nonnull final FilterChain filterChain) {
 
     try {
       filterChain.doFilter(request, response);

@@ -3,8 +3,8 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
 import com.illiapinchuk.moodle.service.JwtService;
 import com.illiapinchuk.moodle.service.RedisService;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class JwtServiceImpl implements JwtService {
   private final JwtTokenProvider jwtTokenProvider;
 
   @Override
-  public void expireJwtToken(@NotNull final HttpServletRequest request) {
+  public void expireJwtToken(@Nonnull final HttpServletRequest request) {
     final var token = jwtTokenProvider.resolveToken(request);
     redisService.addTokenToBlackList(token);
   }

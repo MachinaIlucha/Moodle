@@ -1,11 +1,10 @@
 package com.illiapinchuk.moodle.common.validator;
 
 import com.illiapinchuk.moodle.common.annotation.ValidEmail;
-import com.illiapinchuk.moodle.common.ApplicationConstants;
-import jakarta.annotation.Nullable;
+import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,11 +16,11 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
   @Override
   public boolean isValid(
-      @NotNull final String email, @Nullable final ConstraintValidatorContext context) {
-    return email != null && validateEmail(email);
+      @Nonnull final String email, @Nonnull final ConstraintValidatorContext context) {
+    return validateEmail(email);
   }
 
-  private boolean validateEmail(@NotNull final String email) {
+  private boolean validateEmail(@Nonnull final String email) {
     final var matcher = ApplicationConstants.Validation.EMAIL_PATTERN.matcher(email);
     return matcher.matches();
   }
