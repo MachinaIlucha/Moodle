@@ -1,12 +1,11 @@
 package com.illiapinchuk.moodle.common.validator;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.illiapinchuk.moodle.common.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmailValidatorTest {
@@ -24,8 +23,8 @@ class EmailValidatorTest {
   }
 
   @Test
-  void testNullEmail() {
-    assertFalse(emailValidator.isValid(TestConstants.UserConstants.USER_NULL_EMAIL, null));
+  void testNullEmailShouldThrowNullPointerException() {
+    assertThrows(NullPointerException.class, () -> emailValidator.isValid(TestConstants.UserConstants.USER_NULL_EMAIL, null));
   }
 
   @Test

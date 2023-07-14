@@ -10,10 +10,9 @@ import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.entity.User;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+
+import java.util.*;
+
 import lombok.experimental.UtilityClass;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -172,10 +171,13 @@ public class TestConstants {
             .password(UserConstants.USER_VALID_PASSWORD)
             .build();
     public static final String VALID_TOKEN =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIl0sInRpbWVab25lSWQiOiJFdXJvcGUvS2lldiIsImlhdCI6MTY4ODIwOTg3MCwiZXhwIjoxNjg4MjQ1ODcwfQ.d6VgCzzJIWo0FzBF82OeV9lchyDYBXYM4hRgiBSIUHM";
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb29kbGVAZXhhbXBsZS5jb20iLCJyb2xlcyI6WyJVU0VSIl0sInRpbWVab25lSWQiOiJFdXJvcGUvS2lldiIsImlhdCI6MTY4OTI2MTE1MSwiZXhwIjoxNjg5Mjk3MTUxfQ.IOYjbYWIjGiolHqeqWOFv8EHoMxjiisp295vtEGCMM4";
     public static final String INVALID_TOKEN =
-        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIl0sInRpbWVab25lSWQiOiJFdXJvcGUvS2lldiIsImlhdCI6MTY4ODIwOTg3MCwiZXhwIjoxNjg4MjQ1ODcwfQ.d6VgCzzJIWo0FzBF82OeV9lchyDYBXYM4hRgiBSIUHM";
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb29kbGVAZXhhbXBsZS5jb20iLCJyb2xlcyI6WyJVU0VSIl0sInRpbWVab25lSWQiOiJFdXJvcGUvS2lldiIsImlhdCI6MTY4OTI2MTE1MSwiZXhwIjoxNjg5Mjk3MTUxfQ.IOYjbYWIjGiolHqeqWOFv8EHoMxjiisp295vtEGCMM4";
     public static final String SECRET_KEY = "testMoodleSecretKeyForUserJWTAuthentication";
+    public static final long VALIDITY_IN_MILLISECONDS = 36000000;
+    public static final Set<RoleName> ROLES_USER_ONLY = Set.of(RoleName.USER);
+    public static final String HEADER = "token";
   }
 
   @UtilityClass

@@ -1,6 +1,7 @@
 package com.illiapinchuk.moodle.configuration.security.jwt;
 
 import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.service.RedisService;
@@ -10,13 +11,14 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import java.time.LocalDateTime;
-import java.util.Collections;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,126 +28,177 @@ class JwtTokenProviderImplTest {
   @Mock private SecretProvider secretProvider;
   @Mock private UserDetailsService userDetailsService;
   @Mock private RedisService redisService;
+  @Mock private MockHttpServletRequest mockHttpServletRequest;
   @InjectMocks private JwtTokenProviderImpl jwtTokenProvider;
+
+  private static final Set<RoleName> ROLES = TestConstants.AuthConstants.ROLES_USER_ONLY;
+  private static final String USER_EMAIL = TestConstants.UserConstants.USER_EMAIL;
+  private static final String USER_LOGIN = TestConstants.UserConstants.USER_LOGIN;
+  private static final String SECRET_KEY = TestConstants.AuthConstants.SECRET_KEY;
+  private static final long VALIDITY_IN_MILLISECONDS =
+      TestConstants.AuthConstants.VALIDITY_IN_MILLISECONDS;
+  private static final String HEADER = TestConstants.AuthConstants.HEADER;
+  private static final String INVALID_TOKEN = TestConstants.AuthConstants.INVALID_TOKEN;
+  private static final String VALID_TOKEN = TestConstants.AuthConstants.VALID_TOKEN;
+
+  @BeforeEach
+  void setUp() {
+    ReflectionTestUtils.setField(
+        jwtTokenProvider, "validityInMilliseconds", VALIDITY_IN_MILLISECONDS);
+    when(secretProvider.getEncodedSecret()).thenReturn(SECRET_KEY);
+  }
 
   @Test
   void createToken_ShouldReturnValidToken() {
-    final var roles = new HashSet<>(Collections.singletonList(RoleName.USER));
-
-    when(secretProvider.getEncodedSecret()).thenReturn(TestConstants.AuthConstants.SECRET_KEY);
-
-    String token = jwtTokenProvider.createToken(TestConstants.UserConstants.USER_EMAIL, roles);
-
+    String token = createToken(USER_EMAIL);
     assertNotNull(token);
   }
 
   @Test
-  void createToken_ShouldThrowException_WhenLoginOrEmailIsNull() {
-    final var roles = new HashSet<>(Collections.singletonList(RoleName.USER));
+  void createToken_ShouldIncludeCorrectSubject() {
+    final var token = createToken(USER_EMAIL);
 
-    when(secretProvider.getEncodedSecret()).thenReturn(TestConstants.AuthConstants.SECRET_KEY);
+    final var userEmailOrLogin = getSubjectFromToken(token);
 
-    assertThrows(NullPointerException.class, () -> jwtTokenProvider.createToken(null, roles));
-  }
-
-  @Test
-  void createToken_ShouldThrowException_WhenRolesIsNull() {
-    String loginOrEmail = "testUser";
-
-    when(secretProvider.getEncodedSecret()).thenReturn("testSecret");
-
-    assertThrows(
-        NullPointerException.class, () -> jwtTokenProvider.createToken(loginOrEmail, null));
-  }
-
-  @Test
-  void createToken_ShouldIncludeCorrectClaims() {
-    String loginOrEmail = "testUser";
-    Set<RoleName> roles = new HashSet<>(Collections.singletonList(RoleName.USER));
-
-    when(secretProvider.getEncodedSecret()).thenReturn("testSecret");
-
-    String token = jwtTokenProvider.createToken(loginOrEmail, roles);
-
-    assertNotNull(token);
-    assertTrue(token.contains(loginOrEmail));
-    assertTrue(token.contains(RoleName.USER.toString()));
+    assertEquals(USER_EMAIL, userEmailOrLogin);
   }
 
   @Test
   void createToken_ShouldHaveExpirationTimeSet() {
-    // Arrange
-    String loginOrEmail = "testUser";
-    Set<RoleName> roles = new HashSet<>(Collections.singletonList(RoleName.USER));
+    final var token = createToken(USER_EMAIL);
 
-    // Mock secretProvider
-    when(secretProvider.getEncodedSecret()).thenReturn("testSecret");
+    final var expiration = getExpirationFromToken(token);
 
-    // Act
-    String token = jwtTokenProvider.createToken(loginOrEmail, roles);
-    Date expiration =
-        Jwts.parser().setSigningKey("testSecret").parseClaimsJws(token).getBody().getExpiration();
-
-    // Assert
     assertNotNull(expiration);
     assertTrue(expiration.getTime() - System.currentTimeMillis() > 0);
   }
 
   @Test
   void createToken_ShouldUseCorrectSignatureAlgorithm() {
-    // Arrange
-    String loginOrEmail = "testUser";
-    Set<RoleName> roles = new HashSet<>(Collections.singletonList(RoleName.USER));
+    final var token = createToken(USER_EMAIL);
+    final var algorithm = getAlgorithmFromToken(token);
 
-    // Mock secretProvider
-    when(secretProvider.getEncodedSecret()).thenReturn("testSecret");
-
-    // Act
-    String token = jwtTokenProvider.createToken(loginOrEmail, roles);
-    SignatureAlgorithm algorithm =
-        SignatureAlgorithm.valueOf(
-            Jwts.parser()
-                .setSigningKey("testSecret")
-                .parseClaimsJws(token)
-                .getHeader()
-                .getAlgorithm());
-
-    // Assert
     assertEquals(SignatureAlgorithm.HS256, algorithm);
   }
 
   @Test
   void createToken_ShouldThrowException_WhenSecretProviderReturnsNull() {
-    // Arrange
-    String loginOrEmail = "testUser";
-    Set<RoleName> roles = new HashSet<>(Collections.singletonList(RoleName.USER));
-
-    // Mock secretProvider
     when(secretProvider.getEncodedSecret()).thenReturn(null);
 
-    // Act and Assert
-    assertThrows(
-        NullPointerException.class, () -> jwtTokenProvider.createToken(loginOrEmail, roles));
+    assertThrows(IllegalArgumentException.class, () -> createToken(USER_EMAIL));
   }
 
-  //  @Test
-  //  void createToken_ShouldHandleExpiredToken() {
-  //    // Arrange
-  //    String loginOrEmail = "testUser";
-  //    Set<RoleName> roles = new HashSet<>(Collections.singletonList(RoleName.USER));
-  //
-  //    // Mock secretProvider
-  //    when(secretProvider.getEncodedSecret()).thenReturn("testSecret");
-  //
-  //    // Act
-  //    String token = jwtTokenProvider.createToken(loginOrEmail, roles);
-  //
-  //    // Simulate token expiration by setting the current time to a past time
-  //    LocalDateTime currentTime = LocalDateTime.now().minusDays(1);
-  //    jwtTokenProvider.validityInMilliseconds =
-  //        1000; // Set a short validity time for testing purposes
-  //
-  //    // Assert
-  //    assertThrows(JwtTokenExpiredException.class, () -> jwtTokenProvider.validateToken(token));
-  //  }
+  @Test
+  void validateToken_ShouldThrowInvalidJwtTokenException_WhenTokenIsExpired() {
+    assertThrows(
+        InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(INVALID_TOKEN));
+  }
+
+  @Test
+  void getAuthentication_ShouldReturnAuthenticationObjectWithRightData() {
+    final var token = createToken(USER_EMAIL);
+    final var userDetails = mock(UserDetails.class);
+
+    when(userDetailsService.loadUserByUsername(anyString())).thenReturn(userDetails);
+
+    final var authentication = jwtTokenProvider.getAuthentication(token);
+
+    assertNotNull(authentication);
+    assertEquals(userDetails, authentication.getPrincipal());
+    assertEquals("", authentication.getCredentials());
+    assertEquals(userDetails.getAuthorities(), authentication.getAuthorities());
+  }
+
+  @Test
+  void getAuthentication_ShouldThrowIllegalArgumentException_WhenTokenIsNull() {
+    assertThrows(IllegalArgumentException.class, () -> jwtTokenProvider.getAuthentication(null));
+  }
+
+  @Test
+  void getLoginOrEmail_ShouldReturnSameEmailAsWePassedToTheToken() {
+    final var token = createToken(USER_EMAIL);
+
+    final var usernameFromToken = jwtTokenProvider.getLoginOrEmail(token);
+
+    assertEquals(USER_EMAIL, usernameFromToken);
+  }
+
+  @Test
+  void getLoginOrEmail_ShouldReturnSameLoginAsWePassedToTheToken() {
+    final var token = createToken(USER_LOGIN);
+
+    final var loginFromToken = jwtTokenProvider.getLoginOrEmail(token);
+
+    assertEquals(USER_LOGIN, loginFromToken);
+  }
+
+  @Test
+  void getLoginOrEmail_ShouldThrowIllegalArgumentException_WhenTokenIsNull() {
+    assertThrows(IllegalArgumentException.class, () -> jwtTokenProvider.getLoginOrEmail(null));
+  }
+
+  @Test
+  void resolveToken_ShouldReturnResolvedToken() {
+    lenient().when(secretProvider.getEncodedSecret()).thenReturn(SECRET_KEY);
+
+    when(mockHttpServletRequest.getHeader(HEADER)).thenReturn(VALID_TOKEN);
+
+    final var resolvedToken = jwtTokenProvider.resolveToken(mockHttpServletRequest);
+
+    assertEquals(VALID_TOKEN, resolvedToken);
+  }
+
+  @Test
+  void resolveToken_ShouldReturnNull_WhenTokenIsNull() {
+    lenient().when(secretProvider.getEncodedSecret()).thenReturn(SECRET_KEY);
+
+    when(mockHttpServletRequest.getHeader(HEADER)).thenReturn(null);
+
+    assertNull(jwtTokenProvider.resolveToken(mockHttpServletRequest));
+  }
+
+  @Test
+  void validateToken_ShouldReturnTrueIfTokenIsValid() {
+    final var token = createToken(USER_LOGIN);
+
+    // Mock redisService.isBlacklisted() to return false (not blacklisted)
+    when(redisService.isBlacklisted(token)).thenReturn(false);
+
+    boolean isValid = jwtTokenProvider.validateToken(token);
+
+    assertTrue(isValid);
+    verify(redisService, times(1)).isBlacklisted(token);
+  }
+
+  @Test
+  void validateToken_ShouldThrowJwtTokenExpiredException_WhenTokenIsBlackListed() {
+    lenient().when(secretProvider.getEncodedSecret()).thenReturn(SECRET_KEY);
+
+    when(redisService.isBlacklisted(INVALID_TOKEN)).thenReturn(true);
+
+    assertThrows(
+        JwtTokenExpiredException.class, () -> jwtTokenProvider.validateToken(INVALID_TOKEN));
+  }
+
+  @Test
+  void validateToken_ShouldThrowInvalidJwtTokenException_WhenTokenIsEmpty() {
+    assertThrows(InvalidJwtTokenException.class, () -> jwtTokenProvider.validateToken(" "));
+  }
+
+  private String createToken(String subject) {
+    return jwtTokenProvider.createToken(subject, ROLES);
+  }
+
+  private String getSubjectFromToken(String token) {
+    return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+  }
+
+  private Date getExpirationFromToken(String token) {
+    return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getExpiration();
+  }
+
+  private SignatureAlgorithm getAlgorithmFromToken(String token) {
+    return SignatureAlgorithm.valueOf(
+        Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getHeader().getAlgorithm());
+  }
 }

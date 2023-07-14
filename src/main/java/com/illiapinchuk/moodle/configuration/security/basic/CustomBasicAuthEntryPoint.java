@@ -35,6 +35,8 @@ public class CustomBasicAuthEntryPoint implements AuthenticationEntryPoint {
     final var message = new ApiError(UNAUTHORIZED);
     message.setMessage("Not Valid Login info");
 
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
     writer.println(jsonMapper.writeValueAsString(message));
   }
 }
