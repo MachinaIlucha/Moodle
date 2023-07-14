@@ -3,14 +3,10 @@ package com.illiapinchuk.moodle.configuration.security.basic;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import com.illiapinchuk.moodle.model.entity.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.ZoneId;
-import java.util.Date;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
@@ -38,6 +34,8 @@ public class CustomBasicAuthEntryPoint implements AuthenticationEntryPoint {
 
     final var message = new ApiError(UNAUTHORIZED);
     message.setMessage("Not Valid Login info");
+
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
     writer.println(jsonMapper.writeValueAsString(message));
   }

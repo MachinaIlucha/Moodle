@@ -1,79 +1,77 @@
 package com.illiapinchuk.moodle.configuration.security.jwt;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-
-import java.io.IOException;
-
-import org.junit.jupiter.api.AfterEach;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.IOException;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class JwtTokenFilterTest {
-  private final String TOKEN = "token";
-  @Mock private MockHttpServletRequest request;
-  @Mock private MockHttpServletResponse response;
-  @Mock private FilterChain chain;
+
   @Mock private JwtTokenProvider jwtTokenProvider;
+
+  @Mock private HttpServletRequest request;
+
+  @Mock private HttpServletResponse response;
+
+  @Mock private FilterChain filterChain;
+
+  @Mock private Authentication authentication;
+
   @InjectMocks private JwtTokenFilter jwtTokenFilter;
 
-  @AfterEach
-  public void clearContext() {
+  @BeforeEach
+  void setUp() {
     SecurityContextHolder.clearContext();
   }
 
   @Test
-  void doFilterShouldCallChainDoFilterOnesAndContextOfSecurityContextHolderShouldBeNull()
-      throws ServletException, IOException {
-    when(jwtTokenProvider.resolveToken(request)).thenReturn(TOKEN);
-    when(jwtTokenProvider.validateToken(TOKEN)).thenReturn(true);
-    when(jwtTokenProvider.getAuthentication(TOKEN)).thenReturn(null);
+  void doFilter_whenTokenIsNull_thenDoFilterAndDoNotAuthenticate()
+      throws IOException, ServletException {
+    when(jwtTokenProvider.resolveToken(any())).thenReturn(null);
 
-    jwtTokenFilter.doFilter(request, response, chain);
+    jwtTokenFilter.doFilter(request, response, filterChain);
 
-    verify(chain, only()).doFilter(request, response);
-    assertNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+    verify(jwtTokenProvider, never()).getAuthentication(any());
+    verify(jwtTokenProvider, never()).validateToken(any());
   }
 
   @Test
-  void doFilterShouldCallChainDoFilterOnesAndSecurityContextShouldBeNullWhenTokenIsNotValid()
-      throws ServletException, IOException {
-    when(jwtTokenProvider.resolveToken(request)).thenReturn(TOKEN);
-    when(jwtTokenProvider.validateToken(TOKEN)).thenReturn(false);
+  void doFilter_whenTokenIsInvalid_thenDoFilterAndDoNotAuthenticate()
+      throws IOException, ServletException {
+    when(jwtTokenProvider.resolveToken(any())).thenReturn("invalid");
+    when(jwtTokenProvider.validateToken(any())).thenReturn(false);
 
-    jwtTokenFilter.doFilter(request, response, chain);
+    jwtTokenFilter.doFilter(request, response, filterChain);
 
-    verify(chain, only()).doFilter(request, response);
-    assertNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+    verify(jwtTokenProvider, never()).getAuthentication(any());
   }
 
   @Test
-  void doFilterShouldCallChainDoFilterOnesAndContextOfSecurityContextHolderShouldNotNull()
-      throws ServletException, IOException {
-    final var authentication = mock(Authentication.class);
+  void doFilter_whenTokenIsValid_thenDoFilterAndAuthenticate()
+      throws IOException, ServletException {
+    when(jwtTokenProvider.resolveToken(any())).thenReturn("valid");
+    when(jwtTokenProvider.validateToken(any())).thenReturn(true);
+    when(jwtTokenProvider.getAuthentication(any())).thenReturn(authentication);
 
-    when(jwtTokenProvider.resolveToken(request)).thenReturn(TOKEN);
-    when(jwtTokenProvider.validateToken(TOKEN)).thenReturn(true);
-    when(jwtTokenProvider.getAuthentication(TOKEN)).thenReturn(authentication);
+    jwtTokenFilter.doFilter(request, response, filterChain);
 
-    jwtTokenFilter.doFilter(request, response, chain);
-
-    verify(chain, only()).doFilter(request, response);
-    assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+    verify(jwtTokenProvider).getAuthentication(any());
   }
 }

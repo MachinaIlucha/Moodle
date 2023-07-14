@@ -30,6 +30,7 @@
         <mongoDB.version>4.7.0</mongoDB.version>
         <spring.cloud.aws.version>3.0.1</spring.cloud.aws.version>
         <jackson.databind.version>2.12.4</jackson.databind.version>
+        <mockito.inline.version>3.12.4</mockito.inline.version>
     </properties>
 
     <dependencyManagement>
@@ -187,6 +188,14 @@
             <version>${jackson.databind.version}</version>
         </dependency>
 
+        <!--   Tests     -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.inline.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -300,18 +309,23 @@
                         <configuration>
                             <excludes>
                                 <exclude>/*com/illiapinchuk/moodle/MoodleApplication.class</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/common/mapper/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/configuration/handler/RestExceptionHandler.class</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/exception/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/persistence/entity/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/model/entity/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/model/dto/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/common/constants/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/common/health/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/common/ApplicationConstants.java</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/SecurityConfig.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/SwaggerSecurityConfig.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/ActuatorSecurityConfig.class</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/jwt/JwtUser.class</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/configuration/security/**</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/configuration/metrics/RepositoryTimingAspect.class</exclude>
-                                <exclude>/*com/illiapinchuk/moodle/configuration/metrics/MetricFilter.class</exclude>
+
+                                <exclude>/*com/illiapinchuk/moodle/common/ApplicationConstants*.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/basic/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/model/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/persistence/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/common/mapper/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/exception/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/handler/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/metrics/**</exclude>
+
+                                <!--    We have e2e tests for controllers, so we exclude it    -->
+                                <exclude>/*com/illiapinchuk/moodle/api/rest/controller/**</exclude>
                             </excludes>
                             <rules>
                                 <rule>
@@ -320,7 +334,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.60</minimum>
+                                            <minimum>0.80</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

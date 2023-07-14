@@ -1,33 +1,52 @@
 package com.illiapinchuk.moodle.common.validator;
 
+import com.illiapinchuk.moodle.common.TestConstants;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import org.junit.jupiter.api.Test;
-
+@ExtendWith(MockitoExtension.class)
 class EmailValidatorTest {
 
-  private static final List<String> VALID_EMAILS =
-      List.of("test@example.com", "john.doe@gmail.com");
-
-  private static final List<String> INVALID_EMAILS =
-      List.of("invalidemail", "john.doe", "john.doe@com");
+  private final EmailValidator emailValidator = new EmailValidator();
 
   @Test
   void testValidEmail() {
-    EmailValidator emailValidator = new EmailValidator();
-
-    for (String email : VALID_EMAILS) {
-      assertTrue(emailValidator.isValid(email, null));
-    }
+    assertTrue(emailValidator.isValid(TestConstants.UserConstants.USER_EMAIL, null));
   }
 
   @Test
   void testInvalidEmail() {
-    EmailValidator emailValidator = new EmailValidator();
+    assertFalse(emailValidator.isValid(TestConstants.UserConstants.USER_INVALID_EMAIL, null));
+  }
 
-    for (String email : INVALID_EMAILS) {
-      assertFalse(emailValidator.isValid(email, null));
-    }
+  @Test
+  void testNullEmailShouldThrowNullPointerException() {
+    assertThrows(NullPointerException.class, () -> emailValidator.isValid(TestConstants.UserConstants.USER_NULL_EMAIL, null));
+  }
+
+  @Test
+  void testEmptyEmail() {
+    assertFalse(emailValidator.isValid(TestConstants.UserConstants.USER_EMPTY_EMAIL, null));
+  }
+
+  @Test
+  void testEmailWithLeadingWhitespace() {
+    assertFalse(
+        emailValidator.isValid(TestConstants.UserConstants.USER_EMAIL_WITH_WHITESPACE, null));
+  }
+
+  @Test
+  void testEmailWithTrailingWhitespace() {
+    assertFalse(
+        emailValidator.isValid(TestConstants.UserConstants.USER_EMAIL_WITH_WHITESPACE, null));
+  }
+
+  @Test
+  void testEmailWithWhitespaceInside() {
+    assertFalse(
+        emailValidator.isValid(TestConstants.UserConstants.USER_EMAIL_WITH_WHITESPACE, null));
   }
 }

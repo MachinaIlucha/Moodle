@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;

@@ -1,42 +1,35 @@
 package com.illiapinchuk.moodle.common.date;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 class DateServiceImplTest {
 
-  private static final String TIME_ZONE_ID = "America/New_York";
-  private final DateService dateService = new DateServiceImpl();
-
+  private final DateServiceImpl dateService = new DateServiceImpl();
 
   @Test
-  void getCurrentZonedDateTime_MatchesPredefinedDateTime() {
-    ZoneId zoneId = ZoneId.of(TIME_ZONE_ID);
-    LocalDateTime predefinedDateTime = LocalDateTime.of(2024, 1, 1, 12, 0, 0);
-    ZonedDateTime expectedDateTime = ZonedDateTime.of(predefinedDateTime, zoneId);
+  void getCurrentZonedDateTime_WithValidTimeZone_ReturnsCurrentDateAndTime() {
+    final var timeZoneId = "America/New_York";
 
-    // Mocking the date service to return a predefined date
-    DateService mockedDateService = mock(DateServiceImpl.class);
-    when(mockedDateService.getCurrentZonedDateTime(TIME_ZONE_ID)).thenReturn(Date.from(expectedDateTime.toInstant()));
+    final var result = dateService.getCurrentZonedDateTime(timeZoneId);
 
-    Date actualDate = mockedDateService.getCurrentZonedDateTime(TIME_ZONE_ID);
-    ZonedDateTime actualDateTime = actualDate.toInstant().atZone(zoneId);
-
-    assertEquals(expectedDateTime, actualDateTime, "The actual date time doesn't match the expected predefined date time");
+    assertNotNull(result);
   }
 
+  @Test
+  void getCurrentZonedDateTime_WithNullTimeZone_ThrowsException() {
+    final String timeZoneId = null;
+
+    assertThrows(NullPointerException.class,
+        () -> dateService.getCurrentZonedDateTime(timeZoneId));
+  }
 
   @Test
-  void getCurrentZonedDateTime_ReturnsNotNull() {
-    Date actualDate = dateService.getCurrentZonedDateTime(TIME_ZONE_ID);
+  void getCurrentZonedDateTime_WithInvalidTimeZone_ThrowsException() {
+    final var timeZoneId = "Invalid_Time_Zone";
 
-    assertEquals(actualDate, actualDate);
+    assertThrows(Exception.class,
+        () -> dateService.getCurrentZonedDateTime(timeZoneId));
   }
 }

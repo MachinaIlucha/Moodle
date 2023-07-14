@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.common.validator;
 
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.common.annotation.ValidEmail;
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

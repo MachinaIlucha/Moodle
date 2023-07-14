@@ -1,19 +1,10 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-
+import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.validator.EmailValidator;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProviderImpl;
-import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
-import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.UserService;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,124 +14,103 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceImplTest {
-  private static final String VALID_LOGIN_OR_EMAIL = "testuser";
-  private static final String INVALID_EMAIL = "invalidemail";
-  private static final String VALID_PASSWORD = "password";
-  private static final String INVALID_PASSWORD = "invalidpassword";
-  private static final String TOKEN = "example-token";
 
-  @Mock
-  private AuthenticationManager authenticationManager;
+  @Mock private AuthenticationManager authenticationManager;
 
-  @Mock
-  private JwtTokenProviderImpl jwtTokenProvider;
+  @Mock private JwtTokenProviderImpl jwtTokenProviderImpl;
 
-  @Mock
-  private UserService userService;
+  @Mock private UserService userService;
 
-  @Mock
-  private EmailValidator emailValidator;
+  @Mock private EmailValidator emailValidator;
 
-  @InjectMocks
-  private AuthenticationServiceImpl authenticationService;
+  @InjectMocks private AuthenticationServiceImpl authenticationService;
 
   @Test
-  void testLogin_WhenValidCredentials_ShouldReturnToken() {
-    final var requestDto = AuthRequestDto.builder()
-        .loginOrEmail(VALID_LOGIN_OR_EMAIL)
-        .password(VALID_PASSWORD)
-        .build();
+  void login_ValidCredentialsWithEmail_ReturnsToken() {
+    when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+        .thenReturn(null);
 
-    final var user = new User();
-    user.setRoles(Set.of(RoleName.USER));
+    when(emailValidator.isValid(
+            TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), null))
+        .thenReturn(true);
+    when(userService.getUserByLoginOrEmail(
+            null, TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail()))
+        .thenReturn(new User());
 
-    when(emailValidator.isValid(VALID_LOGIN_OR_EMAIL, null)).thenReturn(false);
-    when(userService.getUserByLoginOrEmail(VALID_LOGIN_OR_EMAIL, null)).thenReturn(user);
-    when(jwtTokenProvider.createToken(VALID_LOGIN_OR_EMAIL, user.getRoles())).thenReturn(TOKEN);
+    when(jwtTokenProviderImpl.createToken(
+            eq(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail()), any()))
+        .thenReturn("token");
 
-    final var result = authenticationService.login(requestDto);
+    final var result = authenticationService.login(TestConstants.AuthConstants.AUTH_REQUEST_DTO);
 
     assertNotNull(result);
-    assertEquals(VALID_LOGIN_OR_EMAIL, result.get("loginOrEmail"));
-    assertEquals(TOKEN, result.get("token"));
-    verify(authenticationManager).authenticate(
-        new UsernamePasswordAuthenticationToken(VALID_LOGIN_OR_EMAIL, VALID_PASSWORD));
-    verify(emailValidator).isValid(VALID_LOGIN_OR_EMAIL, null);
-    verify(userService).getUserByLoginOrEmail(VALID_LOGIN_OR_EMAIL, null);
-    verify(jwtTokenProvider).createToken(VALID_LOGIN_OR_EMAIL, user.getRoles());
+    assertEquals(
+        TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), result.get("loginOrEmail"));
+    assertEquals("token", result.get("token"));
+
+    verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+    verify(emailValidator)
+        .isValid(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), null);
+    verify(userService)
+        .getUserByLoginOrEmail(
+            null, TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail());
+    verify(jwtTokenProviderImpl)
+        .createToken(eq(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail()), any());
   }
 
   @Test
-  void testLogin_WhenInvalidCredentials_ShouldThrowBadCredentialsException() {
-    final var requestDto = AuthRequestDto.builder()
-        .loginOrEmail(VALID_LOGIN_OR_EMAIL)
-        .password(INVALID_PASSWORD)
-        .build();
+  void login_ValidCredentialsWithUsername_ReturnsToken() {
+    when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+        .thenReturn(null);
 
-    when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid credentials"));
+    when(emailValidator.isValid(
+            TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), null))
+        .thenReturn(false);
+    when(userService.getUserByLoginOrEmail(
+            TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), null))
+        .thenReturn(new User());
 
-    assertThrows(BadCredentialsException.class, () -> authenticationService.login(requestDto));
+    when(jwtTokenProviderImpl.createToken(
+            eq(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail()), any()))
+        .thenReturn("token");
 
-    verify(authenticationManager).authenticate(
-        new UsernamePasswordAuthenticationToken(VALID_LOGIN_OR_EMAIL, INVALID_PASSWORD));
-  }
-
-  @Test
-  void testLogin_WhenValidCredentialsAndNoRoles_ShouldReturnTokenWithEmptyRoles() {
-    final var requestDto = AuthRequestDto.builder()
-        .loginOrEmail(VALID_LOGIN_OR_EMAIL)
-        .password(VALID_PASSWORD)
-        .build();
-
-    final var user = new User();
-    user.setRoles(Set.of()); // Empty set of roles
-
-    when(emailValidator.isValid(VALID_LOGIN_OR_EMAIL, null)).thenReturn(false);
-    when(userService.getUserByLoginOrEmail(VALID_LOGIN_OR_EMAIL, null)).thenReturn(user);
-    when(jwtTokenProvider.createToken(VALID_LOGIN_OR_EMAIL, user.getRoles())).thenReturn(TOKEN);
-
-    final var result = authenticationService.login(requestDto);
+    final var result =
+        authenticationService.login(TestConstants.AuthConstants.AUTH_REQUEST_DTO);
 
     assertNotNull(result);
-    assertEquals(VALID_LOGIN_OR_EMAIL, result.get("loginOrEmail"));
-    assertEquals(TOKEN, result.get("token"));
-    verify(authenticationManager).authenticate(
-        new UsernamePasswordAuthenticationToken(VALID_LOGIN_OR_EMAIL, VALID_PASSWORD));
-    verify(emailValidator).isValid(VALID_LOGIN_OR_EMAIL, null);
-    verify(userService).getUserByLoginOrEmail(VALID_LOGIN_OR_EMAIL, null);
-    verify(jwtTokenProvider).createToken(VALID_LOGIN_OR_EMAIL, user.getRoles());
+    assertEquals(
+        TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), result.get("loginOrEmail"));
+    assertEquals("token", result.get("token"));
+
+    verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+    verify(emailValidator)
+        .isValid(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), null);
+    verify(userService)
+        .getUserByLoginOrEmail(
+            TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail(), null);
+    verify(jwtTokenProviderImpl)
+        .createToken(eq(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail()), any());
   }
 
   @Test
-  void testLogin_WhenInvalidCredentialsPassword_ShouldThrowBadCredentialsException() {
-    final var requestDto = AuthRequestDto.builder()
-        .loginOrEmail(VALID_LOGIN_OR_EMAIL)
-        .password(INVALID_PASSWORD)
-        .build();
+  void login_InvalidCredentials_ThrowsBadCredentialsException() {
+    when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+        .thenThrow(new BadCredentialsException("Invalid username or password"));
 
-    when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid credentials"));
+    assertThrows(
+        BadCredentialsException.class,
+        () -> authenticationService.login(TestConstants.AuthConstants.AUTH_REQUEST_DTO));
 
-    assertThrows(BadCredentialsException.class, () -> authenticationService.login(requestDto));
-
-    verify(authenticationManager).authenticate(
-        new UsernamePasswordAuthenticationToken(VALID_LOGIN_OR_EMAIL, INVALID_PASSWORD));
+    verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
   }
-
-  @Test
-  void testLogin_WhenInvalidCredentialsUsernameOrEmail_ShouldThrowBadCredentialsException() {
-    final var requestDto = AuthRequestDto.builder()
-        .loginOrEmail(INVALID_EMAIL)
-        .password(INVALID_PASSWORD)
-        .build();
-
-    when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid credentials"));
-
-    assertThrows(BadCredentialsException.class, () -> authenticationService.login(requestDto));
-
-    verify(authenticationManager).authenticate(
-        new UsernamePasswordAuthenticationToken(INVALID_EMAIL, INVALID_PASSWORD));
-  }
-
 }

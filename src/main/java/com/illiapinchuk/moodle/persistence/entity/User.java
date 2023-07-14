@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.persistence.entity;
 
-import com.illiapinchuk.moodle.common.constants.ApplicationConstants;
+import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.model.entity.RoleName;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;

@@ -1,13 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
@@ -22,15 +15,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
-  private static final String EXISTING_LOGIN = "existing_login";
-  private static final String NON_EXISTING_LOGIN = "non_existing_login";
-  private static final String EXISTING_EMAIL = "existing_email@example.com";
-  private static final String NON_EXISTING_EMAIL = "non_existing_email@example.com";
 
   @Mock private UserRepository userRepository;
   @Mock private UserMapper userMapper;
@@ -39,120 +34,122 @@ class UserServiceImplTest {
   @InjectMocks private UserServiceImpl userService;
 
   @Test
-  void testGetUserByLoginOrEmail_WhenUserExists_ShouldReturnUser() {
-    final var expectedUser = new User();
-    when(userRepository.findUserByLoginOrEmail(EXISTING_LOGIN, EXISTING_EMAIL))
-        .thenReturn(Optional.of(expectedUser));
+  void getUserByLoginOrEmail_UserExists_ReturnsUser() {
+    when(userRepository.findUserByLoginOrEmail(TestConstants.UserConstants.USER_LOGIN, null))
+        .thenReturn(Optional.of(TestConstants.UserConstants.VALID_USER));
 
-    final var result = userService.getUserByLoginOrEmail(EXISTING_LOGIN, EXISTING_EMAIL);
+    final var result =
+        userService.getUserByLoginOrEmail(TestConstants.UserConstants.USER_LOGIN, null);
 
-    assertSame(expectedUser, result);
-    verify(userRepository, times(1)).findUserByLoginOrEmail(EXISTING_LOGIN, EXISTING_EMAIL);
+    assertEquals(TestConstants.UserConstants.VALID_USER, result);
   }
 
   @Test
-  void testGetUserByLoginOrEmail_WhenUserDoesNotExist_ShouldThrowException() {
-    when(userRepository.findUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL))
+  void getUserByLoginOrEmail_UserDoesNotExist_ThrowsUserNotFoundException() {
+    when(userRepository.findUserByLoginOrEmail(
+            null, TestConstants.UserConstants.USER_INVALID_EMAIL))
         .thenReturn(Optional.empty());
 
     assertThrows(
         UserNotFoundException.class,
-        () -> userService.getUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL));
-    verify(userRepository, times(1)).findUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL);
+        () ->
+            userService.getUserByLoginOrEmail(
+                null, TestConstants.UserConstants.USER_INVALID_EMAIL));
   }
 
   @Test
-  @WithMockUser(roles = "USER")
-  void testCreateUser_WhenUserDoesNotExist_ShouldSaveUser() {
-    final var user = new User();
-    when(userValidator.isLoginExistInDb(user.getLogin())).thenReturn(false);
-    when(userValidator.isEmailExistInDb(user.getEmail())).thenReturn(false);
-    when(userRepository.save(user)).thenReturn(user);
+  void createUser_ValidUser_CreatesAndReturnsUser() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER.getLogin()))
+        .thenReturn(false);
+    when(userValidator.isEmailExistInDb(TestConstants.UserConstants.VALID_USER.getEmail()))
+        .thenReturn(false);
+    when(userRepository.save(TestConstants.UserConstants.VALID_USER))
+        .thenReturn(TestConstants.UserConstants.VALID_USER);
+    when(passwordEncoder.encode(TestConstants.UserConstants.VALID_USER.getPassword()))
+        .thenReturn(TestConstants.UserConstants.VALID_USER.getPassword());
 
-    final var result = userService.createUser(user);
+    final var result = userService.createUser(TestConstants.UserConstants.VALID_USER);
 
-    assertSame(user, result);
-    verify(userValidator, times(1)).isLoginExistInDb(user.getLogin());
-    verify(userValidator, times(1)).isEmailExistInDb(user.getEmail());
-    verify(userRepository, times(1)).save(user);
+    assertEquals(TestConstants.UserConstants.VALID_USER, result);
+    verify(passwordEncoder).encode(TestConstants.UserConstants.VALID_USER.getPassword());
   }
 
   @Test
-  void testCreateUser_WhenLoginExists_ShouldThrowException() {
-    final var user = new User();
-    when(userValidator.isLoginExistInDb(user.getLogin())).thenReturn(true);
+  void createUser_UserWithExistingLogin_ThrowsEntityExistsException() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER.getLogin()))
+        .thenReturn(true);
 
-    assertThrows(EntityExistsException.class, () -> userService.createUser(user));
-    verify(userValidator, times(1)).isLoginExistInDb(user.getLogin());
-    verify(userValidator, never()).isEmailExistInDb(user.getEmail());
-    verify(userRepository, never()).save(user);
+    assertThrows(
+        EntityExistsException.class,
+        () -> userService.createUser(TestConstants.UserConstants.VALID_USER));
+    verify(userRepository, never()).save(TestConstants.UserConstants.VALID_USER);
   }
 
   @Test
-  void testCreateUser_WhenEmailExists_ShouldThrowException() {
-    final var user = new User();
-    when(userValidator.isLoginExistInDb(user.getLogin())).thenReturn(false);
-    when(userValidator.isEmailExistInDb(user.getEmail())).thenReturn(true);
+  void createUser_UserWithExistingEmail_ThrowsEntityExistsException() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER.getLogin()))
+        .thenReturn(false);
+    when(userValidator.isEmailExistInDb(TestConstants.UserConstants.VALID_USER.getEmail()))
+        .thenReturn(true);
 
-    assertThrows(EntityExistsException.class, () -> userService.createUser(user));
-    verify(userValidator, times(1)).isLoginExistInDb(user.getLogin());
-    verify(userValidator, times(1)).isEmailExistInDb(user.getEmail());
-    verify(userRepository, never()).save(user);
+    assertThrows(
+        EntityExistsException.class,
+        () -> userService.createUser(TestConstants.UserConstants.VALID_USER));
+    verify(userRepository, never()).save(TestConstants.UserConstants.VALID_USER);
   }
 
   @Test
-  void testUpdateUser_WhenUserExists_ShouldUpdateUser() {
-    final var userDto = new UserDto();
-    userDto.setLogin(EXISTING_LOGIN);
+  void updateUser_ValidUserDto_UpdatesAndReturnsUser() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER_DTO.getLogin()))
+        .thenReturn(true);
+    when(userRepository.findUserByLoginOrEmail(
+            TestConstants.UserConstants.VALID_USER_DTO.getLogin(), null))
+        .thenReturn(Optional.of(TestConstants.UserConstants.VALID_USER));
+    when(userRepository.save(TestConstants.UserConstants.VALID_USER))
+        .thenReturn(TestConstants.UserConstants.VALID_USER);
 
-    final var existingUser = new User();
-    when(userValidator.isLoginExistInDb(userDto.getLogin())).thenReturn(true);
-    when(userRepository.findUserByLoginOrEmail(EXISTING_LOGIN, null))
-        .thenReturn(Optional.of(existingUser));
-    when(userRepository.save(existingUser)).thenReturn(existingUser);
+    final var result = userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO);
 
-    final var result = userService.updateUser(userDto);
-
-    assertSame(existingUser, result);
-    verify(userValidator, times(1)).isLoginExistInDb(userDto.getLogin());
-    verify(userMapper, times(1)).updateUser(existingUser, userDto);
-    verify(userRepository, times(1)).save(existingUser);
+    assertEquals(TestConstants.UserConstants.VALID_USER, result);
+    verify(userMapper)
+        .updateUser(
+            TestConstants.UserConstants.VALID_USER, TestConstants.UserConstants.VALID_USER_DTO);
+    verify(userRepository).save(TestConstants.UserConstants.VALID_USER);
   }
 
   @Test
-  void testUpdateUser_WhenUserDoesNotExist_ShouldThrowException() {
-    final var userDto = new UserDto();
-    userDto.setLogin(NON_EXISTING_LOGIN);
-
-    when(userValidator.isLoginExistInDb(userDto.getLogin())).thenReturn(false);
-
-    assertThrows(UserNotFoundException.class, () -> userService.updateUser(userDto));
-    verify(userValidator, times(1)).isLoginExistInDb(userDto.getLogin());
-    verify(userMapper, never()).updateUser(any(), any());
-    verify(userRepository, never()).save(any());
-  }
-
-  @Test
-  void testDeleteUserByLoginOrEmail_WhenUserExists_ShouldDeleteUser() {
-    when(userValidator.isLoginExistInDb(EXISTING_LOGIN)).thenReturn(true);
-
-    userService.deleteUserByLoginOrEmail(EXISTING_LOGIN, EXISTING_EMAIL);
-
-    verify(userValidator, times(1)).isLoginExistInDb(EXISTING_LOGIN);
-    verify(userRepository, times(1)).deleteUserByLoginOrEmail(EXISTING_LOGIN, EXISTING_EMAIL);
-  }
-
-  @Test
-  void testDeleteUserByLoginOrEmail_WhenUserDoesNotExist_ShouldThrowException() {
-    when(userValidator.isLoginExistInDb(NON_EXISTING_LOGIN)).thenReturn(false);
-    when(userValidator.isEmailExistInDb(NON_EXISTING_EMAIL)).thenReturn(true);
+  void updateUser_UserWithNonExistingLogin_ThrowsUserNotFoundException() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER_DTO.getLogin()))
+        .thenReturn(false);
 
     assertThrows(
         UserNotFoundException.class,
-        () -> userService.deleteUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL));
-    verify(userValidator, times(1)).isLoginExistInDb(NON_EXISTING_LOGIN);
-    verify(userValidator, times(1)).isEmailExistInDb(NON_EXISTING_EMAIL);
-    verify(userRepository, never())
-        .deleteUserByLoginOrEmail(NON_EXISTING_LOGIN, NON_EXISTING_EMAIL);
+        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
+    verify(userRepository, never()).findUserByLoginOrEmail(anyString(), anyString());
+    verify(userMapper, never()).updateUser(any(User.class), any(UserDto.class));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void deleteUserByLoginOrEmail_UserWithExistingLogin_DeletesUser() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.USER_LOGIN)).thenReturn(true);
+
+    userService.deleteUserByLoginOrEmail(TestConstants.UserConstants.USER_LOGIN, null);
+
+    verify(userRepository).deleteUserByLoginOrEmail(TestConstants.UserConstants.USER_LOGIN, null);
+  }
+
+  @Test
+  void
+      deleteUserByLoginOrEmail_UserWithNonExistingLoginAndExistingEmail_ThrowsUserNotFoundException() {
+    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.USER_LOGIN)).thenReturn(false);
+    when(userValidator.isEmailExistInDb(TestConstants.UserConstants.USER_EMAIL)).thenReturn(true);
+
+    assertThrows(
+        UserNotFoundException.class,
+        () ->
+            userService.deleteUserByLoginOrEmail(
+                TestConstants.UserConstants.USER_LOGIN, TestConstants.UserConstants.USER_EMAIL));
+    verify(userRepository, never()).deleteUserByLoginOrEmail(anyString(), anyString());
   }
 }

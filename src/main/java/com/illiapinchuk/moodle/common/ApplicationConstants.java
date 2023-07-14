@@ -1,10 +1,10 @@
-package com.illiapinchuk.moodle.common.constants;
+package com.illiapinchuk.moodle.common;
 
 import java.util.Calendar;
 import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
 
-/** Contains various constants used in the messenger application. */
+/** Contains various constants used in the moodle application. */
 @UtilityClass
 public class ApplicationConstants {
 
@@ -120,8 +120,10 @@ public class ApplicationConstants {
         public static final String TASK_USERID_BLANK_ERROR_MESSAGE = "User ID cannot be blank";
         public static final String TASK_USERID_NULL_ERROR_MESSAGE = "User ID cannot be null";
 
-        public static final String SUBMISSION_FILENAME_BLANK_ERROR_MESSAGE = "Filename cannot be blank";
-        public static final String SUBMISSION_FILENAME_NULL_ERROR_MESSAGE = "Filename cannot be null";
+        public static final String SUBMISSION_FILENAME_BLANK_ERROR_MESSAGE =
+            "Filename cannot be blank";
+        public static final String SUBMISSION_FILENAME_NULL_ERROR_MESSAGE =
+            "Filename cannot be null";
         public static final String TASK_TASKID_BLANK_ERROR_MESSAGE = "Task ID cannot be blank";
         public static final String TASK_TASKID_NULL_ERROR_MESSAGE = "Task ID cannot be null";
         public static final String EMAIL_BLANK_ERROR_MESSAGE = "Email is mandatory";
