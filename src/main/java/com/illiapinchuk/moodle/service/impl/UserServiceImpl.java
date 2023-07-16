@@ -34,6 +34,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public User getUserById(@Nonnull final Long id) {
+    return userRepository.getReferenceById(id);
+  }
+
+  @Override
   public User createUser(@Nonnull final User user) {
     if (userValidator.isLoginExistInDb(user.getLogin())) {
       throw new EntityExistsException("User with current login already exists in the database.");

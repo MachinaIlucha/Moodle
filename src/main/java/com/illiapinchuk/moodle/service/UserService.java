@@ -16,6 +16,14 @@ public interface UserService {
   User getUserByLoginOrEmail(String login, String email);
 
   /**
+   * Retrieves a user by their ID.
+   *
+   * @param id The ID of the user to retrieve.
+   * @return The user object associated with the provided ID.
+   */
+  User getUserById(Long id);
+
+  /**
    * Creates a new user.
    *
    * @param user the user to create
