@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataRedisTest
-@Import(EmbeddedRedisConfiguration.class)
+@Import(RedisConfiguration.class)
 class EmbeddedRedisConnectionTest {
   @Autowired private RedisTemplate<String, Object> redisTemplate;
 
