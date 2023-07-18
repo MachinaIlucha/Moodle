@@ -24,13 +24,12 @@
         <spotbugs.version>4.7.3.4</spotbugs.version>
         <jacoco.version>0.8.10</jacoco.version>
         <jwt.version>0.11.5</jwt.version>
-        <embedded.redis.version>0.7.3</embedded.redis.version>
         <jedis.version>4.4.1</jedis.version>
         <springdoc.version>2.1.0</springdoc.version>
-        <mongoDB.version>4.7.0</mongoDB.version>
         <spring.cloud.aws.version>3.0.1</spring.cloud.aws.version>
         <jackson.databind.version>2.12.4</jackson.databind.version>
         <mockito.inline.version>3.12.4</mockito.inline.version>
+        <postgres.version>42.6.0</postgres.version>
     </properties>
 
     <dependencyManagement>
@@ -126,13 +125,9 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
-            <version>${mongoDB.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -141,11 +136,6 @@
         </dependency>
 
         <!--   Redis     -->
-        <dependency>
-            <groupId>it.ozimov</groupId>
-            <artifactId>embedded-redis</artifactId>
-            <version>${embedded.redis.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>

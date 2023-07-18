@@ -1,46 +1,42 @@
 package com.illiapinchuk.moodle.configuration.redis;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import redis.embedded.RedisServer;
 
+/** Configuration class for Redis connection and RedisTemplate setup. */
 @Configuration
-public class EmbeddedRedisConfiguration {
-
-  private final RedisServer redisServer;
+public class RedisConfiguration {
 
   @Value("${spring.data.redis.host}")
   private String redisHost;
 
-  public EmbeddedRedisConfiguration(@Value("${spring.data.redis.port}") int redisPort) {
-    this.redisServer = RedisServer.builder().port(redisPort).setting("maxheap 128M").build();
-  }
+  @Value("${spring.data.redis.port}")
+  private int redisPort;
 
-  @PostConstruct
-  public void postConstruct() {
-    redisServer.start();
-  }
-
-  @PreDestroy
-  public void preDestroy() {
-    redisServer.stop();
-  }
-
+  /**
+   * Creates a JedisConnectionFactory bean for establishing a connection to Redis.
+   *
+   * @return JedisConnectionFactory - the configured JedisConnectionFactory instance
+   */
   @Bean
   public JedisConnectionFactory jedisConnectionFactory() {
-    final var redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisHost, redisServer.ports().get(0));
+    RedisStandaloneConfiguration redisStandaloneConfiguration =
+        new RedisStandaloneConfiguration(redisHost, redisPort);
     return new JedisConnectionFactory(redisStandaloneConfiguration);
   }
 
+  /**
+   * Creates a RedisTemplate bean for performing Redis operations.
+   *
+   * @return RedisTemplate<String, Object> - the configured RedisTemplate instance
+   */
   @Bean
   public RedisTemplate<String, Object> redisTemplate() {
-    final RedisTemplate<String, Object> template = new RedisTemplate<>();
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(jedisConnectionFactory());
     return template;
   }

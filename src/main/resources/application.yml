@@ -14,10 +14,9 @@ spring:
           starttls:
             enable: true
   datasource:
-    url: jdbc:h2:mem:moodle_db  # JDBC URL for H2 in-memory database
-    username: admin  # Database username
-    password: admin  # Database password
-    driver-class-name: org.h2.Driver  # Database driver class name
+    url: jdbc:postgresql://localhost:5432/moodle_postgresDB # JDBC URL for docker database
+    username: illiapinchuk  # Database username
+    password: moodle_password  # Database password
   jpa:
     hibernate:
       ddl-auto: none  # Hibernate DDL auto-generation mode
@@ -36,8 +35,10 @@ spring:
     redis:
       host: localhost  # Redis host
       port: 6379  # Redis port
+    mongodb:
+      uri: mongodb://localhost:27017/moodle_mongoDB
 
-# Liquibase Configuration
+  # Liquibase Configuration
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml  # Liquibase changelog file location
 
@@ -73,13 +74,6 @@ management:
     health:
       show-components: always  # Show health components
       show-details: always  # Show health details
-
-# Embedded MongoDB Configuration
-de:
-  flap-doodle:
-    mongodb:
-      embedded:
-        version: 4.0.2  # Version of embedded MongoDB
 
 # Server Configuration
 server:
