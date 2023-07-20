@@ -30,6 +30,7 @@
         <jackson.databind.version>2.12.4</jackson.databind.version>
         <mockito.inline.version>3.12.4</mockito.inline.version>
         <postgres.version>42.6.0</postgres.version>
+        <embedded.mongo.version>4.7.0</embedded.mongo.version>
     </properties>
 
     <dependencyManagement>
@@ -115,7 +116,7 @@
             <version>${jwt.version}</version>
         </dependency>
 
-        <!--   DataBase     -->
+        <!--    DataBase     -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -187,6 +188,17 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>${mockito.inline.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
+            <version>${embedded.mongo.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
 
