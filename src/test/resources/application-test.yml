@@ -1,0 +1,14 @@
+# MongoDB
+de:
+  flap-doodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+spring:
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:h2_db
+    username: test
+    password: test
+    driver-class-name: org.h2.Driver

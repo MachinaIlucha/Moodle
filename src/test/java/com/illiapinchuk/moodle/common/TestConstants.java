@@ -2,6 +2,7 @@ package com.illiapinchuk.moodle.common;
 
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
+import com.illiapinchuk.moodle.model.dto.EmailDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.model.entity.RoleName;
@@ -13,6 +14,7 @@ import com.illiapinchuk.moodle.persistence.entity.User;
 
 import java.util.*;
 
+import com.illiapinchuk.moodle.persistence.entity.UserToken;
 import lombok.experimental.UtilityClass;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +63,21 @@ public class TestConstants {
             .country("USA")
             .city("New York")
             .build();
+  }
+
+  @UtilityClass
+  public class UserTokenConstants {
+    public static final UserToken VALID_USER_TOKEN =
+        UserToken.builder().userId(1L).token("testToken").build();
+    public static final String VALID_TOKEN = "testToken";
+  }
+
+  @UtilityClass
+  public class EmailConstants {
+    public static final String SUBJECT = "Test Subject";
+    public static final String CONTENT = "Test Content";
+    public static final EmailDto VALID_EMAIL_DTO =
+        EmailDto.builder().to(UserConstants.USER_EMAIL).subject(SUBJECT).content(CONTENT).build();
   }
 
   @UtilityClass

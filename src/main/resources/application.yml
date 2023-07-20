@@ -1,5 +1,18 @@
 # Database Configuration
 spring:
+  #Email sender settings
+  mail:
+    host: smtp.gmail.com
+    username: mailsendertelegram@gmail.com
+    password: ***
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   datasource:
     url: jdbc:postgresql://localhost:5432/moodle_postgresDB # JDBC URL for docker database
     username: illiapinchuk  # Database username
