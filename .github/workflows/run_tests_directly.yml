@@ -1,4 +1,4 @@
-name: Moodle Run Tests Directly
+name: Tests - Moodle Run Tests Directly
 
 on:
   workflow_dispatch:
