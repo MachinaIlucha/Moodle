@@ -1,4 +1,4 @@
-name: Moodle Run Tests
+name: Tests - Moodle Run Tests on PR
 
 # Workflow will run whenever a pull request is made.
 on:
