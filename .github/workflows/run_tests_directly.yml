@@ -2,27 +2,27 @@ name: Moodle Run Tests Directly
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run tests on'
+        required: true
+        default: 'master'
 
-# The jobs that the workflow will run. In this case, there is one job called "build".
 jobs:
   build:
-
-    # The type of runner that the job will run on.
     runs-on: ubuntu-latest
 
-    # The sequence of tasks that will be run as part of the job.
     steps:
-      # Checks out a copy of repository on the runner so the workflow can access it.
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
 
-      # Sets up the specified version of Java on the runner.
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'adopt'
 
-      # Caches the dependencies of the project to speed up future workflow runs.
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
@@ -30,10 +30,8 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # Builds the Maven project.
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      # Runs the tests in the Maven project.
       - name: Test with Maven
         run: mvn test
