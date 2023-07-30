@@ -17,7 +17,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
  */
 @Slf4j
 @Configuration
-@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SwaggerSecurityConfig implements HttpSecurityConfig {
 
