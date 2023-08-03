@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Google Java Format
-        uses: google/google-java-format@v3.6.0
+        uses: google/google-java-format@v3
 
       - name: Format Java files
         run: |
