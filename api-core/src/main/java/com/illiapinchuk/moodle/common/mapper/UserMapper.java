@@ -5,9 +5,7 @@ import com.illiapinchuk.moodle.persistence.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-/**
- * This interface defines methods for mapping between the {@link User}, {@link UserDto}.
- */
+/** This interface defines methods for mapping between the {@link User}, {@link UserDto}. */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -30,7 +28,7 @@ public interface UserMapper {
   /**
    * This method updates the User object with the data from the UserDto.
    *
-   * @param user    The User object to be updated.
+   * @param user The User object to be updated.
    * @param userDto The source of the updated data.
    */
   void updateUser(@MappingTarget User user, UserDto userDto);

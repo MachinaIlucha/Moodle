@@ -24,7 +24,9 @@ class EmailValidatorTest {
 
   @Test
   void testNullEmailShouldThrowNullPointerException() {
-    assertThrows(NullPointerException.class, () -> emailValidator.isValid(TestConstants.UserConstants.USER_NULL_EMAIL, null));
+    assertThrows(
+        NullPointerException.class,
+        () -> emailValidator.isValid(TestConstants.UserConstants.USER_NULL_EMAIL, null));
   }
 
   @Test
