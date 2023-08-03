@@ -1,4 +1,4 @@
-name: Java Formatting
+name: Google Java Format
 
 on:
   pull_request:
@@ -9,28 +9,32 @@ on:
         required: true
         default: 'main'
 
-
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Install Google Java Format
-        uses: google/google-java-format@v3
-
-      - name: Format Java files
-        run: |
-          find . -name "*.java" | xargs google-java-format -i
-
-      - name: Commit changes
-        if: ${{ steps.changed-files.outputs.changedFiles }}
-        run: |
-          git add .
-          git commit -m "Formatted Java files with Google Java Format"
-
-      - uses: tj-actions/changed-files@v37
-        name: changed-files
+        uses: actions/setup-java@v2
         with:
-          glob-pattern: "**/*.java"
+          java-version: 11
+
+      - name: Get branch name
+        id: get_branch_name
+        run: echo "::set-output name=branch_name::$(github.event.inputs.branch)"
+
+      - name: Format Java Files
+        uses: google/google-java-format@latest
+        args:
+          --replace
+          --java-version=17
+          --source=.
+          --target=.
+          --branch=${{ steps.get_branch_name.outputs.branch_name }}
+
+      - name: Commit Changes
+        run: |
+          git add -A
+          git commit -m "Formatted Java files with Google Java Format"
