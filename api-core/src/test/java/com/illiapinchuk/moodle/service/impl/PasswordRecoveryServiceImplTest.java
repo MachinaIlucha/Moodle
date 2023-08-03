@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.common.TestConstants;
+import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.model.dto.EmailDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.EmailService;

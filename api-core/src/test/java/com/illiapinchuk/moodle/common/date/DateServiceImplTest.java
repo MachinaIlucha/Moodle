@@ -1,4 +1,4 @@
-package com.illiapinchuk.common.date;
+package com.illiapinchuk.moodle.common.date;
 
 import static org.junit.jupiter.api.Assertions.*;
 

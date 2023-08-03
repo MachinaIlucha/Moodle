@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.illiapinchuk.common.TestConstants;
+import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.persistence.repository.TaskAttachmentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

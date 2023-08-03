@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.common.TestConstants;
+import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
 import com.illiapinchuk.moodle.persistence.repository.UserTokenRepository;
