@@ -37,9 +37,12 @@ public class TaskSubmissionFile {
   String userId;
 
   @NotNull(
-      message = ApplicationConstants.Web.DataValidation.ErrorMessage.SUBMISSION_FILENAME_BLANK_ERROR_MESSAGE)
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage
+              .SUBMISSION_FILENAME_BLANK_ERROR_MESSAGE)
   @NotBlank(
       message =
-          ApplicationConstants.Web.DataValidation.ErrorMessage.SUBMISSION_FILENAME_NULL_ERROR_MESSAGE)
+          ApplicationConstants.Web.DataValidation.ErrorMessage
+              .SUBMISSION_FILENAME_NULL_ERROR_MESSAGE)
   String fileName;
 }

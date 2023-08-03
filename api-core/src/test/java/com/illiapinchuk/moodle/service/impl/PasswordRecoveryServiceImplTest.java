@@ -69,20 +69,21 @@ class PasswordRecoveryServiceImplTest {
     assertEquals(TestConstants.UserConstants.USER_EMAIL, emailDtoCaptor.getValue().getTo());
   }
 
-    @Test
-    void testSendPasswordRecoveryEmailWithToken_emailNotSent() {
-      final User user = mock(User.class);
-      when(user.getId()).thenReturn(Long.valueOf(TestConstants.UserConstants.USER_ID));
-      when(user.getEmail()).thenReturn(TestConstants.UserConstants.USER_EMAIL);
-      when(userService.getUserByLoginOrEmail(null, TestConstants.UserConstants.USER_EMAIL)).thenReturn(user);
+  @Test
+  void testSendPasswordRecoveryEmailWithToken_emailNotSent() {
+    final User user = mock(User.class);
+    when(user.getId()).thenReturn(Long.valueOf(TestConstants.UserConstants.USER_ID));
+    when(user.getEmail()).thenReturn(TestConstants.UserConstants.USER_EMAIL);
+    when(userService.getUserByLoginOrEmail(null, TestConstants.UserConstants.USER_EMAIL))
+        .thenReturn(user);
 
-      doThrow(new RuntimeException()).when(emailService).sendEmail(any(EmailDto.class));
+    doThrow(new RuntimeException()).when(emailService).sendEmail(any(EmailDto.class));
 
-      assertThrows(
-          RuntimeException.class,
-          () -> {
-            passwordRecoveryService.sendPasswordRecoveryEmailWithToken(
-                    TestConstants.UserConstants.USER_EMAIL, "https", "moodle.com", "8080");
-          });
-    }
+    assertThrows(
+        RuntimeException.class,
+        () -> {
+          passwordRecoveryService.sendPasswordRecoveryEmailWithToken(
+              TestConstants.UserConstants.USER_EMAIL, "https", "moodle.com", "8080");
+        });
+  }
 }

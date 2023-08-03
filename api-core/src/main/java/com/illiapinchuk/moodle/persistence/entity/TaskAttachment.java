@@ -18,8 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class TaskAttachment {
 
-  @JsonIgnore
-  String taskId;
+  @JsonIgnore String taskId;
 
   String fileName;
 }

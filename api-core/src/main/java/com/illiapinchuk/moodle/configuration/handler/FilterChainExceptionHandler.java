@@ -20,7 +20,8 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
 
   private final HandlerExceptionResolver resolver;
 
-  public FilterChainExceptionHandler(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+  public FilterChainExceptionHandler(
+      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
     this.resolver = resolver;
   }
 

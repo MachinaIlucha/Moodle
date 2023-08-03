@@ -30,7 +30,8 @@ class RedisServiceImplTest {
 
     redisService.addTokenToBlackList(TestConstants.AuthConstants.INVALID_TOKEN);
 
-    verify(valueOperations, times(1)).set(eq(TestConstants.AuthConstants.INVALID_TOKEN), eq("blacklisted"));
+    verify(valueOperations, times(1))
+        .set(eq(TestConstants.AuthConstants.INVALID_TOKEN), eq("blacklisted"));
   }
 
   @Test

@@ -10,9 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * DTO class for authentication (login) request.
- */
+/** DTO class for authentication (login) request. */
 @EqualsAndHashCode
 @Getter
 @ToString
@@ -21,12 +19,14 @@ import lombok.ToString;
 @NoArgsConstructor
 public class AuthRequestDto {
 
-  @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_EMAIL,
+  @Size(
+      min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_EMAIL,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_EMAIL)
   @NotBlank
   private String loginOrEmail;
 
-  @Size(min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_PASSWORD,
+  @Size(
+      min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_PASSWORD,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_PASSWORD)
   @NotBlank
   private String password;
