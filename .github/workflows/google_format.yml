@@ -1,4 +1,4 @@
-name: Google Java Format
+name: Format
 
 on:
   pull_request:
@@ -7,34 +7,18 @@ on:
       branch:
         description: 'Branch to format code on'
         required: true
-        default: 'main'
+        default: 'master'
 
 jobs:
-  format:
+  formatting:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v2
-
-      - name: Install Google Java Format
-        uses: actions/setup-java@v2
         with:
-          java-version: 11
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.head_ref }}
 
-      - name: Get branch name
-        id: get_branch_name
-        run: echo "::set-output name=branch_name::$(github.event.inputs.branch)"
-
-      - name: Format Java Files
-        uses: google/google-java-format@latest
-        args:
-          --replace
-          --java-version=17
-          --source=.
-          --target=.
-          --branch=${{ steps.get_branch_name.outputs.branch_name }}
-
-      - name: Commit Changes
-        run: |
-          git add -A
-          git commit -m "Formatted Java files with Google Java Format"
+      - name: Run google-java-format
+        uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--skip-sorting-imports --replace"
