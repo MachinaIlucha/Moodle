@@ -21,29 +21,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class BasicAuthenticationManager implements AuthenticationManager {
 
-  @NonNull
-  private final String authenticationName;
+  @NonNull private final String authenticationName;
 
-  @NonNull
-  private final String authenticationPassword;
+  @NonNull private final String authenticationPassword;
 
-  @NonNull
-  private final String authenticationRole;
+  @NonNull private final String authenticationRole;
 
-  @NonNull
-  private final PasswordEncoder passwordEncoder;
+  @NonNull private final PasswordEncoder passwordEncoder;
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     final var username = (String) authentication.getPrincipal();
     final var password = (String) authentication.getCredentials();
     log.info("basic authentication manager: authenticate user: {}", username);
-    if (!passwordEncoder.matches(password, authenticationPassword) || !StringUtils.equals(username,
-        authenticationName)) {
+    if (!passwordEncoder.matches(password, authenticationPassword)
+        || !StringUtils.equals(username, authenticationName)) {
       throw new BadCredentialsException(" incorrect username or password ");
     }
     log.info("basic authentication manager: successfully authenticated user: {}", username);
-    return new UsernamePasswordAuthenticationToken(username, password,
-        Set.of(new SimpleGrantedAuthority(authenticationRole)));
+    return new UsernamePasswordAuthenticationToken(
+        username, password, Set.of(new SimpleGrantedAuthority(authenticationRole)));
   }
 }

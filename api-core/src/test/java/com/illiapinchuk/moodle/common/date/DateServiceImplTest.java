@@ -22,15 +22,13 @@ class DateServiceImplTest {
   void getCurrentZonedDateTime_WithNullTimeZone_ThrowsException() {
     final String timeZoneId = null;
 
-    assertThrows(NullPointerException.class,
-        () -> dateService.getCurrentZonedDateTime(timeZoneId));
+    assertThrows(NullPointerException.class, () -> dateService.getCurrentZonedDateTime(timeZoneId));
   }
 
   @Test
   void getCurrentZonedDateTime_WithInvalidTimeZone_ThrowsException() {
     final var timeZoneId = "Invalid_Time_Zone";
 
-    assertThrows(Exception.class,
-        () -> dateService.getCurrentZonedDateTime(timeZoneId));
+    assertThrows(Exception.class, () -> dateService.getCurrentZonedDateTime(timeZoneId));
   }
 }

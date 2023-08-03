@@ -84,8 +84,7 @@ class AuthenticationServiceImplTest {
             eq(TestConstants.AuthConstants.AUTH_REQUEST_DTO.getLoginOrEmail()), any()))
         .thenReturn("token");
 
-    final var result =
-        authenticationService.login(TestConstants.AuthConstants.AUTH_REQUEST_DTO);
+    final var result = authenticationService.login(TestConstants.AuthConstants.AUTH_REQUEST_DTO);
 
     assertNotNull(result);
     assertEquals(
