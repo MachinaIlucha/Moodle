@@ -24,7 +24,8 @@ class CourseValidatorTest {
 
   @Test
   void testIsCourseExistsInDbById_ExistingCourseId_ReturnsTrue() {
-    when(courseRepository.existsById(TestConstants.CourseConstants.VALID_COURSE_ID)).thenReturn(true);
+    when(courseRepository.existsById(TestConstants.CourseConstants.VALID_COURSE_ID))
+        .thenReturn(true);
 
     boolean result =
         courseValidator.isCourseExistsInDbById(TestConstants.CourseConstants.VALID_COURSE_ID);
@@ -34,7 +35,8 @@ class CourseValidatorTest {
 
   @Test
   void testIsCourseExistsInDbById_NonExistingCourseId_ReturnsFalse() {
-    when(courseRepository.existsById(TestConstants.CourseConstants.VALID_COURSE_ID)).thenReturn(false);
+    when(courseRepository.existsById(TestConstants.CourseConstants.VALID_COURSE_ID))
+        .thenReturn(false);
 
     boolean result =
         courseValidator.isCourseExistsInDbById(TestConstants.CourseConstants.VALID_COURSE_ID);

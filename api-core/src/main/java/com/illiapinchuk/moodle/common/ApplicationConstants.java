@@ -13,6 +13,7 @@ public class ApplicationConstants {
   public class Validation {
     /** A regular expression for validating phone number. */
     public static final String PHONE_REGEX = "\\+?[0-9]+";
+
     /** A regular expression for validating email addresses. */
     public static final String EMAIL_REGEX =
         "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"

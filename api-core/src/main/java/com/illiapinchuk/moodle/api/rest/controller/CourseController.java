@@ -32,7 +32,8 @@ public class CourseController {
    * Retrieves a course with the given id.
    *
    * @param courseId the id of the Course to retrieve
-   * @return a {@link ResponseEntity} containing the {@link CourseDto} object and an HTTP status code
+   * @return a {@link ResponseEntity} containing the {@link CourseDto} object and an HTTP status
+   *     code
    */
   @GetMapping("/{id}")
   public ResponseEntity<CourseDto> getCourseById(@PathVariable("id") final String courseId) {
