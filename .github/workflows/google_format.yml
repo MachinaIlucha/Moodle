@@ -15,26 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Check for formatting changes
-        id: check-format
-        run: |
-          git diff --exit-code || echo "formatting-changes" > formatting-needed
-        continue-on-error: true
-
-      - name: Run google-java-format if needed
-        uses: axel-op/googlejavaformat-action@v3
+      - uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--skip-sorting-imports --replace"
-        if: steps.check-format.outcome != 'success'
-
-      - name: Commit changes if needed
-        run: |
-          if [[ -f formatting-needed ]]; then
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git add -A
-            git commit -m "Apply google-java-format"
-            git push
-          fi
-        if: steps.check-format.outcome != 'success'
