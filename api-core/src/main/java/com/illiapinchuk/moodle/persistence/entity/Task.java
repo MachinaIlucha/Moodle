@@ -77,5 +77,4 @@ public class Task {
   List<TaskAttachment> attachments = new ArrayList<>();
 
   List<Submission> submissions = new ArrayList<>();
-
 }

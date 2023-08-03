@@ -13,6 +13,7 @@ public class ApplicationConstants {
   public class Validation {
     /** A regular expression for validating phone number. */
     public static final String PHONE_REGEX = "\\+?[0-9]+";
+
     /** A regular expression for validating email addresses. */
     public static final String EMAIL_REGEX =
         "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -25,22 +26,21 @@ public class ApplicationConstants {
   @UtilityClass
   public class Web {
 
-    /**
-     * Inner utility class for constants related to resetting passwords.
-     */
+    /** Inner utility class for constants related to resetting passwords. */
     @UtilityClass
     public class PasswordRecovery {
       public static final String RESET_PASSWORD_LINK = "/api/password/reset?token=";
       public static final String LETTER_SUBJECT = "Password reset";
-      public static final String RESET_PASSWORD_LETTER = """
+      public static final String RESET_PASSWORD_LETTER =
+          """
         Hi there,
-                  
+
         We have received a request to reset the password for your account.
         If you did not make this request, please ignore this email.
 
         To reset your password, please click on the following link: %s .
         If the link is not working, you can also copy and paste it into your browser's address bar
-                
+
         Once you have reset your password,
         we recommend that you keep it in a safe place and do not share it with anyone.
         If you have any questions, please don't hesitate to contact our support team.
