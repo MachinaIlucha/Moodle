@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;

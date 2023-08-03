@@ -16,6 +16,8 @@
 
     <properties>
         <spring-boot-dependencies>3.0.9</spring-boot-dependencies>
+        <embedded.mongo.version>4.7.0</embedded.mongo.version>
+        <embedded.redis.version>0.7.3</embedded.redis.version>
     </properties>
 
     <dependencyManagement>
@@ -37,7 +39,40 @@
             <version>0.0.1</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
+            <version>${embedded.mongo.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.ozimov</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <version>${embedded.redis.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--  Lombok  -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
+
+
     <repositories>
         <repository>
             <id>spring-milestones</id>
@@ -84,7 +119,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <spring.profiles.active>e2e</spring.profiles.active>
+                        <spring.profiles.active>test</spring.profiles.active>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

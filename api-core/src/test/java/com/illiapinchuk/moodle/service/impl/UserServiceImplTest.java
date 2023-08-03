@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;

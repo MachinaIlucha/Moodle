@@ -1,6 +1,7 @@
-package com.illiapinchuk.moodle.common.validator;
+package com.illiapinchuk.common.validator;
 
-import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.common.TestConstants;
+import com.illiapinchuk.moodle.common.validator.EmailValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

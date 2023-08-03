@@ -1,11 +1,12 @@
-package com.illiapinchuk.moodle.common.validator;
+package com.illiapinchuk.common.validator;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.common.TestConstants;
+import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

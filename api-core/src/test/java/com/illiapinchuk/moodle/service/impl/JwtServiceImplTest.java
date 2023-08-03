@@ -3,7 +3,7 @@ package com.illiapinchuk.moodle.service.impl;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.common.TestConstants;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
 import com.illiapinchuk.moodle.service.RedisService;
 import org.junit.jupiter.api.Test;

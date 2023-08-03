@@ -1,4 +1,4 @@
-package com.illiapinchuk.moodle.common;
+package com.illiapinchuk.common;
 
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
 import com.illiapinchuk.moodle.model.dto.CourseDto;

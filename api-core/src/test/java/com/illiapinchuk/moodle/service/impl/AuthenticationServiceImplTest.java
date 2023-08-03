@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
-import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.common.TestConstants;
 import com.illiapinchuk.moodle.common.validator.EmailValidator;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProviderImpl;
 import com.illiapinchuk.moodle.persistence.entity.User;
