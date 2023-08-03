@@ -25,7 +25,12 @@ jobs:
           find . -name "*.java" | xargs google-java-format -i
 
       - name: Commit changes
-        if: ${{ changed-files('**/*.java') }}
+        if: ${{ steps.changed-files.outputs.changedFiles }}
         run: |
           git add .
           git commit -m "Formatted Java files with Google Java Format"
+
+      - uses: tj-actions/changed-files@v37
+        name: changed-files
+        with:
+          glob-pattern: "**/*.java"
