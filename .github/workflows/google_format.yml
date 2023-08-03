@@ -5,16 +5,27 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to run tests on'
+        description: 'Branch to format code on'
         required: true
         default: 'master'
 
-jobs:
 
-  formatting:
+jobs:
+  format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: axel-op/googlejavaformat-action@v3
-        with:
-          args: "--skip-sorting-imports --replace"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Google Java Format
+        uses: google/google-java-format@latest
+
+      - name: Format Java files
+        run: |
+          find . -name "*.java" | xargs google-java-format -i
+
+      - name: Commit changes
+        if: ${{ changes() }}
+        run: |
+          git add .
+          git commit -m "Formatted Java files with Google Java Format"
