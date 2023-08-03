@@ -1,7 +1,11 @@
 package com.illiapinchuk.moodle;
 
 import com.illiapinchuk.moodle.config.RedisTestConfiguration;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -16,7 +20,9 @@ import java.util.Map;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Course.VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
-import static com.illiapinchuk.moodle.common.TestConstants.Path.*;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.EXPIRE_JWT_TOKEN_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
