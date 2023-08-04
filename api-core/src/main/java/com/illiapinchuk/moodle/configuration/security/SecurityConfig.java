@@ -53,9 +53,11 @@ public class SecurityConfig {
         .disable()
         .authorizeHttpRequests()
         // authenticate requests
-        .requestMatchers(new AntPathRequestMatcher(ApplicationConstants.Web.Path.LOGIN_PATH))
-        .permitAll()
-        .requestMatchers(new AntPathRequestMatcher("/users", HttpMethod.POST.name()))
+        .requestMatchers(
+            new AntPathRequestMatcher(ApplicationConstants.Web.Path.LOGIN_PATH),
+            new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
+            new AntPathRequestMatcher("/password/forgot**", HttpMethod.POST.name()),
+            new AntPathRequestMatcher("/password/reset**", HttpMethod.PUT.name()))
         .permitAll()
         .anyRequest()
         .authenticated()

@@ -18,6 +18,7 @@
         <spring-boot-dependencies>3.0.9</spring-boot-dependencies>
         <embedded.mongo.version>4.7.0</embedded.mongo.version>
         <embedded.redis.version>0.7.3</embedded.redis.version>
+        <greenmail.version>2.0.0</greenmail.version>
     </properties>
 
     <dependencyManagement>
@@ -40,11 +41,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!--   Starters     -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--  Embedded DB  -->
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
@@ -62,6 +66,15 @@
             <version>${embedded.redis.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!--  Embedded email  -->
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail-junit5</artifactId>
+            <version>${greenmail.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!--  Lombok  -->
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -16,6 +16,14 @@ public class TestConstants {
     public static final String COURSE_WITH_ID_CONTROLLER_PATH = "/courses/{id}";
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String EXPIRE_JWT_TOKEN_PATH = "/token/expire";
+    public static final String PASSWORD_RESET_INIT_PATH = "/password/forgot";
+    public static final String PASSWORD_RESET_PATH = "/password/reset";
+  }
+
+  @UtilityClass
+  public class User {
+    public static final String EXISTING_ADMIN_EMAIL = "testAdminUser@example.com";
+    public static final String NOT_EXISTING_ADMIN_EMAIL = "notExistingEmail@example.com";
   }
 
   @UtilityClass

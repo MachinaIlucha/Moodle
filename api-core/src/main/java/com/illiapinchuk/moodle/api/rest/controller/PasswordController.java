@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,7 +79,7 @@ public class PasswordController {
    * @param password the new password to be set
    * @return a ResponseEntity with no content
    */
-  @PostMapping(value = "/reset")
+  @PutMapping(value = "/reset")
   public ResponseEntity<Void> setNewPassword(
       @RequestParam("token") final String token, @RequestParam("password") final String password) {
     final var encodedPassword = passwordEncoder.encode(password);

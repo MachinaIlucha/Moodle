@@ -22,3 +22,10 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db.changelog.insert_data/insert_test_users.sql
+  # GreenMail
+  mail:
+    username: user
+    password: admin
+    host: 127.0.0.1
+    port: 3025
+    protocol: smtp
