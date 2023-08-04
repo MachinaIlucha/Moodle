@@ -66,7 +66,7 @@ public class TestConstants {
                                       }
                                       """;
     public static final String COURSE_DTO_INVALID_ID_AS_STRING =
-            """
+        """
                                           {
                                               "id": "invalid ID",
                                               "name": "Java Programming Course 2",

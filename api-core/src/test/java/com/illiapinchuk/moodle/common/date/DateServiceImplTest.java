@@ -2,7 +2,6 @@ package com.illiapinchuk.moodle.common.date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.illiapinchuk.moodle.common.date.DateServiceImpl;
 import org.junit.jupiter.api.Test;
 
 class DateServiceImplTest {

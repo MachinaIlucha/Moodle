@@ -16,16 +16,12 @@ public class RedisTestConfiguration {
 
   @PostConstruct
   public void startRedis() {
-    this.redisServer =
-        RedisServer.builder()
-            .port(redisPort)
-            .setting("maxmemory 128M")
-            .build();
+    this.redisServer = RedisServer.builder().port(redisPort).setting("maxmemory 128M").build();
     this.redisServer.start();
   }
 
   @PreDestroy
   public void stopRedis() {
-      this.redisServer.stop();
+    this.redisServer.stop();
   }
 }
