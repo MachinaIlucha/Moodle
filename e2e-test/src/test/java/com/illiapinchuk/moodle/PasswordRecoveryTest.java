@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_INIT_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_PATH;
-import static com.illiapinchuk.moodle.common.TestConstants.User.EXISTING_ADMIN_EMAIL;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_ADMIN_EMAIL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     classes = {MoodleApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class PasswordRecoveryTests {
+class PasswordRecoveryTest {
 
   @RegisterExtension
   static GreenMailExtension greenMail =

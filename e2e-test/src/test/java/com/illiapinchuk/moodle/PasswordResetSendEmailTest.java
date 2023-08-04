@@ -17,8 +17,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_INIT_PATH;
-import static com.illiapinchuk.moodle.common.TestConstants.User.EXISTING_ADMIN_EMAIL;
-import static com.illiapinchuk.moodle.common.TestConstants.User.NOT_EXISTING_ADMIN_EMAIL;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_ADMIN_EMAIL;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.NOT_EXISTING_ADMIN_EMAIL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(RedisTestConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class PasswordResetSendEmailTests {
+class PasswordResetSendEmailTest {
 
   @RegisterExtension
   static GreenMailExtension greenMail =

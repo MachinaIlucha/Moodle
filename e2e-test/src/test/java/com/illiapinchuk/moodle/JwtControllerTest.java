@@ -18,7 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Map;
 
-import static com.illiapinchuk.moodle.common.TestConstants.Course.VALID_COURSE_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.EXPIRE_JWT_TOKEN_PATH;
