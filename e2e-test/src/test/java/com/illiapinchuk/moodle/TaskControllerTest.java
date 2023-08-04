@@ -105,8 +105,8 @@ class TaskControllerTest {
     final var entityWithTaskDto = new HttpEntity<>(INVALID_TASK_DTO_NOT_EXISTED_AUTHOR_ID, HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    TASK_CONTROLLER_PATH, HttpMethod.POST, entityWithTaskDto, String.class);
+        restTemplate.exchange(
+            TASK_CONTROLLER_PATH, HttpMethod.POST, entityWithTaskDto, String.class);
 
     assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }
