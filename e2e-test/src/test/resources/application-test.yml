@@ -1,0 +1,31 @@
+# Embedded MongoDB
+de:
+  flap-doodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+spring:
+  # Embedded Database Configuration
+  datasource:
+    url: jdbc:h2:mem:h2_db
+    username: e2e
+    password: e2e
+    driver-class-name: org.h2.Driver
+  # Embedded Redis
+  data:
+    redis:
+      host: localhost
+      port: 6370
+  # Embedded DB insert data for tests
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db.changelog.insert_data/insert_test_users.sql
+  # GreenMail
+  mail:
+    username: user
+    password: admin
+    host: 127.0.0.1
+    port: 3025
+    protocol: smtp

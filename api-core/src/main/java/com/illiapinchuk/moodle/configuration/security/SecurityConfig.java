@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /** Security configuration class for JWT based Spring Security application. */
 @Configuration
@@ -52,9 +53,11 @@ public class SecurityConfig {
         .disable()
         .authorizeHttpRequests()
         // authenticate requests
-        .requestMatchers(ApplicationConstants.Web.Path.LOGIN_PATH)
-        .permitAll()
-        .requestMatchers(HttpMethod.POST, "/users")
+        .requestMatchers(
+            new AntPathRequestMatcher(ApplicationConstants.Web.Path.LOGIN_PATH),
+            new AntPathRequestMatcher("/users", HttpMethod.POST.name()),
+            new AntPathRequestMatcher("/password/forgot**", HttpMethod.POST.name()),
+            new AntPathRequestMatcher("/password/reset**", HttpMethod.PUT.name()))
         .permitAll()
         .anyRequest()
         .authenticated()

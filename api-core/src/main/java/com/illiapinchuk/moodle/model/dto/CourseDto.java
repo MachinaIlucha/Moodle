@@ -23,7 +23,7 @@ import lombok.experimental.FieldDefaults;
 public class CourseDto {
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-  private String id;
+  String id;
 
   @NotBlank(
       message =
