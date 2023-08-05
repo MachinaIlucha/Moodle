@@ -16,15 +16,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.util.LinkedMultiValueMap;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_CONTROLLER_PATH;
-import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_UPLOAD_ATTACHMENT_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.INVALID_TASK_DTO_NOT_EXISTED_AUTHOR_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.INVALID_TASK_DTO_NOT_EXISTED_COURSE_ID;
