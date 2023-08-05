@@ -81,38 +81,38 @@ public class TestConstants {
             .submissions(new ArrayList<>())
             .build();
     public static final TaskDto VALID_TASK_DTO =
-            TaskDto.builder()
-                    .title("Valid task title")
-                    .description("Valid task description")
-                    // due date is set to 1 day from now
-                    .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-                    .creationDate(new Date())
-                    .courseId("1")
-                    .authorId("1")
-                    .status(TaskStatus.OPEN)
-                    .build();
+        TaskDto.builder()
+            .title("Valid task title")
+            .description("Valid task description")
+            // due date is set to 1 day from now
+            .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
+            .creationDate(new Date())
+            .courseId("1")
+            .authorId("1")
+            .status(TaskStatus.OPEN)
+            .build();
     public static final TaskDto INVALID_TASK_DTO_NOT_EXISTED_COURSE_ID =
-            TaskDto.builder()
-                    .title("Valid task title")
-                    .description("Valid task description")
-                    // due date is set to 1 day from now
-                    .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-                    .creationDate(new Date())
-                    .courseId(INVALID_COURSE_ID)
-                    .authorId("1")
-                    .status(TaskStatus.OPEN)
-                    .build();
+        TaskDto.builder()
+            .title("Valid task title")
+            .description("Valid task description")
+            // due date is set to 1 day from now
+            .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
+            .creationDate(new Date())
+            .courseId(INVALID_COURSE_ID)
+            .authorId("1")
+            .status(TaskStatus.OPEN)
+            .build();
     public static final TaskDto INVALID_TASK_DTO_NOT_EXISTED_AUTHOR_ID =
-            TaskDto.builder()
-                    .title("Valid task title")
-                    .description("Valid task description")
-                    // due date is set to 1 day from now
-                    .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-                    .creationDate(new Date())
-                    .courseId("1")
-                    .authorId("4124243124515")
-                    .status(TaskStatus.OPEN)
-                    .build();
+        TaskDto.builder()
+            .title("Valid task title")
+            .description("Valid task description")
+            // due date is set to 1 day from now
+            .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
+            .creationDate(new Date())
+            .courseId("1")
+            .authorId("4124243124515")
+            .status(TaskStatus.OPEN)
+            .build();
   }
 
   @UtilityClass

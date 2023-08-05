@@ -24,17 +24,17 @@ public class MongoInsertData {
       taskRepository.deleteAll();
 
       final Course VALID_COURSE_1 =
-              Course.builder()
-                      .id("1")
-                      .name("Test Java Course")
-                      .description("Test This is java core course.")
-                      .build();
+          Course.builder()
+              .id("1")
+              .name("Test Java Course")
+              .description("Test This is java core course.")
+              .build();
       final Course VALID_COURSE_2 =
-              Course.builder()
-                      .id("2")
-                      .name("Test Java Course 2")
-                      .description("Test This is java core course 2.")
-                      .build();
+          Course.builder()
+              .id("2")
+              .name("Test Java Course 2")
+              .description("Test This is java core course 2.")
+              .build();
 
       // save all courses
       courseRepository.saveAll(List.of(VALID_COURSE_1, VALID_COURSE_2));
