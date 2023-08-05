@@ -25,6 +25,7 @@ public class TestConstants {
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String TASK_WITH_ID_CONTROLLER_PATH = "/tasks/{id}";
+    public static final String TASK_UPLOAD_ATTACHMENT_CONTROLLER_PATH = "/tasks/{id}/upload";
     public static final String EXPIRE_JWT_TOKEN_PATH = "/token/expire";
     public static final String PASSWORD_RESET_INIT_PATH = "/password/forgot";
     public static final String PASSWORD_RESET_PATH = "/password/reset";

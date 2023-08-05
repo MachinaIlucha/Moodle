@@ -2,7 +2,6 @@ package com.illiapinchuk.moodle;
 
 import com.illiapinchuk.moodle.config.MongoInsertData;
 import com.illiapinchuk.moodle.config.RedisTestConfiguration;
-import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,12 +16,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.LinkedMultiValueMap;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_CONTROLLER_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_UPLOAD_ATTACHMENT_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.INVALID_TASK_DTO_NOT_EXISTED_AUTHOR_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.INVALID_TASK_DTO_NOT_EXISTED_COURSE_ID;
@@ -42,7 +44,7 @@ class TaskControllerTest {
   @Autowired private TestRestTemplate restTemplate;
 
   private static final HttpHeaders HEADERS = new HttpHeaders();
-  private static final HttpEntity<CourseDto> HTTP_ENTITY = new HttpEntity<>(HEADERS);
+  private static final HttpEntity<Object> HTTP_ENTITY = new HttpEntity<>(HEADERS);
 
   @BeforeAll
   public void getJwtToken() {
@@ -105,8 +107,8 @@ class TaskControllerTest {
     final var entityWithTaskDto = new HttpEntity<>(INVALID_TASK_DTO_NOT_EXISTED_AUTHOR_ID, HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    TASK_CONTROLLER_PATH, HttpMethod.POST, entityWithTaskDto, String.class);
+        restTemplate.exchange(
+            TASK_CONTROLLER_PATH, HttpMethod.POST, entityWithTaskDto, String.class);
 
     assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }
