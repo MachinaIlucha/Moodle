@@ -28,7 +28,6 @@
         <postgres.version>42.6.0</postgres.version>
         <embedded.mongo.version>4.7.0</embedded.mongo.version>
         <spring-boot-dependencies>3.0.9</spring-boot-dependencies>
-        <mockito.inline.version>5.2.0</mockito.inline.version>
     </properties>
 
     <dependencyManagement>
@@ -206,12 +205,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>${mockito.inline.version}</version>
             <scope>test</scope>
         </dependency>
 
