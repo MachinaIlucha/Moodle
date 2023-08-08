@@ -4,6 +4,7 @@ import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.UserCantModifyAnotherUserException;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
@@ -148,23 +149,29 @@ class UserServiceImplTest {
     verify(userRepository, never()).save(any(User.class));
   }
 
-//  @Test
-//  void updateUser_NonAdminUpdatingAnotherUser_ThrowsException() {
-//    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
-//
-//    assertThrows(
-//        UserCantModifyAnotherUserException.class,
-//        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
-//  }
+  @Test
+  void updateUser_NonAdminUpdatingAnotherUser_ThrowsException() {
+    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(false);
+    mockedUserPermissionService.when(UserPermissionService::hasUserRole).thenReturn(true);
 
-//  @Test
-//  void updateUser_NonAdminWithoutUserRoleUpdatingSelf_ThrowsException() {
-//    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
-//
-//    assertThrows(
-//        UserCantModifyAnotherUserException.class,
-//        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
-//  }
+    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
+
+    assertThrows(
+        UserCantModifyAnotherUserException.class,
+        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
+  }
+
+  @Test
+  void updateUser_NonAdminWithoutUserRoleUpdatingSelf_ThrowsException() {
+    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(false);
+    mockedUserPermissionService.when(UserPermissionService::hasUserRole).thenReturn(false);
+
+    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
+
+    assertThrows(
+        UserCantModifyAnotherUserException.class,
+        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
+  }
 
   @Test
   void deleteUserByLoginOrEmail_UserWithExistingLogin_DeletesUser() {

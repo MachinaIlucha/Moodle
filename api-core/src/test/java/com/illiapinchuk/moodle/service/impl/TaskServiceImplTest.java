@@ -103,16 +103,17 @@ class TaskServiceImplTest {
     verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
   }
 
-//  @Test
-//  void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
-//    when(courseValidator.isStudentEnrolledInCourseWithTask(
-//            eq(TestConstants.TaskConstants.TASK_ID), any()))
-//        .thenReturn(false);
-//
-//    assertThrows(
-//        UserDontHaveAccessToResource.class,
-//        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
-//  }
+  @Test
+  void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
+    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(false);
+    when(courseValidator.isStudentEnrolledInCourseWithTask(
+            eq(TestConstants.TaskConstants.TASK_ID), any()))
+        .thenReturn(false);
+
+    assertThrows(
+        UserDontHaveAccessToResource.class,
+        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+  }
 
   @Test
   void testCreateTask_ValidAuthorId_TaskCreated() {
