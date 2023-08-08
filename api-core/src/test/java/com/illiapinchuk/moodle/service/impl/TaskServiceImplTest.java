@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -17,6 +16,7 @@ import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.UserPermissionServiceMock;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
@@ -28,14 +28,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,23 +48,14 @@ class TaskServiceImplTest {
   @Mock private TaskAttachmentService taskAttachmentService;
   @InjectMocks private TaskServiceImpl taskService;
 
-  private static MockedStatic<UserPermissionService> mockedUserPermissionService;
-
-  @BeforeAll
-  static void setupUserPermissionServiceMocks() {
-    if (mockedUserPermissionService != null) {
-      mockedUserPermissionService.close();
-    }
-    mockedUserPermissionService = mockStatic(UserPermissionService.class);
-    mockedUserPermissionService
-        .when(UserPermissionService::getJwtUser)
-        .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
-    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
+  @BeforeEach
+  void setupUserPermissionServiceMocks() {
+    UserPermissionServiceMock.start();
   }
 
-  @AfterAll
-  static void closeUserPermissionServiceMocks() {
-    mockedUserPermissionService.close();
+  @AfterEach
+  void closeUserPermissionServiceMocks() {
+    UserPermissionServiceMock.stop();
   }
 
   @Test
