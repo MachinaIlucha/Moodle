@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,10 +49,10 @@ class TaskServiceImplTest {
   @Mock private TaskAttachmentService taskAttachmentService;
   @InjectMocks private TaskServiceImpl taskService;
 
-  private MockedStatic<UserPermissionService> mockedUserPermissionService;
+  private static MockedStatic<UserPermissionService> mockedUserPermissionService;
 
-  @BeforeEach
-  void setupUserPermissionServiceMocks() {
+  @BeforeAll
+  static void setupUserPermissionServiceMocks() {
     mockedUserPermissionService = mockStatic(UserPermissionService.class);
     mockedUserPermissionService
         .when(UserPermissionService::getJwtUser)
@@ -60,8 +60,8 @@ class TaskServiceImplTest {
     mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
   }
 
-  @AfterEach
-  void closeUserPermissionServiceMocks() {
+  @AfterAll
+  static void closeUserPermissionServiceMocks() {
     mockedUserPermissionService.close();
   }
 
