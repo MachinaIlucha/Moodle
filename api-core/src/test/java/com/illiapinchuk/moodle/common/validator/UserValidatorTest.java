@@ -64,8 +64,7 @@ class UserValidatorTest {
 
   @Test
   void testIsUserExistInDbById_ValidId_ReturnsTrue() {
-    when(userRepository.existsById(TestConstants.UserConstants.USER_ID))
-        .thenReturn(true);
+    when(userRepository.existsById(TestConstants.UserConstants.USER_ID)).thenReturn(true);
 
     boolean result = userValidator.isUserExistInDbById(TestConstants.UserConstants.USER_ID);
 
@@ -75,8 +74,7 @@ class UserValidatorTest {
 
   @Test
   void testIsUserExistInDbById_InvalidId_ReturnsFalse() {
-    when(userRepository.existsById(TestConstants.UserConstants.USER_ID))
-        .thenReturn(false);
+    when(userRepository.existsById(TestConstants.UserConstants.USER_ID)).thenReturn(false);
 
     boolean result = userValidator.isUserExistInDbById(TestConstants.UserConstants.USER_ID);
 

@@ -43,18 +43,20 @@ public class CourseValidator {
    * @return {@code true} if the student with the provided ID is enrolled in the specified course,
    *     {@code false} otherwise.
    */
-  public boolean isStudentEnrolledInCourse(@Nonnull final String courseId, @Nonnull final Long studentId) {
+  public boolean isStudentEnrolledInCourse(
+      @Nonnull final String courseId, @Nonnull final Long studentId) {
     return courseRepository.existsByIdAndStudentsContains(courseId, studentId);
   }
 
   /**
    * Determines if a student is enrolled in a course containing a specific task.
    *
-   * @param taskId     The ID of the task.
-   * @param studentId  The ID of the student to check.
+   * @param taskId The ID of the task.
+   * @param studentId The ID of the student to check.
    * @return true if the student is enrolled in the course with the given task; false otherwise.
    */
-  public boolean isStudentEnrolledInCourseWithTask(@Nonnull final String taskId, @Nonnull final Long studentId) {
+  public boolean isStudentEnrolledInCourseWithTask(
+      @Nonnull final String taskId, @Nonnull final Long studentId) {
     return courseRepository.existsByTasksIdAndStudentsContains(taskId, studentId);
   }
 }
