@@ -60,7 +60,7 @@ class CourseServiceImplTest {
 
   @AfterAll
   static void closeUserPermissionServiceMocks() {
-    mockedUserPermissionService.close();
+    mockedUserPermissionService.closeOnDemand();
   }
 
   @Test
