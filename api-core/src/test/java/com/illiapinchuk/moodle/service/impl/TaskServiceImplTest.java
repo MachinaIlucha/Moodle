@@ -55,8 +55,8 @@ class TaskServiceImplTest {
   static void setupUserPermissionServiceMocks() {
     mockedUserPermissionService = mockStatic(UserPermissionService.class);
     mockedUserPermissionService
-            .when(UserPermissionService::getJwtUser)
-            .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+        .when(UserPermissionService::getJwtUser)
+        .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
     mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
   }
 
