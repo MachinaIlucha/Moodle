@@ -108,12 +108,12 @@ class TaskServiceImplTest {
   void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
     when(courseValidator.isStudentEnrolledInCourseWithTask(
             eq(TestConstants.TaskConstants.TASK_ID), any()))
-            .thenReturn(false);
+        .thenReturn(false);
     when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
 
     assertThrows(
-            UserDontHaveAccessToResource.class,
-            () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+        UserDontHaveAccessToResource.class,
+        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
   }
 
   @Test
