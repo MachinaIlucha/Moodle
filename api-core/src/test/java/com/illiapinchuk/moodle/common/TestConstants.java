@@ -67,6 +67,7 @@ public class TestConstants {
             .build();
     public static final User VALID_ADMIN_USER =
         User.builder()
+            .id(USER_ID)
             .surname("Admin")
             .lastname("Admin")
             .email(USER_EMAIL)
