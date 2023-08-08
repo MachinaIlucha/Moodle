@@ -29,6 +29,7 @@
         <postgres.version>42.6.0</postgres.version>
         <embedded.mongo.version>4.7.0</embedded.mongo.version>
         <spring-boot-dependencies>3.0.9</spring-boot-dependencies>
+        <mockito.inline.version>5.2.0</mockito.inline.version>
     </properties>
 
     <dependencyManagement>
@@ -208,6 +209,12 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.inline.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -275,6 +282,8 @@
                                 <exclude>/*com/illiapinchuk/moodle/exception/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/handler/**</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/metrics/**</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/security/UserPermissionService.class
+                                </exclude>
 
                                 <!--    We have e2e tests for controllers, so we exclude it    -->
                                 <exclude>/*com/illiapinchuk/moodle/api/rest/controller/**</exclude>

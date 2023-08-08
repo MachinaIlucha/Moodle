@@ -3,6 +3,8 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.UserCantModifyAnotherUserException;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
@@ -13,11 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +36,16 @@ class UserServiceImplTest {
   @Mock private UserValidator userValidator;
   @Mock private PasswordEncoder passwordEncoder;
   @InjectMocks private UserServiceImpl userService;
+
+  private MockedStatic<UserPermissionService> mockedUserPermissionService;
+
+  private void setupUserPermissionServiceMocks() {
+    mockedUserPermissionService = mockStatic(UserPermissionService.class);
+    mockedUserPermissionService
+        .when(UserPermissionService::getJwtUser)
+        .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
+  }
 
   @Test
   void getUserByLoginOrEmail_UserExists_ReturnsUser() {
@@ -100,34 +114,65 @@ class UserServiceImplTest {
 
   @Test
   void updateUser_ValidUserDto_UpdatesAndReturnsUser() {
-    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER_DTO.getLogin()))
-        .thenReturn(true);
-    when(userRepository.findUserByLoginOrEmail(
-            TestConstants.UserConstants.VALID_USER_DTO.getLogin(), null))
-        .thenReturn(Optional.of(TestConstants.UserConstants.VALID_USER));
-    when(userRepository.save(TestConstants.UserConstants.VALID_USER))
-        .thenReturn(TestConstants.UserConstants.VALID_USER);
+    setupUserPermissionServiceMocks();
+    try {
+      when(userRepository.getReferenceById(TestConstants.UserConstants.VALID_USER_DTO.getId()))
+          .thenReturn(TestConstants.UserConstants.VALID_USER);
+      when(userRepository.save(TestConstants.UserConstants.VALID_USER))
+          .thenReturn(TestConstants.UserConstants.VALID_USER);
+      when(userValidator.isUserExistInDbById(TestConstants.UserConstants.VALID_USER_DTO.getId()))
+          .thenReturn(true);
 
-    final var result = userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO);
+      final var result = userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO);
 
-    assertEquals(TestConstants.UserConstants.VALID_USER, result);
-    verify(userMapper)
-        .updateUser(
-            TestConstants.UserConstants.VALID_USER, TestConstants.UserConstants.VALID_USER_DTO);
-    verify(userRepository).save(TestConstants.UserConstants.VALID_USER);
+      assertEquals(TestConstants.UserConstants.VALID_USER, result);
+      verify(userMapper)
+          .updateUser(
+              TestConstants.UserConstants.VALID_USER, TestConstants.UserConstants.VALID_USER_DTO);
+      verify(userRepository).save(TestConstants.UserConstants.VALID_USER);
+    } finally {
+      mockedUserPermissionService.close();
+    }
   }
 
   @Test
   void updateUser_UserWithNonExistingLogin_ThrowsUserNotFoundException() {
-    when(userValidator.isLoginExistInDb(TestConstants.UserConstants.VALID_USER_DTO.getLogin()))
-        .thenReturn(false);
-
     assertThrows(
         UserNotFoundException.class,
         () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
     verify(userRepository, never()).findUserByLoginOrEmail(anyString(), anyString());
     verify(userMapper, never()).updateUser(any(User.class), any(UserDto.class));
     verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void updateUser_NonAdminUpdatingAnotherUser_ThrowsException() {
+    setupUserPermissionServiceMocks();
+    try {
+      when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
+      when(UserPermissionService.hasUserRole()).thenReturn(true);
+      when(UserPermissionService.isSameUserAsAuthenticated(any())).thenReturn(false);
+      when(userValidator.isUserExistInDbById(any())).thenReturn(true);
+
+      assertThrows(
+          UserCantModifyAnotherUserException.class,
+          () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
+    } finally {
+      mockedUserPermissionService.close();
+    }
+  }
+
+  @Test
+  void updateUser_NonAdminWithoutUserRoleUpdatingSelf_ThrowsException() {
+    setupUserPermissionServiceMocks();
+    when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
+    when(UserPermissionService.hasUserRole()).thenReturn(false);
+    when(UserPermissionService.isSameUserAsAuthenticated(any())).thenReturn(true);
+    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
+
+    assertThrows(
+        UserCantModifyAnotherUserException.class,
+        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
   }
 
   @Test

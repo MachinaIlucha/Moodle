@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     // If the authenticated user is not an admin and (does not have a USER role or is not updating
     // their own details)
-    if (!UserPermissionService.hasAdminRole()
+    if (!UserPermissionService.hasAnyRulingRole()
         && (!UserPermissionService.hasUserRole()
             || !UserPermissionService.isSameUserAsAuthenticated(userId))) {
       throw new UserCantModifyAnotherUserException("User has no permission to modify another user");

@@ -3,6 +3,8 @@ package com.illiapinchuk.moodle.service.impl;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -12,9 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.date.DateService;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
@@ -22,10 +27,14 @@ import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,8 +45,25 @@ class TaskServiceImplTest {
   @Mock private TaskValidator taskValidator;
   @Mock private DateService dateService;
   @Mock private UserValidator userValidator;
+  @Mock private CourseValidator courseValidator;
   @Mock private TaskAttachmentService taskAttachmentService;
   @InjectMocks private TaskServiceImpl taskService;
+
+  private MockedStatic<UserPermissionService> mockedUserPermissionService;
+
+  @BeforeEach
+  void setupUserPermissionServiceMocks() {
+    mockedUserPermissionService = mockStatic(UserPermissionService.class);
+    mockedUserPermissionService
+        .when(UserPermissionService::getJwtUser)
+        .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
+  }
+
+  @AfterEach
+  void closeUserPermissionServiceMocks() {
+    mockedUserPermissionService.close();
+  }
 
   @Test
   void testGetTaskById_ValidId_TaskFound() {
@@ -59,6 +85,35 @@ class TaskServiceImplTest {
     assertThrows(
         TaskNotFoundException.class,
         () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+  }
+
+  @Test
+  void testGetTaskById_UserNotEnrolledWithRulingRole_TaskFound() {
+    when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
+        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
+    when(courseValidator.isStudentEnrolledInCourseWithTask(
+            eq(TestConstants.TaskConstants.TASK_ID), any()))
+        .thenReturn(false);
+    when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
+    when(taskAttachmentService.getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID))
+        .thenReturn(new ArrayList<>());
+
+    final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
+
+    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+    verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
+  }
+
+  @Test
+  void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
+    when(courseValidator.isStudentEnrolledInCourseWithTask(
+            eq(TestConstants.TaskConstants.TASK_ID), any()))
+            .thenReturn(false);
+    when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
+
+    assertThrows(
+            UserDontHaveAccessToResource.class,
+            () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
   }
 
   @Test

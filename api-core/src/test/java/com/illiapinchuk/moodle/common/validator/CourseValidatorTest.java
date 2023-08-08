@@ -80,4 +80,32 @@ class CourseValidatorTest {
 
     assertTrue(result);
   }
+
+  @Test
+  void testIsStudentEnrolledInCourseWithTask_StudentEnrolled_ReturnsTrue() {
+    when(courseRepository.existsByTasksIdAndStudentsContains(
+            TestConstants.TaskConstants.TASK_ID,
+            TestConstants.UserConstants.USER_ID))
+            .thenReturn(true);
+
+    boolean result = courseValidator.isStudentEnrolledInCourseWithTask(
+            TestConstants.TaskConstants.TASK_ID,
+            TestConstants.UserConstants.USER_ID);
+
+    assertTrue(result);
+  }
+
+  @Test
+  void testIsStudentEnrolledInCourseWithTask_StudentNotEnrolled_ReturnsFalse() {
+    when(courseRepository.existsByTasksIdAndStudentsContains(
+            TestConstants.TaskConstants.TASK_ID,
+            TestConstants.UserConstants.USER_ID))
+            .thenReturn(false);
+
+    boolean result = courseValidator.isStudentEnrolledInCourseWithTask(
+            TestConstants.TaskConstants.TASK_ID,
+            TestConstants.UserConstants.USER_ID);
+
+    assertFalse(result);
+  }
 }

@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.common;
 
+import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.model.dto.EmailDto;
@@ -52,6 +53,7 @@ public class TestConstants {
             .build();
     public static final UserDto VALID_USER_DTO =
         UserDto.builder()
+            .id(USER_ID)
             .surname("Smith")
             .lastname("John")
             .email(USER_EMAIL)
@@ -63,6 +65,21 @@ public class TestConstants {
             .country("USA")
             .city("New York")
             .build();
+    public static final User VALID_ADMIN_USER =
+        User.builder()
+            .surname("Admin")
+            .lastname("Admin")
+            .email(USER_EMAIL)
+            .login(USER_LOGIN)
+            .password(USER_VALID_PASSWORD)
+            .bio("I am a software engineer.")
+            .phoneNumber("+1234567890")
+            .dateOfBirth(new Date())
+            .country("USA")
+            .city("New York")
+            .roles(Set.of(RoleName.ADMIN, RoleName.USER))
+            .build();
+    public static final JwtUser ADMIN_JWT_USER = JwtUser.build(VALID_ADMIN_USER);
   }
 
   @UtilityClass
@@ -130,7 +147,7 @@ public class TestConstants {
             .dueDate(new Date())
             .creationDate(new Date())
             .courseId("course123")
-            .authorId("author123")
+            .authorId(1L)
             .status(TaskStatus.OPEN)
             .build();
   }
