@@ -39,3 +39,39 @@ databaseChangeLog:
               - column:
                   name: user_role
                   value: "ADMIN"
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: surname
+                  value: "Illia"
+              - column:
+                  name: lastname
+                  value: "Pinchuk"
+              - column:
+                  name: email
+                  value: "illiapinchuk@developer.com"
+              - column:
+                  name: login
+                  value: "illiaPinchuk"
+              - column:
+                  name: password
+                  value: "$2a$12$5XwRjrAcTE/Dm67wEYZJgOYFOrn0ShQrRUmljQTsvkizJRYLcGIem"
+              - column:
+                  name: phone_number
+                  value: "1234567890"
+              - column:
+                  name: country
+                  value: "Developer Country"
+              - column:
+                  name: city
+                  value: "Developer City"
+        - insert:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 2
+              - column:
+                  name: user_role
+                  value: "DEVELOPER"

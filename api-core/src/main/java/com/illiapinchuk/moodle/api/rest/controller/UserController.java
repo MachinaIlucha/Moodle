@@ -6,10 +6,12 @@ import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,7 @@ public class UserController {
    * @param email the email of the user to retrieve
    * @return a {@link ResponseEntity} containing the {@link UserDto} object and an HTTP status code
    */
+  @PreAuthorize("hasAuthority('ADMIN')")
   @GetMapping
   public ResponseEntity<UserDto> getUserByLoginOrEmail(
       @RequestParam(name = "login", required = false) final String login,
@@ -73,10 +76,15 @@ public class UserController {
   }
 
   /**
-   * Update an existing user.
+   * Updates the details of an existing user.
+   *
+   * <p>This method is accessible only to users with the 'ADMIN' authority. It takes a {@link
+   * UserDto} object that contains updated user information and returns a {@link ResponseEntity}
+   * with the updated user details.
    *
    * @param userDto A {@link UserDto} object representing the updated user information.
    * @return A {@link ResponseEntity} containing the updated {@link UserDto} object.
+   * @throws ValidationException If the provided {@link UserDto} fails validation checks.
    */
   @PutMapping
   public ResponseEntity<UserDto> updateUser(@Valid @RequestBody final UserDto userDto) {
@@ -88,12 +96,22 @@ public class UserController {
   }
 
   /**
-   * Deletes the user with the given login.
+   * Deletes the user identified by the given login or email.
    *
-   * @param login the login of the user to delete
-   * @return a response with an HTTP status of OK if the user was successfully deleted, or an HTTP
-   *     status of NOT_FOUND if the user was not found
+   * <p>If both login and email are provided, the method prioritizes deletion based on the criteria
+   * in the implementation of the service. Typically, the login takes precedence, but it can be
+   * dependent on the specific implementation.
+   *
+   * <p>This method is only accessible to users with 'ADMIN' authority.
+   *
+   * @param login The login of the user to be deleted. Can be null if email is provided.
+   * @param email The email of the user to be deleted. Can be null if login is provided.
+   * @return a ResponseEntity with an HTTP status of OK if the user was successfully deleted. If the
+   *     user is not found based on the provided login or email, it returns an HTTP status of
+   *     NOT_FOUND, based on the userService implementation.
+   * @throws IllegalArgumentException if both login and email are null.
    */
+  @PreAuthorize("hasAuthority('ADMIN')")
   @DeleteMapping
   public ResponseEntity<Void> deleteUserByLoginOrEmail(
       @RequestParam(name = "login", required = false) final String login,

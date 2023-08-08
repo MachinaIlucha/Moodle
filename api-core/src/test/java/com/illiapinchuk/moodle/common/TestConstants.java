@@ -25,7 +25,7 @@ public class TestConstants {
 
   @UtilityClass
   public class UserConstants {
-    public static final String USER_ID = "1";
+    public static final Long USER_ID = 1L;
     public static final String USER_LOGIN = "test-login";
     public static final String USER_EMAIL = "moodle@example.com";
     public static final String USER_INVALID_EMAIL = "invalid.email";
@@ -33,8 +33,8 @@ public class TestConstants {
     public static final String USER_NULL_EMAIL = null;
     public static final String USER_EMPTY_EMAIL = "";
     public static final String USER_EMAIL_WITH_WHITESPACE = "  " + USER_EMAIL;
-    public static final List<String> LIST_OF_USER_IDS = List.of("1", "2", "3");
-    public static final List<String> EMPTY_LIST_OF_USER_IDS = Collections.emptyList();
+    public static final List<Long> LIST_OF_USER_IDS = List.of(1L, 2L, 3L);
+    public static final List<Long> EMPTY_LIST_OF_USER_IDS = Collections.emptyList();
 
     public static final User VALID_USER =
         User.builder()
@@ -91,7 +91,7 @@ public class TestConstants {
             .dueDate(new Date()) // Set the due date to the current date
             .creationDate(new Date()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
-            .authorId("author1")
+            .authorId(1L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
             .submissions(new ArrayList<>()) // Add any submissions if necessary
@@ -103,7 +103,7 @@ public class TestConstants {
             .dueDate(new Date()) // Set the due date to the current date
             .creationDate(new Date()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
-            .authorId("author2")
+            .authorId(2L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
             .submissions(new ArrayList<>()) // Add any submissions if necessary
@@ -115,7 +115,7 @@ public class TestConstants {
             .dueDate(new Date()) // Set the due date to the current date
             .creationDate(new Date()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
-            .authorId("author3")
+            .authorId(3L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
             .submissions(new ArrayList<>()) // Add any submissions if necessary

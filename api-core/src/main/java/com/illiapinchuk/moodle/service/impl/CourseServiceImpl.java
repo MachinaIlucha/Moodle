@@ -2,7 +2,9 @@ package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
@@ -11,11 +13,13 @@ import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /** Implementation of {@link CourseService} interface. */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CourseServiceImpl implements CourseService {
 
   private final CourseRepository courseRepository;
@@ -24,15 +28,26 @@ public class CourseServiceImpl implements CourseService {
   private final TaskService taskService;
 
   @Override
-  public Course getCourseById(@Nonnull final String id) {
-    final var course =
-        courseRepository
-            .findById(id)
-            .orElseThrow(
-                () ->
-                    new CourseNotFoundException(String.format("Course with id: %s not found", id)));
-    course.setTasks(taskService.getTasksByCourseId(id));
-    return course;
+  public Course getCourseById(@Nonnull final String courseId) {
+    final var userId = UserPermissionService.getJwtUser().getId();
+
+    if (!courseValidator.isStudentEnrolledInCourse(courseId, userId)
+        && !UserPermissionService.hasAnyRulingRole()) {
+      log.error("User with id - {} trying to access course with id - {}", userId, courseId);
+      throw new UserDontHaveAccessToResource("User doesn't have access to this course.");
+    }
+
+    return courseRepository
+        .findById(courseId)
+        .map(
+            course -> {
+              course.setTasks(taskService.getTasksByCourseId(courseId));
+              return course;
+            })
+        .orElseThrow(
+            () ->
+                new CourseNotFoundException(
+                    String.format("Course with id: %s not found", courseId)));
   }
 
   @Override

@@ -47,13 +47,13 @@ class CourseValidatorTest {
   @Test
   void testIsAuthorsExistsInDbByIds_AllAuthorsExist_ReturnsTrue() {
     when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(0))))
+            TestConstants.UserConstants.LIST_OF_USER_IDS.get(0)))
         .thenReturn(true);
     when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(1))))
+            TestConstants.UserConstants.LIST_OF_USER_IDS.get(1)))
         .thenReturn(true);
     when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(2))))
+            TestConstants.UserConstants.LIST_OF_USER_IDS.get(2)))
         .thenReturn(true);
 
     boolean result =
@@ -65,10 +65,10 @@ class CourseValidatorTest {
   @Test
   void testIsAuthorsExistsInDbByIds_SomeAuthorsDoNotExist_ReturnsFalse() {
     when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(0))))
+            TestConstants.UserConstants.LIST_OF_USER_IDS.get(0)))
         .thenReturn(true);
     when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(1))))
+            TestConstants.UserConstants.LIST_OF_USER_IDS.get(1)))
         .thenReturn(false);
 
     boolean result =

@@ -24,6 +24,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 public class UserDto {
 
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  Long id;
+
   @Size(
       min = ApplicationConstants.Web.DataValidation.MIN_SIZE_OF_SURNAME,
       max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_SURNAME,

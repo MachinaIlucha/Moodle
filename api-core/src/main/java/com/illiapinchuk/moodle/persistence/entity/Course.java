@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -51,9 +52,9 @@ public class Course {
   @NotEmpty(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
-  List<@NotBlank String> authorIds;
+  List<@NonNull Long> authorIds;
 
-  List<@NotBlank String> students;
+  List<@NonNull Long> students;
 
   @DBRef List<@Valid Task> tasks;
 }
