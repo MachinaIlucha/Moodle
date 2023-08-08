@@ -51,7 +51,8 @@ class CourseServiceImplTest {
 
   @BeforeAll
   static void setupUserPermissionServiceMocks() {
-    mockedUserPermissionService = mockStatic(UserPermissionService.class, Mockito.RETURNS_DEEP_STUBS);
+    mockedUserPermissionService =
+        mockStatic(UserPermissionService.class, Mockito.RETURNS_DEEP_STUBS);
     mockedUserPermissionService
         .when(UserPermissionService::getJwtUser)
         .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
