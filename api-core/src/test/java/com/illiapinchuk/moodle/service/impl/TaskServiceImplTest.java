@@ -19,7 +19,6 @@ import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
-import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
@@ -55,8 +54,8 @@ class TaskServiceImplTest {
   static void setupUserPermissionServiceMocks() {
     mockedUserPermissionService = mockStatic(UserPermissionService.class);
     mockedUserPermissionService
-            .when(UserPermissionService::getJwtUser)
-            .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+        .when(UserPermissionService::getJwtUser)
+        .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
     mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
   }
 
@@ -103,16 +102,16 @@ class TaskServiceImplTest {
     verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
   }
 
-//  @Test
-//  void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
-//    when(courseValidator.isStudentEnrolledInCourseWithTask(
-//            eq(TestConstants.TaskConstants.TASK_ID), any()))
-//        .thenReturn(false);
-//
-//    assertThrows(
-//        UserDontHaveAccessToResource.class,
-//        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
-//  }
+  //  @Test
+  //  void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
+  //    when(courseValidator.isStudentEnrolledInCourseWithTask(
+  //            eq(TestConstants.TaskConstants.TASK_ID), any()))
+  //        .thenReturn(false);
+  //
+  //    assertThrows(
+  //        UserDontHaveAccessToResource.class,
+  //        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+  //  }
 
   @Test
   void testCreateTask_ValidAuthorId_TaskCreated() {

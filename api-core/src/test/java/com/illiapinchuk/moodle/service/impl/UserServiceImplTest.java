@@ -148,23 +148,23 @@ class UserServiceImplTest {
     verify(userRepository, never()).save(any(User.class));
   }
 
-//  @Test
-//  void updateUser_NonAdminUpdatingAnotherUser_ThrowsException() {
-//    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
-//
-//    assertThrows(
-//        UserCantModifyAnotherUserException.class,
-//        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
-//  }
+  //  @Test
+  //  void updateUser_NonAdminUpdatingAnotherUser_ThrowsException() {
+  //    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
+  //
+  //    assertThrows(
+  //        UserCantModifyAnotherUserException.class,
+  //        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
+  //  }
 
-//  @Test
-//  void updateUser_NonAdminWithoutUserRoleUpdatingSelf_ThrowsException() {
-//    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
-//
-//    assertThrows(
-//        UserCantModifyAnotherUserException.class,
-//        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
-//  }
+  //  @Test
+  //  void updateUser_NonAdminWithoutUserRoleUpdatingSelf_ThrowsException() {
+  //    when(userValidator.isUserExistInDbById(any())).thenReturn(true);
+  //
+  //    assertThrows(
+  //        UserCantModifyAnotherUserException.class,
+  //        () -> userService.updateUser(TestConstants.UserConstants.VALID_USER_DTO));
+  //  }
 
   @Test
   void deleteUserByLoginOrEmail_UserWithExistingLogin_DeletesUser() {
