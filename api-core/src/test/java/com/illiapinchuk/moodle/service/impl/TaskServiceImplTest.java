@@ -35,6 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +54,7 @@ class TaskServiceImplTest {
 
   @BeforeAll
   static void setupUserPermissionServiceMocks() {
-    mockedUserPermissionService = mockStatic(UserPermissionService.class);
+    mockedUserPermissionService = mockStatic(UserPermissionService.class, Mockito.RETURNS_DEEP_STUBS);
     mockedUserPermissionService
         .when(UserPermissionService::getJwtUser)
         .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
