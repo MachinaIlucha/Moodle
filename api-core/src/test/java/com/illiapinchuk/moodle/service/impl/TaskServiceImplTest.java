@@ -16,7 +16,6 @@ import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
-import com.illiapinchuk.moodle.configuration.UserPermissionServiceMock;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
@@ -27,13 +26,13 @@ import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,65 +47,88 @@ class TaskServiceImplTest {
   @Mock private TaskAttachmentService taskAttachmentService;
   @InjectMocks private TaskServiceImpl taskService;
 
-  @BeforeEach
-  void setupUserPermissionServiceMocks() {
-    UserPermissionServiceMock.start();
-  }
-
-  @AfterEach
-  void closeUserPermissionServiceMocks() {
-    UserPermissionServiceMock.stop();
-  }
-
   @Test
   void testGetTaskById_ValidId_TaskFound() {
-    when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
-        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
-    when(taskAttachmentService.getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID))
-        .thenReturn(new ArrayList<>());
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
+      when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
+          .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
+      when(taskAttachmentService.getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID))
+          .thenReturn(new ArrayList<>());
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
-    verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
+      final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
+
+      assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+      verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
+    }
   }
 
   @Test
   void testGetTaskById_InvalidId_TaskNotFound() {
-    when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID)).thenReturn(Optional.empty());
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    assertThrows(
-        TaskNotFoundException.class,
-        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+      when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
+          .thenReturn(Optional.empty());
+
+      assertThrows(
+          TaskNotFoundException.class,
+          () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+    }
   }
 
   @Test
   void testGetTaskById_UserNotEnrolledWithRulingRole_TaskFound() {
-    when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
-        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
-    when(courseValidator.isStudentEnrolledInCourseWithTask(
-            eq(TestConstants.TaskConstants.TASK_ID), any()))
-        .thenReturn(false);
-    when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
-    when(taskAttachmentService.getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID))
-        .thenReturn(new ArrayList<>());
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
+      when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
+          .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
+      when(courseValidator.isStudentEnrolledInCourseWithTask(
+              eq(TestConstants.TaskConstants.TASK_ID), any()))
+          .thenReturn(false);
+      when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
+      when(taskAttachmentService.getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID))
+          .thenReturn(new ArrayList<>());
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
-    verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
+      final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
+
+      assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+      verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
+    }
   }
 
   @Test
   void testGetTaskById_UserNotEnrolledWithoutRulingRole_TaskNotFound() {
-    when(courseValidator.isStudentEnrolledInCourseWithTask(
-            eq(TestConstants.TaskConstants.TASK_ID), any()))
-        .thenReturn(false);
-    when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    assertThrows(
-        UserDontHaveAccessToResource.class,
-        () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+      when(courseValidator.isStudentEnrolledInCourseWithTask(
+              eq(TestConstants.TaskConstants.TASK_ID), any()))
+          .thenReturn(false);
+      when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
+
+      assertThrows(
+          UserDontHaveAccessToResource.class,
+          () -> taskService.getTaskById(TestConstants.TaskConstants.TASK_ID));
+    }
   }
 
   @Test
@@ -144,22 +166,31 @@ class TaskServiceImplTest {
 
   @Test
   void testUpdateTask_ValidTaskDto_TaskUpdated() {
-    when(taskValidator.isTaskExistsInDbById(TestConstants.TaskConstants.VALID_TASK_DTO.getId()))
-        .thenReturn(true);
-    when(taskRepository.findById(TestConstants.TaskConstants.VALID_TASK_DTO.getId()))
-        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
-    when(taskRepository.save(TestConstants.TaskConstants.VALID_TASK_1))
-        .thenReturn(TestConstants.TaskConstants.VALID_TASK_1);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    final var result = taskService.updateTask(TestConstants.TaskConstants.VALID_TASK_DTO);
+      when(taskValidator.isTaskExistsInDbById(TestConstants.TaskConstants.VALID_TASK_DTO.getId()))
+          .thenReturn(true);
+      when(taskRepository.findById(TestConstants.TaskConstants.VALID_TASK_DTO.getId()))
+          .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
+      when(taskRepository.save(TestConstants.TaskConstants.VALID_TASK_1))
+          .thenReturn(TestConstants.TaskConstants.VALID_TASK_1);
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
-    verify(taskValidator).isTaskExistsInDbById(TestConstants.TaskConstants.VALID_TASK_DTO.getId());
-    verify(taskRepository).findById(TestConstants.TaskConstants.VALID_TASK_DTO.getId());
-    verify(taskMapper)
-        .updateTask(
-            TestConstants.TaskConstants.VALID_TASK_1, TestConstants.TaskConstants.VALID_TASK_DTO);
-    verify(taskRepository).save(TestConstants.TaskConstants.VALID_TASK_1);
+      final var result = taskService.updateTask(TestConstants.TaskConstants.VALID_TASK_DTO);
+
+      assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+      verify(taskValidator)
+          .isTaskExistsInDbById(TestConstants.TaskConstants.VALID_TASK_DTO.getId());
+      verify(taskRepository).findById(TestConstants.TaskConstants.VALID_TASK_DTO.getId());
+      verify(taskMapper)
+          .updateTask(
+              TestConstants.TaskConstants.VALID_TASK_1, TestConstants.TaskConstants.VALID_TASK_DTO);
+      verify(taskRepository).save(TestConstants.TaskConstants.VALID_TASK_1);
+    }
   }
 
   @Test

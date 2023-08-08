@@ -3,7 +3,6 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
-import com.illiapinchuk.moodle.configuration.UserPermissionServiceMock;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
@@ -13,12 +12,12 @@ import com.illiapinchuk.moodle.service.TaskService;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
@@ -45,90 +44,121 @@ class CourseServiceImplTest {
 
   @InjectMocks private CourseServiceImpl courseService;
 
-  @BeforeEach
-  void setupUserPermissionServiceMocks() {
-    UserPermissionServiceMock.start();
-  }
-
-  @AfterEach
-  void closeUserPermissionServiceMocks() {
-    UserPermissionServiceMock.stop();
-  }
-
   @Test
   void getCourseById_ExistingCourseId_ReturnsCourse() {
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Collections.emptyList());
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    final var actualCourse =
-        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+      when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+      when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Collections.emptyList());
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
-    assertEquals(TestConstants.CourseConstants.VALID_COURSE_ID, actualCourse.getId());
-    assertEquals(0, actualCourse.getTasks().size());
+      final var actualCourse =
+          courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
 
-    verify(courseRepository, times(1)).findById(TestConstants.CourseConstants.VALID_COURSE_ID);
-    verify(taskService, times(1)).getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID);
+      assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+      assertEquals(TestConstants.CourseConstants.VALID_COURSE_ID, actualCourse.getId());
+      assertEquals(0, actualCourse.getTasks().size());
+
+      verify(courseRepository, times(1)).findById(TestConstants.CourseConstants.VALID_COURSE_ID);
+      verify(taskService, times(1))
+          .getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID);
+    }
   }
 
   @Test
   void getCourseById_NonExistingCourseId_ThrowsCourseNotFoundException() {
-    when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
-    when(courseValidator.isStudentEnrolledInCourse(
-            INVALID_COURSE_ID, TestConstants.UserConstants.ADMIN_JWT_USER.getId()))
-        .thenReturn(true);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    assertThrows(
-        CourseNotFoundException.class, () -> courseService.getCourseById(INVALID_COURSE_ID));
+      when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
+      when(courseValidator.isStudentEnrolledInCourse(
+              INVALID_COURSE_ID, TestConstants.UserConstants.ADMIN_JWT_USER.getId()))
+          .thenReturn(true);
 
-    verify(courseRepository, times(1)).findById(INVALID_COURSE_ID);
-    verifyNoInteractions(taskService);
+      assertThrows(
+          CourseNotFoundException.class, () -> courseService.getCourseById(INVALID_COURSE_ID));
+
+      verify(courseRepository, times(1)).findById(INVALID_COURSE_ID);
+      verifyNoInteractions(taskService);
+    }
   }
 
   @Test
   void getCourseById_UserNotEnrolledAndNoRulingRole_ThrowsUserDontHaveAccessToResource() {
-    when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(false);
-    when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    assertThrows(
-        UserDontHaveAccessToResource.class,
-        () -> courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID));
+      when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(false);
+      when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
 
-    verifyNoInteractions(courseRepository, taskService);
+      assertThrows(
+          UserDontHaveAccessToResource.class,
+          () -> courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID));
+
+      verifyNoInteractions(courseRepository, taskService);
+    }
   }
 
   @Test
   void getCourseById_UserEnrolled_ReturnsCourse() {
-    when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(true);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Collections.emptyList());
+      when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(true);
 
-    final var actualCourse =
-        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+      when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+      when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Collections.emptyList());
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+      final var actualCourse =
+          courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+
+      assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+    }
   }
 
   @Test
   void getCourseById_UserHasRulingRole_ReturnsCourse() {
-    when(courseValidator.isStudentEnrolledInCourse(anyString(), any()))
-        .thenReturn(false); // Not enrolled
-    when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Collections.emptyList());
+      when(courseValidator.isStudentEnrolledInCourse(anyString(), any()))
+          .thenReturn(false); // Not enrolled
+      when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
 
-    final var actualCourse =
-        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+      when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+      when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Collections.emptyList());
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+      final var actualCourse =
+          courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+
+      assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+    }
   }
 
   @Test
@@ -148,26 +178,34 @@ class CourseServiceImplTest {
 
   @Test
   void updateCourse_ExistingCourseDto_UpdatesAndReturnsCourse() {
-    when(courseValidator.isCourseExistsInDbById(
-            TestConstants.CourseConstants.VALID_COURSE_DTO.getId()))
-        .thenReturn(true);
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_DTO.getId()))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(courseRepository.save(TestConstants.CourseConstants.VALID_COURSE))
-        .thenReturn(TestConstants.CourseConstants.VALID_COURSE);
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    final var updatedCourse =
-        courseService.updateCourse(TestConstants.CourseConstants.VALID_COURSE_DTO);
+      when(courseValidator.isCourseExistsInDbById(
+              TestConstants.CourseConstants.VALID_COURSE_DTO.getId()))
+          .thenReturn(true);
+      when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_DTO.getId()))
+          .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+      when(courseRepository.save(TestConstants.CourseConstants.VALID_COURSE))
+          .thenReturn(TestConstants.CourseConstants.VALID_COURSE);
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, updatedCourse);
+      final var updatedCourse =
+          courseService.updateCourse(TestConstants.CourseConstants.VALID_COURSE_DTO);
 
-    verify(courseValidator, times(1))
-        .isCourseExistsInDbById(TestConstants.CourseConstants.VALID_COURSE_DTO.getId());
-    verify(courseMapper, times(1))
-        .updateCourse(
-            TestConstants.CourseConstants.VALID_COURSE,
-            TestConstants.CourseConstants.VALID_COURSE_DTO);
-    verify(courseRepository, times(1)).save(TestConstants.CourseConstants.VALID_COURSE);
+      assertSame(TestConstants.CourseConstants.VALID_COURSE, updatedCourse);
+
+      verify(courseValidator, times(1))
+          .isCourseExistsInDbById(TestConstants.CourseConstants.VALID_COURSE_DTO.getId());
+      verify(courseMapper, times(1))
+          .updateCourse(
+              TestConstants.CourseConstants.VALID_COURSE,
+              TestConstants.CourseConstants.VALID_COURSE_DTO);
+      verify(courseRepository, times(1)).save(TestConstants.CourseConstants.VALID_COURSE);
+    }
   }
 
   @Test
@@ -187,22 +225,38 @@ class CourseServiceImplTest {
 
   @Test
   void deleteCourseById_ExistingCourseId_DeletesCourseAndAssociatedTasks() {
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    courseService.deleteCourseById(TestConstants.CourseConstants.VALID_COURSE.getId());
+      when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
+          .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
 
-    verify(taskService, times(TestConstants.CourseConstants.VALID_COURSE.getTasks().size()))
-        .deleteTaskById(anyString());
-    verify(courseRepository, times(1))
-        .deleteById(TestConstants.CourseConstants.VALID_COURSE.getId());
+      courseService.deleteCourseById(TestConstants.CourseConstants.VALID_COURSE.getId());
+
+      verify(taskService, times(TestConstants.CourseConstants.VALID_COURSE.getTasks().size()))
+          .deleteTaskById(anyString());
+      verify(courseRepository, times(1))
+          .deleteById(TestConstants.CourseConstants.VALID_COURSE.getId());
+    }
   }
 
   @Test
   void deleteCourseById_NonExistingCourseId_ThrowsCourseNotFoundException() {
-    when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
+    try (MockedStatic<UserPermissionService> mockedStatic =
+        Mockito.mockStatic(UserPermissionService.class)) {
+      mockedStatic
+          .when(UserPermissionService::getJwtUser)
+          .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+      mockedStatic.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
 
-    assertThrows(
-        CourseNotFoundException.class, () -> courseService.deleteCourseById(INVALID_COURSE_ID));
+      when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
+
+      assertThrows(
+          CourseNotFoundException.class, () -> courseService.deleteCourseById(INVALID_COURSE_ID));
+    }
   }
 }
