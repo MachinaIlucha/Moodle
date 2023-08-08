@@ -54,8 +54,10 @@ class TaskServiceImplTest {
 
   @BeforeAll
   static void setupUserPermissionServiceMocks() {
-    mockedUserPermissionService =
-        mockStatic(UserPermissionService.class, Mockito.RETURNS_DEEP_STUBS);
+    if (mockedUserPermissionService != null) {
+      mockedUserPermissionService.close();
+    }
+    mockedUserPermissionService = mockStatic(UserPermissionService.class);
     mockedUserPermissionService
         .when(UserPermissionService::getJwtUser)
         .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
@@ -64,7 +66,7 @@ class TaskServiceImplTest {
 
   @AfterAll
   static void closeUserPermissionServiceMocks() {
-    mockedUserPermissionService.closeOnDemand();
+    mockedUserPermissionService.close();
   }
 
   @Test
