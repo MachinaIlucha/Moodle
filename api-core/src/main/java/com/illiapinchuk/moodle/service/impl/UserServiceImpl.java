@@ -84,6 +84,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
+  public void updateUserPassword(@Nonnull final String password, @Nonnull final Long id) {
+    if (!userValidator.isUserExistInDbById(id)) {
+      throw new UserNotFoundException("User with current id not found");
+    }
+    final var encodedPassword = passwordEncoder.encode(password);
+    userRepository.updateUserPassword(encodedPassword, id);
+  }
+
+  @Override
+  @Transactional
   public void deleteUserByLoginOrEmail(final String login, final String email) {
     if (!userValidator.isLoginExistInDb(login) && userValidator.isEmailExistInDb(email)) {
       throw new UserNotFoundException("User with current login/email not found");

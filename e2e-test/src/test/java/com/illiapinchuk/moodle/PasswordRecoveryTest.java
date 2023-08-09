@@ -4,7 +4,9 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_INIT_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_PATH;
-import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_ADMIN_EMAIL;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_USER_EMAIL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     classes = {MoodleApplication.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@Slf4j
 class PasswordRecoveryTest {
 
   @RegisterExtension
@@ -45,10 +48,10 @@ class PasswordRecoveryTest {
   public void getResetToken() throws MessagingException, IOException {
     final var builder =
         UriComponentsBuilder.fromUriString(PASSWORD_RESET_INIT_PATH)
-            .queryParam("email", EXISTING_ADMIN_EMAIL);
+            .queryParam("email", EXISTING_USER_EMAIL);
 
     restTemplate.postForEntity(builder.toUriString(), null, Void.class);
-    greenMail.waitForIncomingEmail(2000, 1);
+    greenMail.waitForIncomingEmail(5000, 1);
 
     final var messages = greenMail.getReceivedMessages();
     final var content = messages[0].getContent().toString();
@@ -56,8 +59,11 @@ class PasswordRecoveryTest {
     final var pattern = Pattern.compile("token=([a-f0-9\\-]+)");
     final var matcher = pattern.matcher(content);
 
+
     if (matcher.find()) {
       RESET_TOKEN = matcher.group(1); // Group 1 will contain the token value
+      log.info(content);
+      log.info(RESET_TOKEN);
     } else {
       throw new IllegalStateException("Could not find token in email content");
     }
@@ -74,10 +80,12 @@ class PasswordRecoveryTest {
     final var response =
         restTemplate.exchange(urlBuilder.toUriString(), HttpMethod.PUT, null, String.class);
 
+    log.info(response.toString());
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
 
   @Test
+  @Order(2)
   void testPasswordResetWhenTokenWasChangedShouldReturnNotFoundStatus() {
     final var newPassword = "new-password";
     final var urlBuilder =

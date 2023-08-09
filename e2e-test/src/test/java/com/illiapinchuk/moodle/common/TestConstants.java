@@ -35,6 +35,7 @@ public class TestConstants {
   public class UserConstants {
     public static final String EXISTING_ADMIN_EMAIL = "testAdminUser@example.com";
     public static final String NOT_EXISTING_ADMIN_EMAIL = "notExistingEmail@example.com";
+    public static final String EXISTING_USER_EMAIL = "testUser@example.com";
   }
 
   @UtilityClass
