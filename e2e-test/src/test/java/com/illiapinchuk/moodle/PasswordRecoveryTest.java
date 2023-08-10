@@ -57,7 +57,6 @@ class PasswordRecoveryTest {
     final var pattern = Pattern.compile("token=([a-f0-9\\-]+)");
     final var matcher = pattern.matcher(content);
 
-
     if (matcher.find()) {
       RESET_TOKEN = matcher.group(1); // Group 1 will contain the token value
     } else {
