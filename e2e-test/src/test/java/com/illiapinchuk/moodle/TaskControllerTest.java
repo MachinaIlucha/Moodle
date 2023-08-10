@@ -20,10 +20,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Map;
 
-import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_USER_LOGIN_AUTH_DTO;
-import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_WITH_ID_CONTROLLER_PATH;
@@ -73,18 +71,15 @@ class TaskControllerTest {
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<CourseDto> httpEntity = new HttpEntity<>(headers);
 
-    final var response = restTemplate.postForEntity(LOGIN_PATH, EXISTING_USER_LOGIN_AUTH_DTO, Map.class);
+    final var response =
+        restTemplate.postForEntity(LOGIN_PATH, EXISTING_USER_LOGIN_AUTH_DTO, Map.class);
     final var token = (String) response.getBody().get("token");
     headers.add("token", token);
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     final var resp =
-            restTemplate.exchange(
-                    TASK_WITH_ID_CONTROLLER_PATH,
-                    HttpMethod.GET,
-                    httpEntity,
-                    String.class,
-                    VALID_TASK_ID);
+        restTemplate.exchange(
+            TASK_WITH_ID_CONTROLLER_PATH, HttpMethod.GET, httpEntity, String.class, VALID_TASK_ID);
 
     assertEquals(HttpStatus.FORBIDDEN, resp.getStatusCode());
   }
