@@ -34,7 +34,7 @@ public class TaskSubmissionFile {
   @NotBlank(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_USERID_BLANK_ERROR_MESSAGE)
-  String userId;
+  Long userId;
 
   @NotNull(
       message =

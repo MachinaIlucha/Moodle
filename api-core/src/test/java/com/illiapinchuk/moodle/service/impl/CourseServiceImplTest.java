@@ -3,22 +3,31 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.service.TaskService;
 import java.util.Collections;
 import java.util.Optional;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -36,6 +45,22 @@ class CourseServiceImplTest {
   @Mock private TaskService taskService;
 
   @InjectMocks private CourseServiceImpl courseService;
+
+  private static MockedStatic<UserPermissionService> mockedUserPermissionService;
+
+  @BeforeAll
+  static void setupUserPermissionServiceMocks() {
+    mockedUserPermissionService = mockStatic(UserPermissionService.class);
+    mockedUserPermissionService
+        .when(UserPermissionService::getJwtUser)
+        .thenReturn(TestConstants.UserConstants.ADMIN_JWT_USER);
+    mockedUserPermissionService.when(UserPermissionService::hasAnyRulingRole).thenReturn(true);
+  }
+
+  @AfterAll
+  static void closeUserPermissionServiceMocks() {
+    mockedUserPermissionService.close();
+  }
 
   @Test
   void getCourseById_ExistingCourseId_ReturnsCourse() {
@@ -57,33 +82,60 @@ class CourseServiceImplTest {
 
   @Test
   void getCourseById_NonExistingCourseId_ThrowsCourseNotFoundException() {
-    when(courseRepository.findById(TestConstants.CourseConstants.INVALID_COURSE_ID))
-        .thenReturn(Optional.empty());
+    when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
+    when(courseValidator.isStudentEnrolledInCourse(
+            INVALID_COURSE_ID, TestConstants.UserConstants.ADMIN_JWT_USER.getId()))
+        .thenReturn(true);
 
     assertThrows(
-        CourseNotFoundException.class,
-        () -> courseService.getCourseById(TestConstants.CourseConstants.INVALID_COURSE_ID));
+        CourseNotFoundException.class, () -> courseService.getCourseById(INVALID_COURSE_ID));
 
-    verify(courseRepository, times(1)).findById(TestConstants.CourseConstants.INVALID_COURSE_ID);
+    verify(courseRepository, times(1)).findById(INVALID_COURSE_ID);
     verifyNoInteractions(taskService);
   }
 
   @Test
-  void createCourse_ValidCourse_CreatesAndReturnsCourse() {
-    when(courseValidator.isAuthorsExistsInDbByIds(
-            TestConstants.CourseConstants.VALID_COURSE.getAuthorIds()))
-        .thenReturn(true);
-    when(courseRepository.save(TestConstants.CourseConstants.VALID_COURSE))
-        .thenReturn(TestConstants.CourseConstants.VALID_COURSE);
+  void getCourseById_UserNotEnrolledAndNoRulingRole_ThrowsUserDontHaveAccessToResource() {
+    when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(false);
+    when(UserPermissionService.hasAnyRulingRole()).thenReturn(false);
 
-    final var createdCourse =
-        courseService.createCourse(TestConstants.CourseConstants.VALID_COURSE);
+    assertThrows(
+        UserDontHaveAccessToResource.class,
+        () -> courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID));
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, createdCourse);
+    verifyNoInteractions(courseRepository, taskService);
+  }
 
-    verify(courseValidator, times(1))
-        .isAuthorsExistsInDbByIds(TestConstants.CourseConstants.VALID_COURSE.getAuthorIds());
-    verify(courseRepository, times(1)).save(TestConstants.CourseConstants.VALID_COURSE);
+  @Test
+  void getCourseById_UserEnrolled_ReturnsCourse() {
+    when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(true);
+
+    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
+        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
+        .thenReturn(Collections.emptyList());
+
+    final var actualCourse =
+        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+
+    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+  }
+
+  @Test
+  void getCourseById_UserHasRulingRole_ReturnsCourse() {
+    when(courseValidator.isStudentEnrolledInCourse(anyString(), any()))
+        .thenReturn(false); // Not enrolled
+    when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
+
+    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
+        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
+        .thenReturn(Collections.emptyList());
+
+    final var actualCourse =
+        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+
+    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
   }
 
   @Test
@@ -155,11 +207,9 @@ class CourseServiceImplTest {
 
   @Test
   void deleteCourseById_NonExistingCourseId_ThrowsCourseNotFoundException() {
-    when(courseRepository.findById(TestConstants.CourseConstants.INVALID_COURSE_ID))
-        .thenReturn(Optional.empty());
+    when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
 
     assertThrows(
-        CourseNotFoundException.class,
-        () -> courseService.deleteCourseById(TestConstants.CourseConstants.INVALID_COURSE_ID));
+        CourseNotFoundException.class, () -> courseService.deleteCourseById(INVALID_COURSE_ID));
   }
 }

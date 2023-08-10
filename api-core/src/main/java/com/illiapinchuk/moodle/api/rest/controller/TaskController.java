@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,6 +72,7 @@ public class TaskController {
    * @return a {@link ResponseEntity} object with a status of 201 (Created) and the created {@link
    *     TaskDto} object in the body.
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PostMapping
   public ResponseEntity<TaskDto> createTask(@Valid @RequestBody final TaskDto taskDto) {
     final var taskRequest = taskMapper.taskDtoToTask(taskDto);
@@ -89,6 +91,7 @@ public class TaskController {
    * @param taskId The ID of the task to which the attachment is being added.
    * @return ResponseEntity containing the updated TaskDto after adding the attachment.
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PostMapping("/{id}/upload")
   public ResponseEntity<TaskDto> addAttachmentToTask(
       @Nonnull @RequestParam("file") final MultipartFile file,
@@ -186,6 +189,7 @@ public class TaskController {
    * @param taskDto A {@link TaskDto} object representing the updated task information.
    * @return A {@link ResponseEntity} containing the updated {@link TaskDto} object.
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PutMapping
   public ResponseEntity<TaskDto> updateTask(@Valid @RequestBody final TaskDto taskDto) {
     final var task = taskService.updateTask(taskDto);
@@ -202,6 +206,7 @@ public class TaskController {
    * @return a response with an HTTP status of OK if the task was successfully deleted, or an HTTP
    *     status of NOT_FOUND if the task was not found
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteTaskById(@PathVariable("id") final String taskId) {
     taskService.deleteTaskById(taskId);

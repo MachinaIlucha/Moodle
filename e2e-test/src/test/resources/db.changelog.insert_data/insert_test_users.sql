@@ -4,7 +4,7 @@ VALUES ('TestUserSurname', 'TestUserLastName', 'testUser@example.com', 'testUser
 
 -- Insert data into 'user_roles' table
 INSERT INTO user_roles (user_id, user_role)
-VALUES (1, 'USER');
+VALUES (3, 'USER');
 
 -- Insert data into 'users' table
 INSERT INTO users (surname, lastname, email, login, password, phone_number, country, city)
@@ -12,4 +12,8 @@ VALUES ('TestAdminUserSurname', 'TestAdminUserLastName', 'testAdminUser@example.
 
 -- Insert data into 'user_roles' table
 INSERT INTO user_roles (user_id, user_role)
-VALUES (2, 'ADMIN');
+VALUES (4, 'ADMIN');
+
+-- Insert data into 'user_roles' table
+INSERT INTO user_roles (user_id, user_role)
+VALUES (4, 'USER');

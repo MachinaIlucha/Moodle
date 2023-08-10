@@ -10,6 +10,8 @@ import com.illiapinchuk.moodle.exception.CannotWriteToS3Exception;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
+import com.illiapinchuk.moodle.exception.UserCantModifyAnotherUserException;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.model.entity.ApiError;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -144,8 +146,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
    * @param ex the AccessDeniedException
    * @return the ApiError object
    */
-  @ExceptionHandler(AccessDeniedException.class)
-  protected ResponseEntity<Object> handleEntityNotFound(AccessDeniedException ex) {
+  @ExceptionHandler({
+    AccessDeniedException.class,
+    UserCantModifyAnotherUserException.class,
+    UserDontHaveAccessToResource.class
+  })
+  protected ResponseEntity<Object> handleEntityNotFound(RuntimeException ex) {
     final var apiError = new ApiError(FORBIDDEN);
     apiError.setMessage(ex.getMessage());
     apiError.setDebugMessage(ex.getMessage());

@@ -46,14 +46,11 @@ class CourseValidatorTest {
 
   @Test
   void testIsAuthorsExistsInDbByIds_AllAuthorsExist_ReturnsTrue() {
-    when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(0))))
+    when(userRepository.existsById(TestConstants.UserConstants.LIST_OF_USER_IDS.get(0)))
         .thenReturn(true);
-    when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(1))))
+    when(userRepository.existsById(TestConstants.UserConstants.LIST_OF_USER_IDS.get(1)))
         .thenReturn(true);
-    when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(2))))
+    when(userRepository.existsById(TestConstants.UserConstants.LIST_OF_USER_IDS.get(2)))
         .thenReturn(true);
 
     boolean result =
@@ -64,11 +61,9 @@ class CourseValidatorTest {
 
   @Test
   void testIsAuthorsExistsInDbByIds_SomeAuthorsDoNotExist_ReturnsFalse() {
-    when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(0))))
+    when(userRepository.existsById(TestConstants.UserConstants.LIST_OF_USER_IDS.get(0)))
         .thenReturn(true);
-    when(userRepository.existsById(
-            Long.valueOf(TestConstants.UserConstants.LIST_OF_USER_IDS.get(1))))
+    when(userRepository.existsById(TestConstants.UserConstants.LIST_OF_USER_IDS.get(1)))
         .thenReturn(false);
 
     boolean result =
@@ -84,5 +79,31 @@ class CourseValidatorTest {
             TestConstants.UserConstants.EMPTY_LIST_OF_USER_IDS);
 
     assertTrue(result);
+  }
+
+  @Test
+  void testIsStudentEnrolledInCourseWithTask_StudentEnrolled_ReturnsTrue() {
+    when(courseRepository.existsByTasksIdAndStudentsContains(
+            TestConstants.TaskConstants.TASK_ID, TestConstants.UserConstants.USER_ID))
+        .thenReturn(true);
+
+    boolean result =
+        courseValidator.isStudentEnrolledInCourseWithTask(
+            TestConstants.TaskConstants.TASK_ID, TestConstants.UserConstants.USER_ID);
+
+    assertTrue(result);
+  }
+
+  @Test
+  void testIsStudentEnrolledInCourseWithTask_StudentNotEnrolled_ReturnsFalse() {
+    when(courseRepository.existsByTasksIdAndStudentsContains(
+            TestConstants.TaskConstants.TASK_ID, TestConstants.UserConstants.USER_ID))
+        .thenReturn(false);
+
+    boolean result =
+        courseValidator.isStudentEnrolledInCourseWithTask(
+            TestConstants.TaskConstants.TASK_ID, TestConstants.UserConstants.USER_ID);
+
+    assertFalse(result);
   }
 }

@@ -35,6 +35,7 @@ public class TestConstants {
   public class UserConstants {
     public static final String EXISTING_ADMIN_EMAIL = "testAdminUser@example.com";
     public static final String NOT_EXISTING_ADMIN_EMAIL = "notExistingEmail@example.com";
+    public static final String EXISTING_USER_EMAIL = "testUser@example.com";
   }
 
   @UtilityClass
@@ -49,7 +50,7 @@ public class TestConstants {
             .dueDate(new Date())
             .creationDate(new Date())
             .course(new Course())
-            .authorId("1")
+            .authorId(1L)
             .status(TaskStatus.OPEN)
             .attachments(new ArrayList<>())
             .submissions(new ArrayList<>())
@@ -62,7 +63,7 @@ public class TestConstants {
             .dueDate(new Date())
             .creationDate(new Date())
             .course(new Course())
-            .authorId("1")
+            .authorId(1L)
             .status(TaskStatus.OPEN)
             .attachments(new ArrayList<>())
             .submissions(new ArrayList<>())
@@ -75,7 +76,7 @@ public class TestConstants {
             .dueDate(new Date())
             .creationDate(new Date())
             .course(new Course())
-            .authorId("2")
+            .authorId(2L)
             .status(TaskStatus.OPEN)
             .attachments(new ArrayList<>())
             .submissions(new ArrayList<>())
@@ -88,7 +89,7 @@ public class TestConstants {
             .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .creationDate(new Date())
             .courseId("1")
-            .authorId("1")
+            .authorId(1L)
             .status(TaskStatus.OPEN)
             .build();
     public static final TaskDto INVALID_TASK_DTO_NOT_EXISTED_COURSE_ID =
@@ -99,7 +100,7 @@ public class TestConstants {
             .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .creationDate(new Date())
             .courseId(INVALID_COURSE_ID)
-            .authorId("1")
+            .authorId(1L)
             .status(TaskStatus.OPEN)
             .build();
     public static final TaskDto INVALID_TASK_DTO_NOT_EXISTED_AUTHOR_ID =
@@ -110,7 +111,7 @@ public class TestConstants {
             .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
             .creationDate(new Date())
             .courseId("1")
-            .authorId("4124243124515")
+            .authorId(123456789L)
             .status(TaskStatus.OPEN)
             .build();
   }
@@ -124,13 +125,13 @@ public class TestConstants {
         CourseDto.builder()
             .name("Java Course")
             .description("This is java core course.")
-            .authorIds(List.of("2"))
+            .authorIds(List.of(2L))
             .build();
     public static final CourseDto VALID_COURSE_DTO_WITH_TWO_AUTHORS =
         CourseDto.builder()
             .name("Java Course")
             .description("This is java core course.")
-            .authorIds(List.of("1", "2"))
+            .authorIds(List.of(1L, 2L))
             .build();
     public static final CourseDto COURSE_DTO_WITHOUT_AUTHORS =
         CourseDto.builder()

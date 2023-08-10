@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +33,6 @@ public class PasswordController {
   private final UserValidator userValidator;
   private final UserTokenService userTokenService;
   private final UserMapper userMapper;
-  private final PasswordEncoder passwordEncoder;
   private final UserService userService;
 
   /**
@@ -82,18 +80,14 @@ public class PasswordController {
   @PutMapping(value = "/reset")
   public ResponseEntity<Void> setNewPassword(
       @RequestParam("token") final String token, @RequestParam("password") final String password) {
-    final var encodedPassword = passwordEncoder.encode(password);
-
     // Find the user associated with the reset token
     final var user = userTokenService.getUserByToken(token);
-    final var userDto = userMapper.userToUserDto(user);
-    userDto.setPassword(encodedPassword);
 
     // Delete token, so now no-one can use it one more time
     userTokenService.deleteTokenByUserId(user.getId());
 
     // Update user
-    userService.updateUser(userDto);
+    userService.updateUserPassword(password, user.getId());
 
     return ResponseEntity.ok().build();
   }

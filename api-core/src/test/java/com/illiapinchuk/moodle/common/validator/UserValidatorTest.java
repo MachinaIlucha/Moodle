@@ -64,23 +64,21 @@ class UserValidatorTest {
 
   @Test
   void testIsUserExistInDbById_ValidId_ReturnsTrue() {
-    when(userRepository.existsById(Long.valueOf(TestConstants.UserConstants.USER_ID)))
-        .thenReturn(true);
+    when(userRepository.existsById(TestConstants.UserConstants.USER_ID)).thenReturn(true);
 
     boolean result = userValidator.isUserExistInDbById(TestConstants.UserConstants.USER_ID);
 
     assertTrue(result);
-    verify(userRepository).existsById(Long.valueOf(TestConstants.UserConstants.USER_ID));
+    verify(userRepository).existsById(TestConstants.UserConstants.USER_ID);
   }
 
   @Test
   void testIsUserExistInDbById_InvalidId_ReturnsFalse() {
-    when(userRepository.existsById(Long.valueOf(TestConstants.UserConstants.USER_ID)))
-        .thenReturn(false);
+    when(userRepository.existsById(TestConstants.UserConstants.USER_ID)).thenReturn(false);
 
     boolean result = userValidator.isUserExistInDbById(TestConstants.UserConstants.USER_ID);
 
     assertFalse(result);
-    verify(userRepository).existsById(Long.valueOf(TestConstants.UserConstants.USER_ID));
+    verify(userRepository).existsById(TestConstants.UserConstants.USER_ID);
   }
 }

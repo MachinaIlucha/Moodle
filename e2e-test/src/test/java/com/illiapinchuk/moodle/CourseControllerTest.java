@@ -28,6 +28,7 @@ import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID_TO_DELETE;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
+import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_USER_LOGIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
@@ -55,7 +56,7 @@ class CourseControllerTest {
   }
 
   @Test
-  void whenExistingCourseIdShouldReturnOKStatus() {
+  void whenExistingCourseIdAndAdminUserShouldReturnOKStatus() {
     final var resp =
         restTemplate.exchange(
             COURSE_WITH_ID_CONTROLLER_PATH,
@@ -68,14 +69,35 @@ class CourseControllerTest {
   }
 
   @Test
+  void whenExistingCourseIdAndNotAdminUserAndNotAllowedToSeeCourseShouldReturnOKStatus() {
+    final HttpHeaders headers = new HttpHeaders();
+    final HttpEntity<CourseDto> httpEntity = new HttpEntity<>(headers);
+
+    final var response = restTemplate.postForEntity(LOGIN_PATH, EXISTING_USER_LOGIN_AUTH_DTO, Map.class);
+    final var token = (String) response.getBody().get("token");
+    headers.add("token", token);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    final var resp =
+            restTemplate.exchange(
+                    COURSE_WITH_ID_CONTROLLER_PATH,
+                    HttpMethod.GET,
+                    httpEntity,
+                    String.class,
+                    VALID_COURSE_ID);
+
+    assertEquals(HttpStatus.FORBIDDEN, resp.getStatusCode());
+  }
+
+  @Test
   void whenNotExistingCourseIdShouldReturnNotFoundStatus() {
     final var resp =
-        restTemplate.exchange(
-            COURSE_WITH_ID_CONTROLLER_PATH,
-            HttpMethod.GET,
-            HTTP_ENTITY,
-            String.class,
-            INVALID_COURSE_ID);
+            restTemplate.exchange(
+                    COURSE_WITH_ID_CONTROLLER_PATH,
+                    HttpMethod.GET,
+                    HTTP_ENTITY,
+                    String.class,
+                    INVALID_COURSE_ID);
 
     assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }

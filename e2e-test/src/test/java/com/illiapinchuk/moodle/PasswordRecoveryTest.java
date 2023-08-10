@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_INIT_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.PASSWORD_RESET_PATH;
-import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_ADMIN_EMAIL;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_USER_EMAIL;
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
@@ -45,7 +46,7 @@ class PasswordRecoveryTest {
   public void getResetToken() throws MessagingException, IOException {
     final var builder =
         UriComponentsBuilder.fromUriString(PASSWORD_RESET_INIT_PATH)
-            .queryParam("email", EXISTING_ADMIN_EMAIL);
+            .queryParam("email", EXISTING_USER_EMAIL);
 
     restTemplate.postForEntity(builder.toUriString(), null, Void.class);
     greenMail.waitForIncomingEmail(2000, 1);
@@ -64,12 +65,14 @@ class PasswordRecoveryTest {
   }
 
   @Test
-  void testPasswordResetWhenTokenIsValidShouldReturnOkStatus() {
+  void testPasswordResetWhenTokenIsValidShouldReturnOkStatus() throws InterruptedException {
     final var newPassword = "new-password";
     final var urlBuilder =
         UriComponentsBuilder.fromUriString(PASSWORD_RESET_PATH)
             .queryParam("token", RESET_TOKEN)
             .queryParam("password", newPassword);
+    // waiting 1 sec for all async operations will be finished
+    sleep(1000);
 
     final var response =
         restTemplate.exchange(urlBuilder.toUriString(), HttpMethod.PUT, null, String.class);

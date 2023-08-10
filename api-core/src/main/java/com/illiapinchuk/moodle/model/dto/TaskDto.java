@@ -62,10 +62,10 @@ public class TaskDto {
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_COURSE_BLANK_ERROR_MESSAGE)
   String courseId;
 
-  @NotBlank(
+  @NotNull(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_AUTHOR_BLANK_ERROR_MESSAGE)
-  String authorId;
+  Long authorId;
 
   @NotNull(
       message =

@@ -41,6 +41,15 @@ public interface UserService {
   User updateUser(UserDto userDto);
 
   /**
+   * Updates the password for a user with the specified ID.
+   *
+   * @param password The new password for the user. Should not be null or empty.
+   * @param id The unique ID of the user whose password needs to be updated. Should be a positive
+   *     value.
+   */
+  void updateUserPassword(String password, Long id);
+
+  /**
    * Deletes a user by login or email.
    *
    * @param login the login of the user to delete
