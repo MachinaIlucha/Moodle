@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,7 @@ public class CourseController {
    * @return a {@link ResponseEntity} object with a status of 201 (Created) and the created {@link
    *     CourseDto} object in the body.
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PostMapping
   public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody final CourseDto courseDto) {
     final var courseRequest = courseMapper.courseDtoToCourse(courseDto);
@@ -70,6 +72,7 @@ public class CourseController {
    * @param courseDto A {@link CourseDto} object representing the updated course information.
    * @return A {@link ResponseEntity} containing the updated {@link CourseDto} object.
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PutMapping
   public ResponseEntity<CourseDto> updateCourse(@Valid @RequestBody final CourseDto courseDto) {
     final var course = courseService.updateCourse(courseDto);
@@ -86,6 +89,7 @@ public class CourseController {
    * @return a response with an HTTP status of OK if the course was successfully deleted, or an HTTP
    *     status of NOT_FOUND if the course was not found
    */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteCourseById(@PathVariable("id") final String courseId) {
     courseService.deleteCourseById(courseId);

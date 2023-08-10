@@ -20,7 +20,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none  # Hibernate DDL auto-generation mode
-    show-sql: true  # Show SQL statements in the console
+#    show-sql: true  # Show SQL statements in the console
   h2:
     console:
       enabled: true  # Enable H2 console for database administration

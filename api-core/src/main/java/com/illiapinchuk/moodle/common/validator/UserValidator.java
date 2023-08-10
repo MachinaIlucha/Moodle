@@ -38,7 +38,7 @@ public class UserValidator {
    * @param id the id to check
    * @return true if the user exists in the database, false otherwise
    */
-  public boolean isUserExistInDbById(@Nonnull final String id) {
-    return userRepository.existsById(Long.valueOf(id));
+  public boolean isUserExistInDbById(@Nonnull final Long id) {
+    return userRepository.existsById(id);
   }
 }

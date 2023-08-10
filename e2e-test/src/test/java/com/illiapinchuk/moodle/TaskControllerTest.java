@@ -2,6 +2,7 @@ package com.illiapinchuk.moodle;
 
 import com.illiapinchuk.moodle.config.MongoInsertData;
 import com.illiapinchuk.moodle.config.RedisTestConfiguration;
+import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.Map;
 
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
+import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_USER_LOGIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.TASK_WITH_ID_CONTROLLER_PATH;
@@ -52,7 +54,7 @@ class TaskControllerTest {
   }
 
   @Test
-  void whenExistingTaskIdShouldReturnOKStatus() {
+  void whenExistingTaskIdAndAdminUserShouldReturnOKStatus() {
     final var resp =
         restTemplate.exchange(
             TASK_WITH_ID_CONTROLLER_PATH,
@@ -62,6 +64,24 @@ class TaskControllerTest {
             VALID_TASK_ID);
 
     assertEquals(HttpStatus.OK, resp.getStatusCode());
+  }
+
+  @Test
+  void whenExistingTaskIdAndNotAdminUserAndNotAllowedToSeeTaskShouldReturnOKStatus() {
+    final HttpHeaders headers = new HttpHeaders();
+    final HttpEntity<CourseDto> httpEntity = new HttpEntity<>(headers);
+
+    final var response =
+        restTemplate.postForEntity(LOGIN_PATH, EXISTING_USER_LOGIN_AUTH_DTO, Map.class);
+    final var token = (String) response.getBody().get("token");
+    headers.add("token", token);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    final var resp =
+        restTemplate.exchange(
+            TASK_WITH_ID_CONTROLLER_PATH, HttpMethod.GET, httpEntity, String.class, VALID_TASK_ID);
+
+    assertEquals(HttpStatus.FORBIDDEN, resp.getStatusCode());
   }
 
   @Test

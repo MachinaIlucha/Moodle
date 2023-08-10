@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.common;
 
+import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.model.dto.EmailDto;
@@ -25,7 +26,7 @@ public class TestConstants {
 
   @UtilityClass
   public class UserConstants {
-    public static final String USER_ID = "1";
+    public static final Long USER_ID = 1L;
     public static final String USER_LOGIN = "test-login";
     public static final String USER_EMAIL = "moodle@example.com";
     public static final String USER_INVALID_EMAIL = "invalid.email";
@@ -33,8 +34,8 @@ public class TestConstants {
     public static final String USER_NULL_EMAIL = null;
     public static final String USER_EMPTY_EMAIL = "";
     public static final String USER_EMAIL_WITH_WHITESPACE = "  " + USER_EMAIL;
-    public static final List<String> LIST_OF_USER_IDS = List.of("1", "2", "3");
-    public static final List<String> EMPTY_LIST_OF_USER_IDS = Collections.emptyList();
+    public static final List<Long> LIST_OF_USER_IDS = List.of(1L, 2L, 3L);
+    public static final List<Long> EMPTY_LIST_OF_USER_IDS = Collections.emptyList();
 
     public static final User VALID_USER =
         User.builder()
@@ -52,6 +53,7 @@ public class TestConstants {
             .build();
     public static final UserDto VALID_USER_DTO =
         UserDto.builder()
+            .id(USER_ID)
             .surname("Smith")
             .lastname("John")
             .email(USER_EMAIL)
@@ -63,6 +65,22 @@ public class TestConstants {
             .country("USA")
             .city("New York")
             .build();
+    public static final User VALID_ADMIN_USER =
+        User.builder()
+            .id(USER_ID)
+            .surname("Admin")
+            .lastname("Admin")
+            .email(USER_EMAIL)
+            .login(USER_LOGIN)
+            .password(USER_VALID_PASSWORD)
+            .bio("I am a software engineer.")
+            .phoneNumber("+1234567890")
+            .dateOfBirth(new Date())
+            .country("USA")
+            .city("New York")
+            .roles(Set.of(RoleName.ADMIN, RoleName.USER))
+            .build();
+    public static final JwtUser ADMIN_JWT_USER = JwtUser.build(VALID_ADMIN_USER);
   }
 
   @UtilityClass
@@ -91,7 +109,7 @@ public class TestConstants {
             .dueDate(new Date()) // Set the due date to the current date
             .creationDate(new Date()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
-            .authorId("author1")
+            .authorId(1L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
             .submissions(new ArrayList<>()) // Add any submissions if necessary
@@ -103,7 +121,7 @@ public class TestConstants {
             .dueDate(new Date()) // Set the due date to the current date
             .creationDate(new Date()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
-            .authorId("author2")
+            .authorId(2L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
             .submissions(new ArrayList<>()) // Add any submissions if necessary
@@ -115,7 +133,7 @@ public class TestConstants {
             .dueDate(new Date()) // Set the due date to the current date
             .creationDate(new Date()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
-            .authorId("author3")
+            .authorId(3L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
             .submissions(new ArrayList<>()) // Add any submissions if necessary
@@ -130,7 +148,7 @@ public class TestConstants {
             .dueDate(new Date())
             .creationDate(new Date())
             .courseId("course123")
-            .authorId("author123")
+            .authorId(1L)
             .status(TaskStatus.OPEN)
             .build();
   }

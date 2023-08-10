@@ -3,9 +3,12 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.common.date.DateService;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
@@ -15,11 +18,13 @@ import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.annotation.Nonnull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /** Implementation of {@link TaskService} interface. */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TaskServiceImpl implements TaskService {
 
   private final TaskRepository taskRepository;
@@ -28,17 +33,27 @@ public class TaskServiceImpl implements TaskService {
   private final DateService dateService;
   private final UserValidator userValidator;
   private final TaskAttachmentService taskAttachmentService;
+  private final CourseValidator courseValidator;
 
   @Override
-  public Task getTaskById(@Nonnull final String id) {
-    final var task =
-        taskRepository
-            .findById(id)
-            .orElseThrow(
-                () -> new TaskNotFoundException(String.format("Task with id: %s not found", id)));
+  public Task getTaskById(@Nonnull final String taskId) {
+    var userId = UserPermissionService.getJwtUser().getId();
 
-    task.setAttachments(taskAttachmentService.getAttachmentsByTaskId(id));
-    return task;
+    if (!courseValidator.isStudentEnrolledInCourseWithTask(taskId, userId)
+        && !UserPermissionService.hasAnyRulingRole()) {
+      log.error("User with id - {} trying to access task with id - {}", userId, taskId);
+      throw new UserDontHaveAccessToResource("User doesn't have access to this task.");
+    }
+
+    return taskRepository
+        .findById(taskId)
+        .map(
+            task -> {
+              task.setAttachments(taskAttachmentService.getAttachmentsByTaskId(taskId));
+              return task;
+            })
+        .orElseThrow(
+            () -> new TaskNotFoundException(String.format("Task with id: %s not found", taskId)));
   }
 
   @Override

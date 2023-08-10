@@ -2,6 +2,8 @@ package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.UserCantModifyAnotherUserException;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.model.entity.RoleName;
@@ -54,14 +56,40 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User updateUser(@Nonnull final UserDto userDto) {
-    final var userLogin = userDto.getLogin();
-    if (!userValidator.isLoginExistInDb(userLogin)) {
-      throw new UserNotFoundException("User with current login not found");
+    final var userId = userDto.getId();
+
+    if (!userValidator.isUserExistInDbById(userId)) {
+      throw new UserNotFoundException("User with current id not found");
     }
-    final var user = getUserByLoginOrEmail(userLogin, null);
+
+    // If the authenticated user is not an admin and (does not have a USER role or is not updating
+    // their own details)
+    if (!UserPermissionService.hasAnyRulingRole()
+        && (!UserPermissionService.hasUserRole()
+            || !UserPermissionService.isSameUserAsAuthenticated(userId))) {
+      throw new UserCantModifyAnotherUserException("User has no permission to modify another user");
+    }
+
+    final var user = getUserById(userId);
+
+    // Mapping the provided user details (from DTO) to the fetched user entity
     userMapper.updateUser(user, userDto);
 
+    // Encoding and setting the password of the user entity
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+    // Saving the updated user entity to the database and returning the saved entity
     return userRepository.save(user);
+  }
+
+  @Override
+  @Transactional
+  public void updateUserPassword(@Nonnull final String password, @Nonnull final Long id) {
+    if (!userValidator.isUserExistInDbById(id)) {
+      throw new UserNotFoundException("User with current id not found");
+    }
+    final var encodedPassword = passwordEncoder.encode(password);
+    userRepository.updateUserPassword(encodedPassword, id);
   }
 
   @Override

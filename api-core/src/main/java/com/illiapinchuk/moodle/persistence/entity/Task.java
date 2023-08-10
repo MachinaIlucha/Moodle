@@ -64,10 +64,10 @@ public class Task {
   @DBRef
   Course course;
 
-  @NotBlank(
+  @NotNull(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_AUTHOR_BLANK_ERROR_MESSAGE)
-  String authorId;
+  Long authorId;
 
   @NotNull(
       message =

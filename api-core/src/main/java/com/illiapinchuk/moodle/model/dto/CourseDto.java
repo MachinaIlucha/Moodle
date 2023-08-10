@@ -5,6 +5,7 @@ import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AccessLevel;
@@ -49,7 +50,7 @@ public class CourseDto {
   @NotEmpty(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
-  List<@NotBlank String> authorIds;
+  List<@NotNull Long> authorIds;
 
   List<@NotBlank String> students;
 
