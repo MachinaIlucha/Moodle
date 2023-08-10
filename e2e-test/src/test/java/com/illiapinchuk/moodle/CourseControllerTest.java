@@ -73,18 +73,19 @@ class CourseControllerTest {
     final HttpHeaders headers = new HttpHeaders();
     final HttpEntity<CourseDto> httpEntity = new HttpEntity<>(headers);
 
-    final var response = restTemplate.postForEntity(LOGIN_PATH, EXISTING_USER_LOGIN_AUTH_DTO, Map.class);
+    final var response =
+        restTemplate.postForEntity(LOGIN_PATH, EXISTING_USER_LOGIN_AUTH_DTO, Map.class);
     final var token = (String) response.getBody().get("token");
     headers.add("token", token);
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     final var resp =
-            restTemplate.exchange(
-                    COURSE_WITH_ID_CONTROLLER_PATH,
-                    HttpMethod.GET,
-                    httpEntity,
-                    String.class,
-                    VALID_COURSE_ID);
+        restTemplate.exchange(
+            COURSE_WITH_ID_CONTROLLER_PATH,
+            HttpMethod.GET,
+            httpEntity,
+            String.class,
+            VALID_COURSE_ID);
 
     assertEquals(HttpStatus.FORBIDDEN, resp.getStatusCode());
   }
@@ -92,12 +93,12 @@ class CourseControllerTest {
   @Test
   void whenNotExistingCourseIdShouldReturnNotFoundStatus() {
     final var resp =
-            restTemplate.exchange(
-                    COURSE_WITH_ID_CONTROLLER_PATH,
-                    HttpMethod.GET,
-                    HTTP_ENTITY,
-                    String.class,
-                    INVALID_COURSE_ID);
+        restTemplate.exchange(
+            COURSE_WITH_ID_CONTROLLER_PATH,
+            HttpMethod.GET,
+            HTTP_ENTITY,
+            String.class,
+            INVALID_COURSE_ID);
 
     assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }
