@@ -29,6 +29,9 @@ public class CustomBasicAuthEntryPoint implements AuthenticationEntryPoint {
       AuthenticationException authException)
       throws IOException {
 
+    // Set the WWW-Authenticate header, which prompts the browser to show the login dialog
+    response.addHeader("WWW-Authenticate", "Basic realm=\"Moodle\", charset=\"UTF-8\"");
+
     log.error("Exception was thrown in entry point: ", authException);
     final var writer = response.getWriter();
 
