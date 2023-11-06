@@ -52,8 +52,8 @@ public class Course {
   String description;
 
   @NotEmpty(
-          message =
-                  ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
+      message =
+          ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
   Set<@NotNull Long> authorIds;
 
   Set<@NotNull Long> students;

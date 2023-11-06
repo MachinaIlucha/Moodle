@@ -34,7 +34,8 @@ public class CourseServiceImpl implements CourseService {
   private final UserValidator userValidator;
 
   @Override
-  public void addStudentsToCourse(@Nonnull final String courseId, @NotEmpty final List<Long> studentIds) {
+  public void addStudentsToCourse(
+      @Nonnull final String courseId, @NotEmpty final List<Long> studentIds) {
     checkIfUserHasAccessToCourse(courseId);
 
     if (!courseValidator.isCourseExistsInDbById(courseId)) {
@@ -44,22 +45,28 @@ public class CourseServiceImpl implements CourseService {
     }
 
     // Retrieve all students at once to minimize database calls
-    final var nonExistingStudents = studentIds.stream()
+    final var nonExistingStudents =
+        studentIds.stream()
             .filter(studentId -> !userValidator.isUserExistInDbById(studentId))
             .toList();
 
     // If there are non-existing students, throw an exception
     if (!nonExistingStudents.isEmpty()) {
-      final var nonExistingStudentIds = nonExistingStudents.stream()
-              .map(String::valueOf)
-              .collect(Collectors.joining(", "));
-      final var errorMessage = String.format("Students with ids: %s not found", nonExistingStudentIds);
+      final var nonExistingStudentIds =
+          nonExistingStudents.stream().map(String::valueOf).collect(Collectors.joining(", "));
+      final var errorMessage =
+          String.format("Students with ids: %s not found", nonExistingStudentIds);
       log.error(errorMessage);
       throw new UserNotFoundException(errorMessage);
     }
 
-    final var course = courseRepository.findById(courseId)
-            .orElseThrow(() -> new CourseNotFoundException(String.format("Course with id: %s not found", courseId)));
+    final var course =
+        courseRepository
+            .findById(courseId)
+            .orElseThrow(
+                () ->
+                    new CourseNotFoundException(
+                        String.format("Course with id: %s not found", courseId)));
 
     boolean changed = course.getStudents().addAll(studentIds);
     if (changed) {
