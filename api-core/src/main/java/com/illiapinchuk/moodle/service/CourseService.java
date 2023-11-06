@@ -3,8 +3,18 @@ package com.illiapinchuk.moodle.service;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 
+import java.util.List;
+
 /** Service interface for managing courses. */
 public interface CourseService {
+
+  /**
+   * Adds one or more students to a course with the specified ID.
+   *
+   * @param id The ID of the course to which students will be added.
+   * @param studentIds a list of student ids to add to the course
+   */
+  void addStudentsToCourse(String id, List<Long> studentIds);
 
   /**
    * Retrieves a course by its ID.

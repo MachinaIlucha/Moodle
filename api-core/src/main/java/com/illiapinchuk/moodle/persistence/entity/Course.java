@@ -4,14 +4,16 @@ import com.illiapinchuk.moodle.common.ApplicationConstants;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -50,11 +52,11 @@ public class Course {
   String description;
 
   @NotEmpty(
-      message =
-          ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
-  List<@NonNull Long> authorIds;
+          message =
+                  ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
+  Set<@NotNull Long> authorIds;
 
-  List<@NonNull Long> students;
+  Set<@NotNull Long> students;
 
   @DBRef List<@Valid Task> tasks;
 }

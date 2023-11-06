@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,11 +50,11 @@ public class CourseDto {
   String description;
 
   @NotEmpty(
-      message =
-          ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
-  List<@NotNull Long> authorIds;
+          message =
+                  ApplicationConstants.Web.DataValidation.ErrorMessage.COURSE_AUTHORS_EMPTY_ERROR_MESSAGE)
+  Set<@NotNull Long> authorIds;
 
-  List<@NotBlank String> students;
+  Set<@NotNull Long> students;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   List<@NotBlank String> tasks;

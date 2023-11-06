@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
 
@@ -125,13 +125,13 @@ public class TestConstants {
         CourseDto.builder()
             .name("Java Course")
             .description("This is java core course.")
-            .authorIds(List.of(2L))
+            .authorIds(Set.of(2L))
             .build();
     public static final CourseDto VALID_COURSE_DTO_WITH_TWO_AUTHORS =
         CourseDto.builder()
             .name("Java Course")
             .description("This is java core course.")
-            .authorIds(List.of(1L, 2L))
+            .authorIds(Set.of(1L, 2L))
             .build();
     public static final CourseDto COURSE_DTO_WITHOUT_AUTHORS =
         CourseDto.builder()

@@ -34,8 +34,8 @@ public class TestConstants {
     public static final String USER_NULL_EMAIL = null;
     public static final String USER_EMPTY_EMAIL = "";
     public static final String USER_EMAIL_WITH_WHITESPACE = "  " + USER_EMAIL;
-    public static final List<Long> LIST_OF_USER_IDS = List.of(1L, 2L, 3L);
-    public static final List<Long> EMPTY_LIST_OF_USER_IDS = Collections.emptyList();
+    public static final Set<Long> SET_OF_USER_IDS = Set.of(1L, 2L, 3L);
+    public static final Set<Long> EMPTY_SET_OF_USER_IDS = Collections.emptySet();
 
     public static final User VALID_USER =
         User.builder()

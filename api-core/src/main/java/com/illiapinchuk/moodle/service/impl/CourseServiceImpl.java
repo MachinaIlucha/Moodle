@@ -2,6 +2,7 @@ package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
+import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
@@ -12,9 +13,13 @@ import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** Implementation of {@link CourseService} interface. */
 @Service
@@ -26,16 +31,45 @@ public class CourseServiceImpl implements CourseService {
   private final CourseMapper courseMapper;
   private final CourseValidator courseValidator;
   private final TaskService taskService;
+  private final UserValidator userValidator;
+
+  @Override
+  public void addStudentsToCourse(@Nonnull final String courseId, @NotEmpty final List<Long> studentIds) {
+    checkIfUserHasAccessToCourse(courseId);
+
+    if (!courseValidator.isCourseExistsInDbById(courseId)) {
+      final var errorMessage = String.format("Course with id: %s not found", courseId);
+      log.error(errorMessage);
+      throw new CourseNotFoundException(errorMessage);
+    }
+
+    // Retrieve all students at once to minimize database calls
+    final var nonExistingStudents = studentIds.stream()
+            .filter(studentId -> !userValidator.isUserExistInDbById(studentId))
+            .toList();
+
+    // If there are non-existing students, throw an exception
+    if (!nonExistingStudents.isEmpty()) {
+      final var nonExistingStudentIds = nonExistingStudents.stream()
+              .map(String::valueOf)
+              .collect(Collectors.joining(", "));
+      final var errorMessage = String.format("Students with ids: %s not found", nonExistingStudentIds);
+      log.error(errorMessage);
+      throw new UserNotFoundException(errorMessage);
+    }
+
+    final var course = courseRepository.findById(courseId)
+            .orElseThrow(() -> new CourseNotFoundException(String.format("Course with id: %s not found", courseId)));
+
+    boolean changed = course.getStudents().addAll(studentIds);
+    if (changed) {
+      courseRepository.save(course); // Save only if there was a change
+    }
+  }
 
   @Override
   public Course getCourseById(@Nonnull final String courseId) {
-    final var userId = UserPermissionService.getJwtUser().getId();
-
-    if (!courseValidator.isStudentEnrolledInCourse(courseId, userId)
-        && !UserPermissionService.hasAnyRulingRole()) {
-      log.error("User with id - {} trying to access course with id - {}", userId, courseId);
-      throw new UserDontHaveAccessToResource("User doesn't have access to this course.");
-    }
+    checkIfUserHasAccessToCourse(courseId);
 
     return courseRepository
         .findById(courseId)
@@ -76,5 +110,21 @@ public class CourseServiceImpl implements CourseService {
     course.getTasks().forEach(task -> taskService.deleteTaskById(task.getId()));
 
     courseRepository.deleteById(id);
+  }
+
+  /**
+   * Checks if the user identified by their JWT token has access to a specific course.
+   *
+   * @param courseId The ID of the course to check access for.
+   * @throws UserDontHaveAccessToResource If the user doesn't have access to the specified course.
+   */
+  private void checkIfUserHasAccessToCourse(@Nonnull final String courseId) {
+    final var userId = UserPermissionService.getJwtUser().getId();
+
+    if (!courseValidator.isStudentEnrolledInCourse(courseId, userId)
+        && !UserPermissionService.hasAnyRulingRole()) {
+      log.error("User with id - {} trying to access course with id - {}", userId, courseId);
+      throw new UserDontHaveAccessToResource("User doesn't have access to this course.");
+    }
   }
 }
