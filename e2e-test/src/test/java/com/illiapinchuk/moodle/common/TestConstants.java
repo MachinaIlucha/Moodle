@@ -23,7 +23,8 @@ public class TestConstants {
     public static final String LOGIN_PATH = "/auth/login";
     public static final String USER_CONTROLLER_PATH = "/users";
     public static final String COURSE_WITH_ID_CONTROLLER_PATH = "/courses/{id}";
-    public static final String ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH = "/courses/{courseId}/students";
+    public static final String ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH =
+        "/courses/{courseId}/students";
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String TASK_WITH_ID_CONTROLLER_PATH = "/tasks/{id}";

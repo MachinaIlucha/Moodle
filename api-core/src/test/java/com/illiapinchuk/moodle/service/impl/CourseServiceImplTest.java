@@ -99,7 +99,7 @@ class CourseServiceImplTest {
   void addStudentsToCourse_StudentsAlreadyEnrolled_DoesNotSaveCourse() {
     when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
     when(courseRepository.findById(anyString()))
-            .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
     when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
 
     courseService.addStudentsToCourse(VALID_COURSE_ID, List.of(8L, 9L));

@@ -37,12 +37,12 @@ public class MongoInsertData {
               .description("Test This is java core course 2.")
               .build();
       final Course VALID_COURSE_3 =
-              Course.builder()
-                      .id("3")
-                      .name("Test Java Course 3")
-                      .description("Test This is java core course 3.")
-                      .students(new HashSet<>(List.of(1L, 2L, 3L)))
-                      .build();
+          Course.builder()
+              .id("3")
+              .name("Test Java Course 3")
+              .description("Test This is java core course 3.")
+              .students(new HashSet<>(List.of(1L, 2L, 3L)))
+              .build();
 
       // save all courses
       courseRepository.saveAll(List.of(VALID_COURSE_1, VALID_COURSE_2, VALID_COURSE_3));

@@ -185,13 +185,13 @@ public class TestConstants {
             .description(COURSE_DESCRIPTION)
             .build();
     public static final Course VALID_COURSE_WITH_STUDENTS =
-            Course.builder()
-                    .id(VALID_COURSE_ID)
-                    .name(COURSE_NAME)
-                    .description(COURSE_DESCRIPTION)
-                    .tasks(TaskConstants.LIST_OF_VALID_TASKS)
-                    .students(new HashSet<>(Arrays.asList(1L, 2L, 3L)))
-                    .build();
+        Course.builder()
+            .id(VALID_COURSE_ID)
+            .name(COURSE_NAME)
+            .description(COURSE_DESCRIPTION)
+            .tasks(TaskConstants.LIST_OF_VALID_TASKS)
+            .students(new HashSet<>(Arrays.asList(1L, 2L, 3L)))
+            .build();
     public static final CourseDto VALID_COURSE_DTO =
         CourseDto.builder()
             .id(VALID_COURSE_ID)
