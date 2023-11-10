@@ -22,16 +22,21 @@ import java.util.Map;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.COURSE_DTO_INVALID_ID_AS_STRING;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.COURSE_DTO_WITHOUT_AUTHORS;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.NOT_VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_DTO_AS_STRING;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_DTO_WITH_TWO_AUTHORS;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID_TO_DELETE;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_USER_LOGIN_AUTH_DTO;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.LIST_OF_USERS_IDS;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.LIST_OF_USERS_WITH_NON_EXISTS_IDS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
@@ -53,6 +58,51 @@ class CourseControllerTest {
     final var token = (String) response.getBody().get("token");
     HEADERS.add("token", token);
     HEADERS.setContentType(MediaType.APPLICATION_JSON);
+  }
+
+  @Test
+  void whenAddingStudentsToExistingCourseWithAdminUserShouldReturnOkStatus() {
+    final var entityWithCourseDto = new HttpEntity<>(LIST_OF_USERS_IDS, HEADERS);
+
+    final var resp =
+        restTemplate.exchange(
+            ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH,
+            HttpMethod.POST,
+            entityWithCourseDto,
+            Void.class,
+            VALID_COURSE_WITH_STUDENTS_ID);
+
+    assertEquals(HttpStatus.OK, resp.getStatusCode());
+  }
+
+  @Test
+  void whenAddingStudentsToNonExistingCourseShouldReturnNotFoundStatus() {
+    final var entityWithStudents = new HttpEntity<>(LIST_OF_USERS_IDS, HEADERS);
+
+    final var resp =
+        restTemplate.exchange(
+            ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH,
+            HttpMethod.POST,
+            entityWithStudents,
+            Void.class,
+            NOT_VALID_COURSE_ID);
+
+    assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
+  }
+
+  @Test
+  void whenAddingStudentsWithNonExistingStudentShouldReturnNotFoundStatus() {
+    final var entityWithStudents = new HttpEntity<>(LIST_OF_USERS_WITH_NON_EXISTS_IDS, HEADERS);
+
+    final var resp =
+        restTemplate.exchange(
+            ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH,
+            HttpMethod.POST,
+            entityWithStudents,
+            Void.class,
+            VALID_COURSE_WITH_STUDENTS_ID);
+
+    assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }
 
   @Test
