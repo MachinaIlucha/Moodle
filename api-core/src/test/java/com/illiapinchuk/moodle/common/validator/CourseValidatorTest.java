@@ -51,33 +51,33 @@ class CourseValidatorTest {
     Set<Long> userSet = TestConstants.UserConstants.SET_OF_USER_IDS;
 
     when(userRepository.existsById(userSet.stream().findFirst().orElse(null))).thenReturn(true);
-    when(userRepository.existsById(userSet.stream().skip(1).findFirst().orElse(null))).thenReturn(true);
-    when(userRepository.existsById(userSet.stream().skip(2).findFirst().orElse(null))).thenReturn(true);
+    when(userRepository.existsById(userSet.stream().skip(1).findFirst().orElse(null)))
+        .thenReturn(true);
+    when(userRepository.existsById(userSet.stream().skip(2).findFirst().orElse(null)))
+        .thenReturn(true);
 
     boolean result = courseValidator.isAuthorsExistsInDbByIds(userSet);
 
     assertTrue(result);
   }
 
-
   @Test
   void testIsAuthorsExistsInDbByIds_SomeAuthorsDoNotExist_ReturnsFalse() {
     Set<Long> userSet = TestConstants.UserConstants.SET_OF_USER_IDS;
 
     when(userRepository.existsById(userSet.stream().findFirst().orElse(null))).thenReturn(true);
-    when(userRepository.existsById(userSet.stream().skip(1).findFirst().orElse(null))).thenReturn(false);
+    when(userRepository.existsById(userSet.stream().skip(1).findFirst().orElse(null)))
+        .thenReturn(false);
 
     boolean result = courseValidator.isAuthorsExistsInDbByIds(userSet);
 
     assertFalse(result);
   }
 
-
   @Test
   void testIsAuthorsExistsInDbByIds_EmptyAuthorIdsList_ReturnsTrue() {
     boolean result =
-        courseValidator.isAuthorsExistsInDbByIds(
-            TestConstants.UserConstants.EMPTY_SET_OF_USER_IDS);
+        courseValidator.isAuthorsExistsInDbByIds(TestConstants.UserConstants.EMPTY_SET_OF_USER_IDS);
 
     assertTrue(result);
   }
