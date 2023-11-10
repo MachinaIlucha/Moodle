@@ -34,8 +34,8 @@ public class TestConstants {
     public static final String USER_NULL_EMAIL = null;
     public static final String USER_EMPTY_EMAIL = "";
     public static final String USER_EMAIL_WITH_WHITESPACE = "  " + USER_EMAIL;
-    public static final List<Long> LIST_OF_USER_IDS = List.of(1L, 2L, 3L);
-    public static final List<Long> EMPTY_LIST_OF_USER_IDS = Collections.emptyList();
+    public static final Set<Long> SET_OF_USER_IDS = Set.of(1L, 2L, 3L);
+    public static final Set<Long> EMPTY_SET_OF_USER_IDS = Collections.emptySet();
 
     public static final User VALID_USER =
         User.builder()
@@ -183,6 +183,14 @@ public class TestConstants {
             .id(INVALID_COURSE_ID)
             .name(COURSE_NAME)
             .description(COURSE_DESCRIPTION)
+            .build();
+    public static final Course VALID_COURSE_WITH_STUDENTS =
+        Course.builder()
+            .id(VALID_COURSE_ID)
+            .name(COURSE_NAME)
+            .description(COURSE_DESCRIPTION)
+            .tasks(TaskConstants.LIST_OF_VALID_TASKS)
+            .students(new HashSet<>(Arrays.asList(1L, 2L, 3L)))
             .build();
     public static final CourseDto VALID_COURSE_DTO =
         CourseDto.builder()

@@ -3,29 +3,40 @@ package com.illiapinchuk.moodle.service.impl;
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
+import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
+import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.service.TaskService;
+
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -41,6 +52,7 @@ class CourseServiceImplTest {
   @Mock private CourseMapper courseMapper;
 
   @Mock private CourseValidator courseValidator;
+  @Mock private UserValidator userValidator;
 
   @Mock private TaskService taskService;
 
@@ -60,6 +72,91 @@ class CourseServiceImplTest {
   @AfterAll
   static void closeUserPermissionServiceMocks() {
     mockedUserPermissionService.close();
+  }
+
+  @Test
+  void addStudentsToCourse_ValidCourseIdAndStudentIds_AddsStudentsToCourse() {
+    when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
+    when(courseRepository.findById(anyString()))
+        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+
+    courseService.addStudentsToCourse(VALID_COURSE_ID, List.of(5L, 6L));
+
+    verify(courseRepository, times(1))
+        .save(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS);
+  }
+
+  @Test
+  void addStudentsToCourse_InvalidCourseId_ThrowsCourseNotFoundException() {
+    assertThrows(
+        CourseNotFoundException.class,
+        () -> courseService.addStudentsToCourse(INVALID_COURSE_ID, Collections.emptyList()));
+
+    verifyNoInteractions(taskService);
+  }
+
+  @Test
+  void addStudentsToCourse_StudentsAlreadyEnrolled_DoesNotSaveCourse() {
+    when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
+    when(courseRepository.findById(anyString()))
+        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+    when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
+
+    courseService.addStudentsToCourse(VALID_COURSE_ID, List.of(8L, 9L));
+
+    verify(courseRepository, times(0)).save(TestConstants.CourseConstants.VALID_COURSE);
+  }
+
+  @Test
+  void addStudentsToCourse_InvalidStudentIds_ThrowsUserNotFoundException() {
+    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(VALID_COURSE));
+    when(courseValidator.isStudentEnrolledInCourse(anyString(), anyLong())).thenReturn(true);
+
+    assertThrows(
+        UserNotFoundException.class,
+        () -> courseService.addStudentsToCourse(VALID_COURSE_ID, List.of(5L, 6L)));
+
+    verify(courseRepository, times(1)).findById(VALID_COURSE_ID);
+  }
+
+  @Test
+  void
+      addStudentsToCourse_EmptyListOfStudentIds_DoesNotThrowExceptionAndDoesNotCallCourseRepositorySave() {
+    when(courseRepository.findById(anyString()))
+        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+
+    courseService.addStudentsToCourse(VALID_COURSE_ID, Collections.emptyList());
+
+    verify(courseRepository, times(0))
+        .save(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS);
+  }
+
+  @Test
+  void addStudentsToCourse_NullCourseId_ThrowsCourseNotFoundException() {
+    assertThrows(
+        CourseNotFoundException.class,
+        () -> courseService.addStudentsToCourse(null, Collections.emptyList()));
+
+    verify(courseRepository, times(1)).findById(null);
+  }
+
+  @Test
+  void addStudentsToCourse_WithDuplicateStudentIds_IgnoresDuplicates() {
+    final List<Long> studentIdsWithDuplicates = List.of(1L, 2L, 2L, 3L); // Duplicate ID '2L'
+    final Course courseBeforeUpdate = new Course();
+    courseBeforeUpdate.setStudents(new HashSet<>(List.of(1L, 3L))); // Existing students
+
+    when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
+    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(courseBeforeUpdate));
+
+    courseService.addStudentsToCourse(VALID_COURSE_ID, studentIdsWithDuplicates);
+
+    ArgumentCaptor<Course> courseArgumentCaptor = ArgumentCaptor.forClass(Course.class);
+    verify(courseRepository).save(courseArgumentCaptor.capture());
+    Set<Long> savedStudentIds = courseArgumentCaptor.getValue().getStudents();
+
+    assertThat(savedStudentIds).hasSize(3); // Should only have 3 unique IDs
+    assertThat(savedStudentIds).containsExactlyInAnyOrder(1L, 2L, 3L); // No duplicates
   }
 
   @Test

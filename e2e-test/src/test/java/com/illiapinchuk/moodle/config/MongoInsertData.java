@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 @TestConfiguration
@@ -35,9 +36,16 @@ public class MongoInsertData {
               .name("Test Java Course 2")
               .description("Test This is java core course 2.")
               .build();
+      final Course VALID_COURSE_3 =
+          Course.builder()
+              .id("3")
+              .name("Test Java Course 3")
+              .description("Test This is java core course 3.")
+              .students(new HashSet<>(List.of(1L, 2L, 3L)))
+              .build();
 
       // save all courses
-      courseRepository.saveAll(List.of(VALID_COURSE_1, VALID_COURSE_2));
+      courseRepository.saveAll(List.of(VALID_COURSE_1, VALID_COURSE_2, VALID_COURSE_3));
 
       final Task VALID_TASK_1 =
           Task.builder()

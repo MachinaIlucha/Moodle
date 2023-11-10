@@ -11,6 +11,7 @@ import lombok.experimental.UtilityClass;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
 
@@ -22,6 +23,8 @@ public class TestConstants {
     public static final String LOGIN_PATH = "/auth/login";
     public static final String USER_CONTROLLER_PATH = "/users";
     public static final String COURSE_WITH_ID_CONTROLLER_PATH = "/courses/{id}";
+    public static final String ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH =
+        "/courses/{courseId}/students";
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String TASK_WITH_ID_CONTROLLER_PATH = "/tasks/{id}";
@@ -36,6 +39,8 @@ public class TestConstants {
     public static final String EXISTING_ADMIN_EMAIL = "testAdminUser@example.com";
     public static final String NOT_EXISTING_ADMIN_EMAIL = "notExistingEmail@example.com";
     public static final String EXISTING_USER_EMAIL = "testUser@example.com";
+    public static final List<Long> LIST_OF_USERS_IDS = List.of(1L, 2L, 3L);
+    public static final List<Long> LIST_OF_USERS_WITH_NON_EXISTS_IDS = List.of(1L, 2L, 99L);
   }
 
   @UtilityClass
@@ -119,19 +124,21 @@ public class TestConstants {
   @UtilityClass
   public class CourseConstants {
     public static final String VALID_COURSE_ID = "1";
+    public static final String VALID_COURSE_WITH_STUDENTS_ID = "3";
+    public static final String NOT_VALID_COURSE_ID = "99";
     public static final String VALID_COURSE_ID_TO_DELETE = "2";
     public static final String INVALID_COURSE_ID = "notValidId";
     public static final CourseDto VALID_COURSE_DTO =
         CourseDto.builder()
             .name("Java Course")
             .description("This is java core course.")
-            .authorIds(List.of(2L))
+            .authorIds(Set.of(2L))
             .build();
     public static final CourseDto VALID_COURSE_DTO_WITH_TWO_AUTHORS =
         CourseDto.builder()
             .name("Java Course")
             .description("This is java core course.")
-            .authorIds(List.of(1L, 2L))
+            .authorIds(Set.of(1L, 2L))
             .build();
     public static final CourseDto COURSE_DTO_WITHOUT_AUTHORS =
         CourseDto.builder()

@@ -5,6 +5,7 @@ import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.service.CourseService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /** REST controller for Course. */
 @RestController
 @RequestMapping(value = "/courses")
@@ -28,6 +31,24 @@ public class CourseController {
 
   private final CourseMapper courseMapper;
   private final CourseService courseService;
+
+  /**
+   * Adds students to a course.
+   *
+   * @param courseId the id of the course to which the students are to be added
+   * @param studentIds a list of student ids to add to the course
+   * @return a {@link ResponseEntity} with a suitable HTTP status code
+   */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
+  @PostMapping("/{courseId}/students")
+  public ResponseEntity<Void> addStudentsToCourse(
+      @PathVariable("courseId") final String courseId,
+      @RequestBody @NotEmpty final List<Long> studentIds) {
+    courseService.addStudentsToCourse(courseId, studentIds);
+
+    log.info("Students were added to course with id: {}", courseId);
+    return ResponseEntity.ok().build();
+  }
 
   /**
    * Retrieves a course with the given id.

@@ -3,7 +3,7 @@ package com.illiapinchuk.moodle.common.validator;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
 import jakarta.annotation.Nonnull;
-import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class CourseValidator {
    * @param authorIds a list of non-blank strings representing author IDs
    * @return true if all authors with the given IDs exist in the database, false otherwise
    */
-  public boolean isAuthorsExistsInDbByIds(@Nonnull final List<Long> authorIds) {
+  public boolean isAuthorsExistsInDbByIds(@Nonnull final Set<Long> authorIds) {
     return authorIds.stream().allMatch(userRepository::existsById);
   }
 
