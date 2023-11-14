@@ -44,15 +44,16 @@ public class MongoInsertData {
               .students(new HashSet<>(List.of(1L, 2L, 3L)))
               .build();
       final Course VALID_COURSE_4 =
-              Course.builder()
-                      .id("4")
-                      .name("Test Java Course 4")
-                      .description("Test This is java core course 4.")
-                      .students(new HashSet<>(List.of(1L, 2L, 3L)))
-                      .build();
+          Course.builder()
+              .id("4")
+              .name("Test Java Course 4")
+              .description("Test This is java core course 4.")
+              .students(new HashSet<>(List.of(1L, 2L, 3L)))
+              .build();
 
       // save all courses
-      courseRepository.saveAll(List.of(VALID_COURSE_1, VALID_COURSE_2, VALID_COURSE_3, VALID_COURSE_4));
+      courseRepository.saveAll(
+          List.of(VALID_COURSE_1, VALID_COURSE_2, VALID_COURSE_3, VALID_COURSE_4));
 
       final Task VALID_TASK_1 =
           Task.builder()

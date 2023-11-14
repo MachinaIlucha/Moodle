@@ -69,7 +69,8 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public void removeStudentFromCourse(@Nonnull final String courseId, @Nonnull final Long studentIds) {
+  public void removeStudentFromCourse(
+      @Nonnull final String courseId, @Nonnull final Long studentIds) {
     checkIfUserHasAccessToCourse(courseId);
 
     final var course =

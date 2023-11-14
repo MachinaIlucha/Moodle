@@ -69,12 +69,13 @@ class CourseControllerTest {
     final var entity = new HttpEntity<>(HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
-                    HttpMethod.DELETE,
-                    entity,
-                    Void.class,
-                    VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT, EXISTING_USER_ID);
+        restTemplate.exchange(
+            REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
+            HttpMethod.DELETE,
+            entity,
+            Void.class,
+            VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT,
+            EXISTING_USER_ID);
 
     assertEquals(HttpStatus.OK, resp.getStatusCode());
   }
@@ -84,12 +85,13 @@ class CourseControllerTest {
     final var entity = new HttpEntity<>(HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
-                    HttpMethod.DELETE,
-                    entity,
-                    Void.class,
-                    VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT, NOT_EXISTING_USER_ID);
+        restTemplate.exchange(
+            REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
+            HttpMethod.DELETE,
+            entity,
+            Void.class,
+            VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT,
+            NOT_EXISTING_USER_ID);
 
     assertEquals(HttpStatus.OK, resp.getStatusCode());
   }
@@ -99,12 +101,13 @@ class CourseControllerTest {
     final var entity = new HttpEntity<>(HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
-                    HttpMethod.DELETE,
-                    entity,
-                    Void.class,
-                    INVALID_COURSE_ID, EXISTING_USER_ID);
+        restTemplate.exchange(
+            REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
+            HttpMethod.DELETE,
+            entity,
+            Void.class,
+            INVALID_COURSE_ID,
+            EXISTING_USER_ID);
 
     assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }

@@ -105,10 +105,10 @@ class CourseServiceImplTest {
   void removeStudentFromCourse_CourseNotFound() {
     when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
 
-    assertThrows(CourseNotFoundException.class,
-            () -> courseService.removeStudentFromCourse(INVALID_COURSE_ID, USER_ID));
+    assertThrows(
+        CourseNotFoundException.class,
+        () -> courseService.removeStudentFromCourse(INVALID_COURSE_ID, USER_ID));
   }
-
 
   @Test
   void addStudentsToCourse_ValidCourseIdAndStudentIds_AddsStudentsToCourse() {

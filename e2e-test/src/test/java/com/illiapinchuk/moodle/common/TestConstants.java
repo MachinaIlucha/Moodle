@@ -26,7 +26,7 @@ public class TestConstants {
     public static final String ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH =
         "/courses/{courseId}/students";
     public static final String REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH =
-            "/courses/{courseId}/students/{studentId}";
+        "/courses/{courseId}/students/{studentId}";
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String TASK_WITH_ID_CONTROLLER_PATH = "/tasks/{id}";

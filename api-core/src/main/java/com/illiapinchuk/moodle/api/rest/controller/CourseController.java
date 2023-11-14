@@ -53,15 +53,14 @@ public class CourseController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @DeleteMapping("/{courseId}/students/{studentId}")
   public ResponseEntity<Void> removeStudentFromCourse(
-          @PathVariable("courseId") final String courseId,
-          @PathVariable("studentId") final Long studentId) {
+      @PathVariable("courseId") final String courseId,
+      @PathVariable("studentId") final Long studentId) {
 
     courseService.removeStudentFromCourse(courseId, studentId);
 
     log.info("Student with id: {} was removed from course with id: {}", studentId, courseId);
     return ResponseEntity.ok().build();
   }
-
 
   /**
    * Retrieves a course with the given id.
