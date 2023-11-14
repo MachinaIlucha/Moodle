@@ -25,6 +25,8 @@ public class TestConstants {
     public static final String COURSE_WITH_ID_CONTROLLER_PATH = "/courses/{id}";
     public static final String ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH =
         "/courses/{courseId}/students";
+    public static final String REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH =
+        "/courses/{courseId}/students/{studentId}";
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String TASK_WITH_ID_CONTROLLER_PATH = "/tasks/{id}";
@@ -41,6 +43,8 @@ public class TestConstants {
     public static final String EXISTING_USER_EMAIL = "testUser@example.com";
     public static final List<Long> LIST_OF_USERS_IDS = List.of(1L, 2L, 3L);
     public static final List<Long> LIST_OF_USERS_WITH_NON_EXISTS_IDS = List.of(1L, 2L, 99L);
+    public static final Long EXISTING_USER_ID = 1L;
+    public static final Long NOT_EXISTING_USER_ID = 99L;
   }
 
   @UtilityClass
@@ -125,6 +129,7 @@ public class TestConstants {
   public class CourseConstants {
     public static final String VALID_COURSE_ID = "1";
     public static final String VALID_COURSE_WITH_STUDENTS_ID = "3";
+    public static final String VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT = "4";
     public static final String NOT_VALID_COURSE_ID = "99";
     public static final String VALID_COURSE_ID_TO_DELETE = "2";
     public static final String INVALID_COURSE_ID = "notValidId";
