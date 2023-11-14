@@ -29,14 +29,18 @@ import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID_TO_DELETE;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_ADMIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_USER_LOGIN_AUTH_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_USER_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.LIST_OF_USERS_IDS;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.LIST_OF_USERS_WITH_NON_EXISTS_IDS;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.NOT_EXISTING_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(
@@ -58,6 +62,51 @@ class CourseControllerTest {
     final var token = (String) response.getBody().get("token");
     HEADERS.add("token", token);
     HEADERS.setContentType(MediaType.APPLICATION_JSON);
+  }
+
+  @Test
+  void whenRemovingStudentFromExistingCourseWithAdminUserShouldReturnOkStatus() {
+    final var entity = new HttpEntity<>(HEADERS);
+
+    final var resp =
+            restTemplate.exchange(
+                    REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
+                    HttpMethod.DELETE,
+                    entity,
+                    Void.class,
+                    VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT, EXISTING_USER_ID);
+
+    assertEquals(HttpStatus.OK, resp.getStatusCode());
+  }
+
+  @Test
+  void whenRemovingNotExistingStudentFromExistingCourseWithAdminUserShouldReturnOkStatus() {
+    final var entity = new HttpEntity<>(HEADERS);
+
+    final var resp =
+            restTemplate.exchange(
+                    REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
+                    HttpMethod.DELETE,
+                    entity,
+                    Void.class,
+                    VALID_COURSE_WITH_STUDENTS_ID_FOR_REMOVING_STUDENT, NOT_EXISTING_USER_ID);
+
+    assertEquals(HttpStatus.OK, resp.getStatusCode());
+  }
+
+  @Test
+  void whenRemovingExistingStudentFromNotExistingCourseWithAdminUserShouldReturnNotFoundStatus() {
+    final var entity = new HttpEntity<>(HEADERS);
+
+    final var resp =
+            restTemplate.exchange(
+                    REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH,
+                    HttpMethod.DELETE,
+                    entity,
+                    Void.class,
+                    INVALID_COURSE_ID, EXISTING_USER_ID);
+
+    assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
   }
 
   @Test

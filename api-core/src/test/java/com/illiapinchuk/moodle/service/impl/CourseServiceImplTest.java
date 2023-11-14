@@ -31,7 +31,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -73,6 +76,39 @@ class CourseServiceImplTest {
   static void closeUserPermissionServiceMocks() {
     mockedUserPermissionService.close();
   }
+
+  @Test
+  void removeStudentFromCourse_SuccessfulRemoval() {
+    final var mockCourse = new Course();
+    mockCourse.setStudents(new HashSet<>(List.of(USER_ID)));
+    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(mockCourse));
+
+    courseService.removeStudentFromCourse(VALID_COURSE_ID, USER_ID);
+
+    assertFalse(mockCourse.getStudents().contains(USER_ID));
+    verify(courseRepository).save(mockCourse);
+  }
+
+  @Test
+  void removeStudentFromCourse_StudentNotInCourse() {
+    final var mockCourse = new Course();
+    mockCourse.setStudents(new HashSet<>());
+    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(mockCourse));
+
+    courseService.removeStudentFromCourse(VALID_COURSE_ID, USER_ID);
+
+    assertFalse(mockCourse.getStudents().contains(USER_ID));
+    verify(courseRepository, never()).save(mockCourse);
+  }
+
+  @Test
+  void removeStudentFromCourse_CourseNotFound() {
+    when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
+
+    assertThrows(CourseNotFoundException.class,
+            () -> courseService.removeStudentFromCourse(INVALID_COURSE_ID, USER_ID));
+  }
+
 
   @Test
   void addStudentsToCourse_ValidCourseIdAndStudentIds_AddsStudentsToCourse() {

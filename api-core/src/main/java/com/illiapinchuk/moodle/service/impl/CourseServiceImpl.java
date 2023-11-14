@@ -69,6 +69,24 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  public void removeStudentFromCourse(@Nonnull final String courseId, @Nonnull final Long studentIds) {
+    checkIfUserHasAccessToCourse(courseId);
+
+    final var course =
+        courseRepository
+            .findById(courseId)
+            .orElseThrow(
+                () ->
+                    new CourseNotFoundException(
+                        String.format("Course with id: %s not found", courseId)));
+
+    boolean changed = course.getStudents().remove(studentIds);
+    if (changed) {
+      courseRepository.save(course); // Save only if there was a change
+    }
+  }
+
+  @Override
   public Course getCourseById(@Nonnull final String courseId) {
     checkIfUserHasAccessToCourse(courseId);
 

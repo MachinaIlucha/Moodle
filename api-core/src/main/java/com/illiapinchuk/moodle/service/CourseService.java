@@ -17,6 +17,14 @@ public interface CourseService {
   void addStudentsToCourse(String id, List<Long> studentIds);
 
   /**
+   * Deletes a student from a course based on the provided student ID.
+   *
+   * @param id The ID of the course from which the student should be deleted.
+   * @param studentIds The ID of the student to be removed from the course.
+   */
+  void removeStudentFromCourse(String id, Long studentIds);
+
+  /**
    * Retrieves a course by its ID.
    *
    * @param id The ID of the course to retrieve.
