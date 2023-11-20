@@ -12,7 +12,6 @@ import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.service.CourseService;
-import com.illiapinchuk.moodle.service.TaskService;
 import com.illiapinchuk.moodle.service.UserService;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotEmpty;
@@ -35,7 +34,6 @@ public class CourseServiceImpl implements CourseService {
   private final CourseRepository courseRepository;
   private final CourseMapper courseMapper;
   private final CourseValidator courseValidator;
-  private final TaskService taskService;
   private final UserValidator userValidator;
   private final UserService userService;
 
@@ -134,11 +132,6 @@ public class CourseServiceImpl implements CourseService {
 
     return courseRepository
         .findById(courseId)
-        .map(
-            course -> {
-              course.setTasks(taskService.getTasksByCourseId(courseId));
-              return course;
-            })
         .orElseThrow(
             () ->
                 new CourseNotFoundException(
@@ -147,6 +140,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   @Transactional
+  // TODO check if course id is already exists and trhow exception
   public Course createCourse(@Nonnull final Course course) {
     if (!courseValidator.isAuthorsExistsInDbByIds(course.getAuthorIds()))
       throw new UserNotFoundException("One of the authors not exists.");
@@ -167,12 +161,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  @Transactional(rollbackFor = Exception.class)
   public void deleteCourseById(@Nonnull final String id) {
-    final var course = getCourseById(id);
-
-    course.getTasks().forEach(task -> taskService.deleteTaskById(task.getId()));
-
     courseRepository.deleteById(id);
   }
 

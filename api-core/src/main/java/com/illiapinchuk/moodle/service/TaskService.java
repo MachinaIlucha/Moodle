@@ -2,6 +2,8 @@ package com.illiapinchuk.moodle.service;
 
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 /** Service interface for managing tasks. */
@@ -45,4 +47,8 @@ public interface TaskService {
    * @return a list of tasks related to the specified course ID
    */
   List<Task> getTasksByCourseId(String courseId);
+
+  TaskDto addAttachmentToTask(MultipartFile file, String taskId);
+
+  TaskDto addSubmissionToTask(String submissionJson, List<MultipartFile> files, String taskId);
 }

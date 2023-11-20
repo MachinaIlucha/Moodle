@@ -33,6 +33,7 @@ import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVAL
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_WITHOUT_TASKS;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.INVALID_USER_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.USER_ID;
@@ -225,20 +226,16 @@ class CourseServiceImplTest {
 
   @Test
   void getCourseById_ExistingCourseId_ReturnsCourse() {
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Collections.emptyList());
+    when(courseRepository.findById(VALID_COURSE_ID))
+        .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
     final var actualCourse =
-        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+        courseService.getCourseById(VALID_COURSE_ID);
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
-    assertEquals(TestConstants.CourseConstants.VALID_COURSE_ID, actualCourse.getId());
-    assertEquals(0, actualCourse.getTasks().size());
+    assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
+    assertEquals(VALID_COURSE_ID, actualCourse.getId());
 
-    verify(courseRepository, times(1)).findById(TestConstants.CourseConstants.VALID_COURSE_ID);
-    verify(taskService, times(1)).getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID);
+    verify(courseRepository, times(1)).findById(VALID_COURSE_ID);
   }
 
   @Test
@@ -271,15 +268,13 @@ class CourseServiceImplTest {
   void getCourseById_UserEnrolled_ReturnsCourse() {
     when(courseValidator.isStudentEnrolledInCourse(anyString(), any())).thenReturn(true);
 
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Collections.emptyList());
+    when(courseRepository.findById(VALID_COURSE_ID))
+        .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
     final var actualCourse =
-        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+        courseService.getCourseById(VALID_COURSE_ID);
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+    assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
   }
 
   @Test
@@ -288,15 +283,13 @@ class CourseServiceImplTest {
         .thenReturn(false); // Not enrolled
     when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
 
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(taskService.getTasksByCourseId(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Collections.emptyList());
+    when(courseRepository.findById(VALID_COURSE_ID))
+        .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
     final var actualCourse =
-        courseService.getCourseById(TestConstants.CourseConstants.VALID_COURSE_ID);
+        courseService.getCourseById(VALID_COURSE_ID);
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, actualCourse);
+    assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
   }
 
   @Test
@@ -343,23 +336,5 @@ class CourseServiceImplTest {
     verify(courseValidator, times(1))
         .isCourseExistsInDbById(TestConstants.CourseConstants.INVALID_COURSE_DTO.getId());
     verifyNoInteractions(courseRepository);
-  }
-
-  @Test
-  void deleteCourseById_ExistingCourseId_DeletesCourseAndAssociatedTasks() {
-    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(VALID_COURSE));
-
-    courseService.deleteCourseById(VALID_COURSE.getId());
-
-    verify(taskService, times(VALID_COURSE.getTasks().size())).deleteTaskById(anyString());
-    verify(courseRepository, times(1)).deleteById(VALID_COURSE.getId());
-  }
-
-  @Test
-  void deleteCourseById_NonExistingCourseId_ThrowsCourseNotFoundException() {
-    when(courseRepository.findById(INVALID_COURSE_ID)).thenReturn(Optional.empty());
-
-    assertThrows(
-        CourseNotFoundException.class, () -> courseService.deleteCourseById(INVALID_COURSE_ID));
   }
 }

@@ -5,6 +5,7 @@ import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.service.CourseService;
+import com.illiapinchuk.moodle.service.CourseTaskFacade;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class CourseController {
 
   private final CourseMapper courseMapper;
   private final CourseService courseService;
+  private final CourseTaskFacade courseTaskFacade;
 
   /**
    * Retrieves courses for a given student.
@@ -110,13 +112,10 @@ public class CourseController {
    */
   @GetMapping("/{id}")
   public ResponseEntity<CourseDto> getCourseById(@PathVariable("id") final String courseId) {
-
-    final var course = courseService.getCourseById(courseId);
-
-    final var courseResponse = courseMapper.courseToCourseDto(course);
+    final var course = courseTaskFacade.getCourseWithTasks(courseId);
 
     log.info("Course with id: {} was found", courseId);
-    return ResponseEntity.ok(courseResponse);
+    return ResponseEntity.ok(course);
   }
 
   /**
@@ -164,7 +163,7 @@ public class CourseController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteCourseById(@PathVariable("id") final String courseId) {
-    courseService.deleteCourseById(courseId);
+    courseTaskFacade.deleteCourseByIdWithTasks(courseId);
     log.info("Course with id: {} was deleted", courseId);
     return ResponseEntity.ok().build();
   }

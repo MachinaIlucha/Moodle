@@ -43,8 +43,6 @@ class TaskServiceImplTest {
   @Mock private TaskRepository taskRepository;
   @Mock private TaskMapper taskMapper;
   @Mock private TaskValidator taskValidator;
-  @Mock private DateService dateService;
-  @Mock private UserValidator userValidator;
   @Mock private CourseValidator courseValidator;
   @Mock private TaskAttachmentService taskAttachmentService;
   @InjectMocks private TaskServiceImpl taskService;
@@ -117,35 +115,13 @@ class TaskServiceImplTest {
 
   @Test
   void testCreateTask_ValidAuthorId_TaskCreated() {
-    final var currentDate = new Date();
-    when(userValidator.isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId()))
-        .thenReturn(true);
-    when(dateService.getCurrentZonedDateTime(anyString())).thenReturn(currentDate);
     when(taskRepository.save(TestConstants.TaskConstants.VALID_TASK_1))
         .thenReturn(TestConstants.TaskConstants.VALID_TASK_1);
 
     final var result = taskService.createTask(TestConstants.TaskConstants.VALID_TASK_1);
 
     assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
-    assertEquals(currentDate, TestConstants.TaskConstants.VALID_TASK_1.getCreationDate());
-    verify(userValidator)
-        .isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId());
-    verify(dateService).getCurrentZonedDateTime(anyString());
     verify(taskRepository).save(TestConstants.TaskConstants.VALID_TASK_1);
-  }
-
-  @Test
-  void testCreateTask_InvalidAuthorId_UserNotFound() {
-    when(userValidator.isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId()))
-        .thenReturn(false);
-
-    assertThrows(
-        UserNotFoundException.class,
-        () -> taskService.createTask(TestConstants.TaskConstants.VALID_TASK_1));
-    verify(userValidator)
-        .isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId());
-    verifyNoInteractions(dateService);
-    verifyNoInteractions(taskRepository);
   }
 
   @Test
