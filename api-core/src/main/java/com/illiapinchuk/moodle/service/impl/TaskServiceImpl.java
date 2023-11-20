@@ -80,7 +80,7 @@ public class TaskServiceImpl implements TaskService {
 
     if (!taskValidator.isTaskExistsInDbById(submissionDto.getTaskId())) {
       throw new TaskNotFoundException(
-              String.format("Task with id: %s does not exist.", submissionDto.getTaskId()));
+          String.format("Task with id: %s does not exist.", submissionDto.getTaskId()));
     }
 
     // Map SubmissionDto to Submission entity

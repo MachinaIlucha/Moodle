@@ -2,30 +2,24 @@ package com.illiapinchuk.moodle.service.impl;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.illiapinchuk.moodle.common.TestConstants;
-import com.illiapinchuk.moodle.common.date.DateService;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
-import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
-import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
 import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;

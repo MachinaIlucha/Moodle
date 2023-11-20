@@ -229,8 +229,7 @@ class CourseServiceImplTest {
     when(courseRepository.findById(VALID_COURSE_ID))
         .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
-    final var actualCourse =
-        courseService.getCourseById(VALID_COURSE_ID);
+    final var actualCourse = courseService.getCourseById(VALID_COURSE_ID);
 
     assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
     assertEquals(VALID_COURSE_ID, actualCourse.getId());
@@ -271,8 +270,7 @@ class CourseServiceImplTest {
     when(courseRepository.findById(VALID_COURSE_ID))
         .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
-    final var actualCourse =
-        courseService.getCourseById(VALID_COURSE_ID);
+    final var actualCourse = courseService.getCourseById(VALID_COURSE_ID);
 
     assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
   }
@@ -286,8 +284,7 @@ class CourseServiceImplTest {
     when(courseRepository.findById(VALID_COURSE_ID))
         .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
-    final var actualCourse =
-        courseService.getCourseById(VALID_COURSE_ID);
+    final var actualCourse = courseService.getCourseById(VALID_COURSE_ID);
 
     assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
   }
