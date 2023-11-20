@@ -9,6 +9,14 @@ import java.util.List;
 public interface CourseService {
 
   /**
+   * Retrieves courses for a given user.
+   *
+   * @param userId the id of the user whose courses are to be retrieved
+   * @return a list of courses
+   */
+  List<Course> getCoursesForUser(Long userId);
+
+  /**
    * Adds one or more students to a course with the specified ID.
    *
    * @param id The ID of the course to which students will be added.

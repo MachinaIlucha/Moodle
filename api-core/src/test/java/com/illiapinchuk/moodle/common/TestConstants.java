@@ -27,6 +27,7 @@ public class TestConstants {
   @UtilityClass
   public class UserConstants {
     public static final Long USER_ID = 1L;
+    public static final Long INVALID_USER_ID = 99L;
     public static final String USER_LOGIN = "test-login";
     public static final String USER_EMAIL = "moodle@example.com";
     public static final String USER_INVALID_EMAIL = "invalid.email";
@@ -80,6 +81,22 @@ public class TestConstants {
             .city("New York")
             .roles(Set.of(RoleName.ADMIN, RoleName.USER))
             .build();
+
+    public static final User VALID_ADMIN_USER_2 =
+        User.builder()
+            .id(USER_ID)
+            .surname("Admin")
+            .lastname("Admin")
+            .email(USER_EMAIL)
+            .login(USER_LOGIN)
+            .password(USER_VALID_PASSWORD)
+            .bio("I am a software engineer.")
+            .phoneNumber("+1234567890")
+            .dateOfBirth(new Date())
+            .country("USA")
+            .city("New York")
+            .roles(Set.of(RoleName.ADMIN))
+            .build();
     public static final JwtUser ADMIN_JWT_USER = JwtUser.build(VALID_ADMIN_USER);
   }
 
@@ -116,6 +133,7 @@ public class TestConstants {
             .build();
     public static final Task VALID_TASK_2 =
         Task.builder()
+            .id("2")
             .title("Task 2")
             .description("Review chapter 5")
             .dueDate(new Date()) // Set the due date to the current date
@@ -128,6 +146,7 @@ public class TestConstants {
             .build();
     public static final Task VALID_TASK_3 =
         Task.builder()
+            .id("3")
             .title("Task 3")
             .description("Prepare presentation")
             .dueDate(new Date()) // Set the due date to the current date

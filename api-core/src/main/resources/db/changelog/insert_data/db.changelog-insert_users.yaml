@@ -40,15 +40,6 @@ databaseChangeLog:
                   name: user_role
                   value: "ADMIN"
         - insert:
-            tableName: user_roles
-            columns:
-              - column:
-                  name: user_id
-                  value: 1
-              - column:
-                  name: user_role
-                  value: "USER"
-        - insert:
             tableName: users
             columns:
               - column:
@@ -75,15 +66,6 @@ databaseChangeLog:
               - column:
                   name: city
                   value: "Developer City"
-        - insert:
-            tableName: user_roles
-            columns:
-              - column:
-                  name: user_id
-                  value: 2
-              - column:
-                  name: user_role
-                  value: "USER"
         - insert:
             tableName: user_roles
             columns:

@@ -8,16 +8,21 @@ import com.illiapinchuk.moodle.exception.CourseNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
+import com.illiapinchuk.moodle.model.entity.RoleName;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.service.CourseService;
 import com.illiapinchuk.moodle.service.TaskService;
+import com.illiapinchuk.moodle.service.UserService;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,8 +37,42 @@ public class CourseServiceImpl implements CourseService {
   private final CourseValidator courseValidator;
   private final TaskService taskService;
   private final UserValidator userValidator;
+  private final UserService userService;
 
   @Override
+  @Transactional(readOnly = true)
+  public List<Course> getCoursesForUser(@Nonnull final Long userId) {
+    if (!userValidator.isUserExistInDbById(userId)) {
+      throw new UserNotFoundException(String.format("User with id: %s not found", userId));
+    }
+
+    final var userRoles = userService.getUserById(userId).getRoles();
+
+    final var courses = new HashSet<Course>();
+
+    boolean isAdminOrDeveloper = false;
+
+    for (RoleName role : userRoles) {
+      switch (role) {
+        case USER -> courses.addAll(courseRepository.findByStudentsContains(userId));
+        case TEACHER -> courses.addAll(courseRepository.findByAuthorIdsContains(userId));
+        case ADMIN, DEVELOPER -> isAdminOrDeveloper = true;
+        default -> throw new IllegalArgumentException("Unhandled user role: " + role);
+      }
+    }
+
+    // Add courses for Admin/Developer roles only if required
+    // If the user is an Admin or Developer, add courses where they are a student or author
+    if (isAdminOrDeveloper) {
+      courses.addAll(courseRepository.findByStudentsContains(userId));
+      courses.addAll(courseRepository.findByAuthorIdsContains(userId));
+    }
+
+    return new ArrayList<>(courses);
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
   public void addStudentsToCourse(
       @Nonnull final String courseId, @NotEmpty final List<Long> studentIds) {
     checkIfUserHasAccessToCourse(courseId);
@@ -69,6 +108,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public void removeStudentFromCourse(
       @Nonnull final String courseId, @Nonnull final Long studentIds) {
     checkIfUserHasAccessToCourse(courseId);
@@ -88,6 +128,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Course getCourseById(@Nonnull final String courseId) {
     checkIfUserHasAccessToCourse(courseId);
 
@@ -105,6 +146,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional
   public Course createCourse(@Nonnull final Course course) {
     if (!courseValidator.isAuthorsExistsInDbByIds(course.getAuthorIds()))
       throw new UserNotFoundException("One of the authors not exists.");
@@ -112,6 +154,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public Course updateCourse(@Nonnull final CourseDto courseDto) {
     final var courseId = courseDto.getId();
     if (!courseValidator.isCourseExistsInDbById(courseId)) {
@@ -124,6 +167,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public void deleteCourseById(@Nonnull final String id) {
     final var course = getCourseById(id);
 

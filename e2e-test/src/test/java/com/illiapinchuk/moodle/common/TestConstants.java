@@ -27,6 +27,10 @@ public class TestConstants {
         "/courses/{courseId}/students";
     public static final String REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH =
         "/courses/{courseId}/students/{studentId}";
+    public static final String GET_STUDENT_COURSES_CONTROLLER_PATH =
+            "/courses/student/{studentId}/courses";
+    public static final String GET_AUTH_USER_COURSES_CONTROLLER_PATH =
+            "/courses/my-courses";
     public static final String COURSE_CONTROLLER_PATH = "/courses";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     public static final String TASK_WITH_ID_CONTROLLER_PATH = "/tasks/{id}";

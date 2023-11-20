@@ -13,7 +13,3 @@ VALUES ('TestAdminUserSurname', 'TestAdminUserLastName', 'testAdminUser@example.
 -- Insert data into 'user_roles' table
 INSERT INTO user_roles (user_id, user_role)
 VALUES (4, 'ADMIN');
-
--- Insert data into 'user_roles' table
-INSERT INTO user_roles (user_id, user_role)
-VALUES (4, 'USER');
