@@ -316,25 +316,17 @@ class CourseServiceImplTest {
 
   @Test
   void updateCourse_ExistingCourseDto_UpdatesAndReturnsCourse() {
-    when(courseValidator.isCourseExistsInDbById(
-            VALID_COURSE_DTO.getId()))
-        .thenReturn(true);
-    when(courseRepository.findById(VALID_COURSE_DTO.getId()))
-        .thenReturn(Optional.of(VALID_COURSE));
-    when(courseRepository.save(VALID_COURSE))
-        .thenReturn(VALID_COURSE);
+    when(courseValidator.isCourseExistsInDbById(VALID_COURSE_DTO.getId())).thenReturn(true);
+    when(courseRepository.findById(VALID_COURSE_DTO.getId())).thenReturn(Optional.of(VALID_COURSE));
+    when(courseRepository.save(VALID_COURSE)).thenReturn(VALID_COURSE);
 
-    final var updatedCourse =
-        courseService.updateCourse(VALID_COURSE_DTO);
+    final var updatedCourse = courseService.updateCourse(VALID_COURSE_DTO);
 
     assertSame(VALID_COURSE, updatedCourse);
 
-    verify(courseValidator, times(1))
-        .isCourseExistsInDbById(VALID_COURSE_DTO.getId());
+    verify(courseValidator, times(1)).isCourseExistsInDbById(VALID_COURSE_DTO.getId());
     verify(courseMapper, times(1))
-        .updateCourse(
-            TestConstants.CourseConstants.VALID_COURSE,
-            VALID_COURSE_DTO);
+        .updateCourse(TestConstants.CourseConstants.VALID_COURSE, VALID_COURSE_DTO);
     verify(courseRepository, times(1)).save(TestConstants.CourseConstants.VALID_COURSE);
   }
 
@@ -355,15 +347,12 @@ class CourseServiceImplTest {
 
   @Test
   void deleteCourseById_ExistingCourseId_DeletesCourseAndAssociatedTasks() {
-    when(courseRepository.findById(VALID_COURSE_ID))
-        .thenReturn(Optional.of(VALID_COURSE));
+    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(VALID_COURSE));
 
     courseService.deleteCourseById(VALID_COURSE.getId());
 
-    verify(taskService, times(VALID_COURSE.getTasks().size()))
-        .deleteTaskById(anyString());
-    verify(courseRepository, times(1))
-        .deleteById(VALID_COURSE.getId());
+    verify(taskService, times(VALID_COURSE.getTasks().size())).deleteTaskById(anyString());
+    verify(courseRepository, times(1)).deleteById(VALID_COURSE.getId());
   }
 
   @Test

@@ -74,12 +74,12 @@ class CourseControllerTest {
     final var entity = new HttpEntity<>(HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    GET_STUDENT_COURSES_CONTROLLER_PATH,
-                    HttpMethod.GET,
-                    entity,
-                    new ParameterizedTypeReference<List<CourseDto>>() {},
-                    4);
+        restTemplate.exchange(
+            GET_STUDENT_COURSES_CONTROLLER_PATH,
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<List<CourseDto>>() {},
+            4);
 
     assertEquals(HttpStatus.OK, resp.getStatusCode());
     assertNotNull(resp.getBody());
@@ -91,18 +91,16 @@ class CourseControllerTest {
     final var entity = new HttpEntity<>(HEADERS);
 
     final var resp =
-            restTemplate.exchange(
-                    GET_AUTH_USER_COURSES_CONTROLLER_PATH,
-                    HttpMethod.GET,
-                    entity,
-                    new ParameterizedTypeReference<List<CourseDto>>() {});
+        restTemplate.exchange(
+            GET_AUTH_USER_COURSES_CONTROLLER_PATH,
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<List<CourseDto>>() {});
 
     assertEquals(HttpStatus.OK, resp.getStatusCode());
     assertNotNull(resp.getBody());
     assertEquals(2, resp.getBody().size());
   }
-
-
 
   @Test
   void whenRemovingStudentFromExistingCourseWithAdminUserShouldReturnOkStatus() {
