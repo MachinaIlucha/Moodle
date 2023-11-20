@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.illiapinchuk.moodle.service.UserService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,8 +31,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.INVALID_COURSE_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.INVALID_USER_ID;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.USER_ID;
+import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.VALID_ADMIN_USER_2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -58,6 +63,7 @@ class CourseServiceImplTest {
   @Mock private UserValidator userValidator;
 
   @Mock private TaskService taskService;
+  @Mock private UserService userService;
 
   @InjectMocks private CourseServiceImpl courseService;
 
@@ -75,6 +81,30 @@ class CourseServiceImplTest {
   @AfterAll
   static void closeUserPermissionServiceMocks() {
     mockedUserPermissionService.close();
+  }
+
+  @Test
+  void getCoursesForUser_UserNotFound() {
+    when(userValidator.isUserExistInDbById(INVALID_USER_ID)).thenReturn(false);
+
+    assertThrows(
+        UserNotFoundException.class, () -> courseService.getCoursesForUser(INVALID_USER_ID));
+  }
+
+  @Test
+  void getCoursesForUser_UserWithMultipleRoles() {
+    when(userValidator.isUserExistInDbById(USER_ID)).thenReturn(true);
+    when(userService.getUserById(USER_ID)).thenReturn(VALID_ADMIN_USER_2);
+    when(courseRepository.findByStudentsContains(USER_ID))
+        .thenReturn(List.of(VALID_COURSE_WITH_STUDENTS));
+    when(courseRepository.findByAuthorIdsContains(USER_ID))
+        .thenReturn(List.of(VALID_COURSE_WITH_STUDENTS));
+
+    final var courses = courseService.getCoursesForUser(USER_ID);
+
+    verify(courseRepository, times(1)).findByStudentsContains(USER_ID);
+    verify(courseRepository, times(1)).findByAuthorIdsContains(USER_ID);
+    assertEquals(1, courses.size());
   }
 
   @Test
@@ -114,12 +144,11 @@ class CourseServiceImplTest {
   void addStudentsToCourse_ValidCourseIdAndStudentIds_AddsStudentsToCourse() {
     when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
     when(courseRepository.findById(anyString()))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+        .thenReturn(Optional.of(VALID_COURSE_WITH_STUDENTS));
 
     courseService.addStudentsToCourse(VALID_COURSE_ID, List.of(5L, 6L));
 
-    verify(courseRepository, times(1))
-        .save(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS);
+    verify(courseRepository, times(1)).save(VALID_COURSE_WITH_STUDENTS);
   }
 
   @Test
@@ -135,7 +164,7 @@ class CourseServiceImplTest {
   void addStudentsToCourse_StudentsAlreadyEnrolled_DoesNotSaveCourse() {
     when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
     when(courseRepository.findById(anyString()))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+        .thenReturn(Optional.of(VALID_COURSE_WITH_STUDENTS));
     when(UserPermissionService.hasAnyRulingRole()).thenReturn(true);
 
     courseService.addStudentsToCourse(VALID_COURSE_ID, List.of(8L, 9L));
@@ -159,12 +188,11 @@ class CourseServiceImplTest {
   void
       addStudentsToCourse_EmptyListOfStudentIds_DoesNotThrowExceptionAndDoesNotCallCourseRepositorySave() {
     when(courseRepository.findById(anyString()))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS));
+        .thenReturn(Optional.of(VALID_COURSE_WITH_STUDENTS));
 
     courseService.addStudentsToCourse(VALID_COURSE_ID, Collections.emptyList());
 
-    verify(courseRepository, times(0))
-        .save(TestConstants.CourseConstants.VALID_COURSE_WITH_STUDENTS);
+    verify(courseRepository, times(0)).save(VALID_COURSE_WITH_STUDENTS);
   }
 
   @Test
@@ -288,25 +316,17 @@ class CourseServiceImplTest {
 
   @Test
   void updateCourse_ExistingCourseDto_UpdatesAndReturnsCourse() {
-    when(courseValidator.isCourseExistsInDbById(
-            TestConstants.CourseConstants.VALID_COURSE_DTO.getId()))
-        .thenReturn(true);
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_DTO.getId()))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
-    when(courseRepository.save(TestConstants.CourseConstants.VALID_COURSE))
-        .thenReturn(TestConstants.CourseConstants.VALID_COURSE);
+    when(courseValidator.isCourseExistsInDbById(VALID_COURSE_DTO.getId())).thenReturn(true);
+    when(courseRepository.findById(VALID_COURSE_DTO.getId())).thenReturn(Optional.of(VALID_COURSE));
+    when(courseRepository.save(VALID_COURSE)).thenReturn(VALID_COURSE);
 
-    final var updatedCourse =
-        courseService.updateCourse(TestConstants.CourseConstants.VALID_COURSE_DTO);
+    final var updatedCourse = courseService.updateCourse(VALID_COURSE_DTO);
 
-    assertSame(TestConstants.CourseConstants.VALID_COURSE, updatedCourse);
+    assertSame(VALID_COURSE, updatedCourse);
 
-    verify(courseValidator, times(1))
-        .isCourseExistsInDbById(TestConstants.CourseConstants.VALID_COURSE_DTO.getId());
+    verify(courseValidator, times(1)).isCourseExistsInDbById(VALID_COURSE_DTO.getId());
     verify(courseMapper, times(1))
-        .updateCourse(
-            TestConstants.CourseConstants.VALID_COURSE,
-            TestConstants.CourseConstants.VALID_COURSE_DTO);
+        .updateCourse(TestConstants.CourseConstants.VALID_COURSE, VALID_COURSE_DTO);
     verify(courseRepository, times(1)).save(TestConstants.CourseConstants.VALID_COURSE);
   }
 
@@ -327,15 +347,12 @@ class CourseServiceImplTest {
 
   @Test
   void deleteCourseById_ExistingCourseId_DeletesCourseAndAssociatedTasks() {
-    when(courseRepository.findById(TestConstants.CourseConstants.VALID_COURSE_ID))
-        .thenReturn(Optional.of(TestConstants.CourseConstants.VALID_COURSE));
+    when(courseRepository.findById(VALID_COURSE_ID)).thenReturn(Optional.of(VALID_COURSE));
 
-    courseService.deleteCourseById(TestConstants.CourseConstants.VALID_COURSE.getId());
+    courseService.deleteCourseById(VALID_COURSE.getId());
 
-    verify(taskService, times(TestConstants.CourseConstants.VALID_COURSE.getTasks().size()))
-        .deleteTaskById(anyString());
-    verify(courseRepository, times(1))
-        .deleteById(TestConstants.CourseConstants.VALID_COURSE.getId());
+    verify(taskService, times(VALID_COURSE.getTasks().size())).deleteTaskById(anyString());
+    verify(courseRepository, times(1)).deleteById(VALID_COURSE.getId());
   }
 
   @Test

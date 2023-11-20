@@ -1,6 +1,7 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
+import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.service.CourseService;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,43 @@ public class CourseController {
 
   private final CourseMapper courseMapper;
   private final CourseService courseService;
+
+  /**
+   * Retrieves courses for a given student.
+   *
+   * @param studentId the id of the student whose courses are to be retrieved
+   * @return a {@link ResponseEntity} containing a list of courses and a suitable HTTP status code
+   */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER')")
+  @GetMapping("/student/{studentId}/courses")
+  public ResponseEntity<List<CourseDto>> getCoursesForStudent(
+      @PathVariable("studentId") final Long studentId) {
+    final var courses = courseService.getCoursesForUser(studentId);
+    final var courseDtos = courses.stream().map(courseMapper::courseToCourseDto).toList();
+
+    log.info("Retrieved courses for student with id: {}", studentId);
+    return ResponseEntity.ok(courseDtos);
+  }
+
+  /**
+   * Retrieves courses for the currently authenticated user.
+   *
+   * @return a {@link ResponseEntity} containing a list of courses and a suitable HTTP status code
+   */
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/my-courses")
+  public ResponseEntity<List<CourseDto>> getMyCourses() {
+    // Retrieve the user ID of the currently authenticated user
+    final var authentication = SecurityContextHolder.getContext().getAuthentication();
+    final var currentUserId = ((JwtUser) authentication.getPrincipal()).getId();
+
+    // Fetch courses for the authenticated user
+    final var courses = courseService.getCoursesForUser(currentUserId);
+    final var courseDtos = courses.stream().map(courseMapper::courseToCourseDto).toList();
+
+    log.info("Retrieved courses for authenticated user with id: {}", currentUserId);
+    return ResponseEntity.ok(courseDtos);
+  }
 
   /**
    * Adds students to a course.

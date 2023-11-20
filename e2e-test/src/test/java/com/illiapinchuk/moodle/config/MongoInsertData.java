@@ -41,14 +41,14 @@ public class MongoInsertData {
               .id("3")
               .name("Test Java Course 3")
               .description("Test This is java core course 3.")
-              .students(new HashSet<>(List.of(1L, 2L, 3L)))
+              .students(new HashSet<>(List.of(1L, 2L, 3L, 4L)))
               .build();
       final Course VALID_COURSE_4 =
           Course.builder()
               .id("4")
               .name("Test Java Course 4")
               .description("Test This is java core course 4.")
-              .students(new HashSet<>(List.of(1L, 2L, 3L)))
+              .students(new HashSet<>(List.of(1L, 2L, 3L, 4L)))
               .build();
 
       // save all courses

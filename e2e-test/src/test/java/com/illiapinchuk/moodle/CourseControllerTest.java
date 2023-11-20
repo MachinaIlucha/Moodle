@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.illiapinchuk.moodle.common.TestConstants.CourseConstants.COURSE_DTO_INVALID_ID_AS_STRING;
@@ -35,6 +37,8 @@ import static com.illiapinchuk.moodle.common.TestConstants.Dto.Auth.EXISTING_USE
 import static com.illiapinchuk.moodle.common.TestConstants.Path.ADD_STUDENTS_TO_COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.COURSE_WITH_ID_CONTROLLER_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.GET_AUTH_USER_COURSES_CONTROLLER_PATH;
+import static com.illiapinchuk.moodle.common.TestConstants.Path.GET_STUDENT_COURSES_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.LOGIN_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.Path.REMOVE_STUDENT_FROM_COURSE_CONTROLLER_PATH;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.EXISTING_USER_ID;
@@ -42,6 +46,7 @@ import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.LIST_OF
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.LIST_OF_USERS_WITH_NON_EXISTS_IDS;
 import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.NOT_EXISTING_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -62,6 +67,39 @@ class CourseControllerTest {
     final var token = (String) response.getBody().get("token");
     HEADERS.add("token", token);
     HEADERS.setContentType(MediaType.APPLICATION_JSON);
+  }
+
+  @Test
+  void getCoursesForStudent_WithAdminUser_ShouldReturnCourses() {
+    final var entity = new HttpEntity<>(HEADERS);
+
+    final var resp =
+        restTemplate.exchange(
+            GET_STUDENT_COURSES_CONTROLLER_PATH,
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<List<CourseDto>>() {},
+            4);
+
+    assertEquals(HttpStatus.OK, resp.getStatusCode());
+    assertNotNull(resp.getBody());
+    assertEquals(2, resp.getBody().size());
+  }
+
+  @Test
+  void getMyCourses_WithAuthenticatedUser_ShouldReturnCourses() {
+    final var entity = new HttpEntity<>(HEADERS);
+
+    final var resp =
+        restTemplate.exchange(
+            GET_AUTH_USER_COURSES_CONTROLLER_PATH,
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<List<CourseDto>>() {});
+
+    assertEquals(HttpStatus.OK, resp.getStatusCode());
+    assertNotNull(resp.getBody());
+    assertEquals(2, resp.getBody().size());
   }
 
   @Test
