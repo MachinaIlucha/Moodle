@@ -5,6 +5,7 @@ import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.CourseAlreadyExistsException;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
@@ -287,6 +288,17 @@ class CourseServiceImplTest {
     final var actualCourse = courseService.getCourseById(VALID_COURSE_ID);
 
     assertSame(VALID_COURSE_WITHOUT_TASKS, actualCourse);
+  }
+
+  @Test
+  void createCourse_CourseAlreadyExists_ThrowsCourseAlreadyExists() {
+    when(courseValidator.isCourseExistsInDbById(VALID_COURSE_ID)).thenReturn(true);
+
+    assertThrows(
+        CourseAlreadyExistsException.class, () -> courseService.createCourse(VALID_COURSE));
+
+    verify(courseValidator, times(1)).isCourseExistsInDbById(VALID_COURSE_ID);
+    verifyNoInteractions(courseRepository);
   }
 
   @Test
