@@ -1,6 +1,5 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
-import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.service.PasswordRecoveryService;
@@ -32,7 +31,6 @@ public class PasswordController {
   private final PasswordRecoveryService passwordRecoveryService;
   private final UserValidator userValidator;
   private final UserTokenService userTokenService;
-  private final UserMapper userMapper;
   private final UserService userService;
 
   /**

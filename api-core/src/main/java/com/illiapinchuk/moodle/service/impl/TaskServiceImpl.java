@@ -109,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
 
   @Override
   public Task getTaskById(@Nonnull final String taskId) {
-    var userId = UserPermissionService.getJwtUser().getId();
+    final var userId = UserPermissionService.getJwtUser().getId();
 
     if (!courseValidator.isStudentEnrolledInCourseWithTask(taskId, userId)
         && !UserPermissionService.hasAnyRulingRole()) {
