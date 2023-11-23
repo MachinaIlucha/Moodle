@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.service.impl;
 
+import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.VALID_TASK_1;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -7,25 +8,22 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.illiapinchuk.moodle.common.TestConstants;
-import com.illiapinchuk.moodle.common.date.DateService;
+import com.illiapinchuk.moodle.common.mapper.SubmissionMapper;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
-import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
-import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
+import com.illiapinchuk.moodle.service.FileUploadService;
 import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;
@@ -36,6 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceImplTest {
@@ -43,10 +42,12 @@ class TaskServiceImplTest {
   @Mock private TaskRepository taskRepository;
   @Mock private TaskMapper taskMapper;
   @Mock private TaskValidator taskValidator;
-  @Mock private DateService dateService;
-  @Mock private UserValidator userValidator;
   @Mock private CourseValidator courseValidator;
   @Mock private TaskAttachmentService taskAttachmentService;
+  @Mock private FileUploadService fileUploadService;
+  @Mock private SubmissionMapper submissionMapper;
+  @Mock private TaskAttachment taskAttachment;
+  @Mock private MultipartFile file;
   @InjectMocks private TaskServiceImpl taskService;
 
   private static MockedStatic<UserPermissionService> mockedUserPermissionService;
@@ -66,15 +67,23 @@ class TaskServiceImplTest {
   }
 
   @Test
+  void testAddAttachmentToTask_TaskNotFound() {
+    when(taskRepository.findById(anyString())).thenReturn(Optional.empty());
+
+    assertThrows(
+        TaskNotFoundException.class, () -> taskService.addAttachmentToTask(file, "invalidTaskId"));
+  }
+
+  @Test
   void testGetTaskById_ValidId_TaskFound() {
     when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
-        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
+        .thenReturn(Optional.of(VALID_TASK_1));
     when(taskAttachmentService.getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID))
         .thenReturn(new ArrayList<>());
 
     final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+    assertEquals(VALID_TASK_1, result);
     verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
   }
 
@@ -90,7 +99,7 @@ class TaskServiceImplTest {
   @Test
   void testGetTaskById_UserNotEnrolledWithRulingRole_TaskFound() {
     when(taskRepository.findById(TestConstants.TaskConstants.TASK_ID))
-        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
+        .thenReturn(Optional.of(VALID_TASK_1));
     when(courseValidator.isStudentEnrolledInCourseWithTask(
             eq(TestConstants.TaskConstants.TASK_ID), any()))
         .thenReturn(false);
@@ -99,7 +108,7 @@ class TaskServiceImplTest {
 
     final var result = taskService.getTaskById(TestConstants.TaskConstants.TASK_ID);
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+    assertEquals(VALID_TASK_1, result);
     verify(taskAttachmentService).getAttachmentsByTaskId(TestConstants.TaskConstants.TASK_ID);
   }
 
@@ -117,35 +126,12 @@ class TaskServiceImplTest {
 
   @Test
   void testCreateTask_ValidAuthorId_TaskCreated() {
-    final var currentDate = new Date();
-    when(userValidator.isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId()))
-        .thenReturn(true);
-    when(dateService.getCurrentZonedDateTime(anyString())).thenReturn(currentDate);
-    when(taskRepository.save(TestConstants.TaskConstants.VALID_TASK_1))
-        .thenReturn(TestConstants.TaskConstants.VALID_TASK_1);
+    when(taskRepository.save(VALID_TASK_1)).thenReturn(VALID_TASK_1);
 
-    final var result = taskService.createTask(TestConstants.TaskConstants.VALID_TASK_1);
+    final var result = taskService.createTask(VALID_TASK_1);
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
-    assertEquals(currentDate, TestConstants.TaskConstants.VALID_TASK_1.getCreationDate());
-    verify(userValidator)
-        .isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId());
-    verify(dateService).getCurrentZonedDateTime(anyString());
-    verify(taskRepository).save(TestConstants.TaskConstants.VALID_TASK_1);
-  }
-
-  @Test
-  void testCreateTask_InvalidAuthorId_UserNotFound() {
-    when(userValidator.isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId()))
-        .thenReturn(false);
-
-    assertThrows(
-        UserNotFoundException.class,
-        () -> taskService.createTask(TestConstants.TaskConstants.VALID_TASK_1));
-    verify(userValidator)
-        .isUserExistInDbById(TestConstants.TaskConstants.VALID_TASK_1.getAuthorId());
-    verifyNoInteractions(dateService);
-    verifyNoInteractions(taskRepository);
+    assertEquals(VALID_TASK_1, result);
+    verify(taskRepository).save(VALID_TASK_1);
   }
 
   @Test
@@ -153,19 +139,16 @@ class TaskServiceImplTest {
     when(taskValidator.isTaskExistsInDbById(TestConstants.TaskConstants.VALID_TASK_DTO.getId()))
         .thenReturn(true);
     when(taskRepository.findById(TestConstants.TaskConstants.VALID_TASK_DTO.getId()))
-        .thenReturn(Optional.of(TestConstants.TaskConstants.VALID_TASK_1));
-    when(taskRepository.save(TestConstants.TaskConstants.VALID_TASK_1))
-        .thenReturn(TestConstants.TaskConstants.VALID_TASK_1);
+        .thenReturn(Optional.of(VALID_TASK_1));
+    when(taskRepository.save(VALID_TASK_1)).thenReturn(VALID_TASK_1);
 
     final var result = taskService.updateTask(TestConstants.TaskConstants.VALID_TASK_DTO);
 
-    assertEquals(TestConstants.TaskConstants.VALID_TASK_1, result);
+    assertEquals(VALID_TASK_1, result);
     verify(taskValidator).isTaskExistsInDbById(TestConstants.TaskConstants.VALID_TASK_DTO.getId());
     verify(taskRepository).findById(TestConstants.TaskConstants.VALID_TASK_DTO.getId());
-    verify(taskMapper)
-        .updateTask(
-            TestConstants.TaskConstants.VALID_TASK_1, TestConstants.TaskConstants.VALID_TASK_DTO);
-    verify(taskRepository).save(TestConstants.TaskConstants.VALID_TASK_1);
+    verify(taskMapper).updateTask(VALID_TASK_1, TestConstants.TaskConstants.VALID_TASK_DTO);
+    verify(taskRepository).save(VALID_TASK_1);
   }
 
   @Test

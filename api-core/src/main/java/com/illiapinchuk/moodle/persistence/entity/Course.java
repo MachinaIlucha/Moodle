@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -58,5 +60,5 @@ public class Course {
 
   Set<@NotNull Long> students;
 
-  @DBRef List<@Valid Task> tasks;
+  @DBRef List<@Valid Task> tasks = new ArrayList<>();
 }

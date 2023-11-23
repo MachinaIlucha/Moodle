@@ -197,6 +197,12 @@ public class TestConstants {
             .description(COURSE_DESCRIPTION)
             .tasks(TaskConstants.LIST_OF_VALID_TASKS)
             .build();
+    public static final Course VALID_COURSE_WITHOUT_TASKS =
+        Course.builder()
+            .id(VALID_COURSE_ID)
+            .name(COURSE_NAME)
+            .description(COURSE_DESCRIPTION)
+            .build();
     public static final Course INVALID_COURSE =
         Course.builder()
             .id(INVALID_COURSE_ID)
