@@ -4,6 +4,7 @@ import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.CourseAlreadyExistsException;
 import com.illiapinchuk.moodle.exception.CourseNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
@@ -140,8 +141,11 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   @Transactional
-  // TODO check if course id is already exists and trhow exception
   public Course createCourse(@Nonnull final Course course) {
+    if (course.getId() != null && courseValidator.isCourseExistsInDbById(course.getId()))
+      throw new CourseAlreadyExistsException(
+          String.format("Course with id: %s already exists", course.getId()));
+
     if (!courseValidator.isAuthorsExistsInDbByIds(course.getAuthorIds()))
       throw new UserNotFoundException("One of the authors not exists.");
     return courseRepository.save(course);
