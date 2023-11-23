@@ -60,5 +60,6 @@ public class Course {
 
   Set<@NotNull Long> students;
 
-  @DBRef List<@Valid Task> tasks = new ArrayList<>();
+  @DBRef(lazy = true)
+  List<@Valid Task> tasks = new ArrayList<>();
 }

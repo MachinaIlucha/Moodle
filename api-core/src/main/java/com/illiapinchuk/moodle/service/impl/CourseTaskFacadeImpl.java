@@ -32,7 +32,6 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
   @Override
   public CourseDto getCourseWithTasks(@Nonnull final String courseId) {
     final var course = courseService.getCourseById(courseId);
-    course.setTasks(taskService.getTasksByCourseId(courseId));
 
     return courseMapper.courseToCourseDto(course);
   }
@@ -48,6 +47,7 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
   }
 
   @Override
+  @Transactional
   public TaskDto createTaskWithCourse(@Nonnull final TaskDto taskDto) {
     final var task = taskMapper.taskDtoToTask(taskDto);
 
@@ -71,6 +71,17 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
     task.setCreationDate(creationDate);
 
     final var createdTask = taskService.createTask(task);
+    addTaskToCourse(courseId, createdTask.getId());
     return taskMapper.taskToTaskDto(createdTask);
+  }
+
+  @Override
+  public void addTaskToCourse(@Nonnull final String courseId, @Nonnull final String taskId) {
+    final var course = courseService.getCourseById(courseId);
+    final var task = taskService.getTaskById(taskId);
+
+    course.getTasks().add(task);
+
+    courseService.updateCourse(course);
   }
 }

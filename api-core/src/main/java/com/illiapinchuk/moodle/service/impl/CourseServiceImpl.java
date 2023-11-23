@@ -153,7 +153,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public Course updateCourse(@Nonnull final CourseDto courseDto) {
+  public Course updateCourseFromDto(@Nonnull final CourseDto courseDto) {
     final var courseId = courseDto.getId();
     if (!courseValidator.isCourseExistsInDbById(courseId)) {
       throw new CourseNotFoundException(String.format("Course with id: %s not found", courseId));
@@ -161,6 +161,11 @@ public class CourseServiceImpl implements CourseService {
     final var course = getCourseById(courseId);
     courseMapper.updateCourse(course, courseDto);
 
+    return courseRepository.save(course);
+  }
+
+  @Override
+  public Course updateCourse(@Nonnull final Course course) {
     return courseRepository.save(course);
   }
 

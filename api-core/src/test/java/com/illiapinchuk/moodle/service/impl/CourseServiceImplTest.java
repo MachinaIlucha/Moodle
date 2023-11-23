@@ -322,7 +322,7 @@ class CourseServiceImplTest {
     when(courseRepository.findById(VALID_COURSE_DTO.getId())).thenReturn(Optional.of(VALID_COURSE));
     when(courseRepository.save(VALID_COURSE)).thenReturn(VALID_COURSE);
 
-    final var updatedCourse = courseService.updateCourse(VALID_COURSE_DTO);
+    final var updatedCourse = courseService.updateCourseFromDto(VALID_COURSE_DTO);
 
     assertSame(VALID_COURSE, updatedCourse);
 
@@ -340,7 +340,7 @@ class CourseServiceImplTest {
 
     assertThrows(
         CourseNotFoundException.class,
-        () -> courseService.updateCourse(TestConstants.CourseConstants.INVALID_COURSE_DTO));
+        () -> courseService.updateCourseFromDto(TestConstants.CourseConstants.INVALID_COURSE_DTO));
 
     verify(courseValidator, times(1))
         .isCourseExistsInDbById(TestConstants.CourseConstants.INVALID_COURSE_DTO.getId());
