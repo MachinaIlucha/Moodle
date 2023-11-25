@@ -126,7 +126,7 @@ public class TaskServiceImpl implements TaskService {
               task.setAttachments(taskAttachmentService.getAttachmentsByTaskId(taskId));
               if (!UserPermissionService.hasAnyRulingRole()) {
                 task.setSubmissions(
-                        task.getSubmissions().stream()
+                    task.getSubmissions().stream()
                         .filter(submission -> submission.getUserId().equals(userId))
                         .collect(Collectors.toList()));
               }
