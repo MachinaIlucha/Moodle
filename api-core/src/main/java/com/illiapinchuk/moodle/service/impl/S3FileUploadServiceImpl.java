@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FileUploadServiceImpl implements FileUploadService {
+public class S3FileUploadServiceImpl implements FileUploadService {
 
   private final ResourceLoader resourceLoader;
 

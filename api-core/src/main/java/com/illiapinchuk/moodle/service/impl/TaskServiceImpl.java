@@ -19,7 +19,9 @@ import com.illiapinchuk.moodle.service.FileUploadService;
 import com.illiapinchuk.moodle.service.TaskAttachmentService;
 import com.illiapinchuk.moodle.service.TaskService;
 import jakarta.annotation.Nonnull;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotEmpty;
@@ -122,6 +124,12 @@ public class TaskServiceImpl implements TaskService {
         .map(
             task -> {
               task.setAttachments(taskAttachmentService.getAttachmentsByTaskId(taskId));
+              if (!UserPermissionService.hasAnyRulingRole()) {
+                task.setSubmissions(
+                        task.getSubmissions().stream()
+                        .filter(submission -> submission.getUserId().equals(userId))
+                        .collect(Collectors.toList()));
+              }
               return task;
             })
         .orElseThrow(

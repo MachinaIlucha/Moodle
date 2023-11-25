@@ -26,11 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.mockito.Mockito.any;
 
 @ExtendWith(MockitoExtension.class)
-class FileUploadServiceImplTest {
+class S3FileUploadServiceImplTest {
 
   @Mock private ResourceLoader resourceLoader;
   @Mock private WritableResource s3Resource;
-  @InjectMocks private FileUploadServiceImpl fileUploadService;
+  @InjectMocks private S3FileUploadServiceImpl fileUploadService;
 
   @Test
   void uploadImage_Success() throws IOException {

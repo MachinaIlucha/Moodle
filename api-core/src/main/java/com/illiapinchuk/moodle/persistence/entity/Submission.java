@@ -12,12 +12,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-/** Submission class represents a submission in the mongo db. */
-@Document(collection = "submissions")
+/** Submission class represents a submission in the task. */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @AllArgsConstructor
@@ -25,14 +22,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 public class Submission {
 
-  @Id String id;
-
   @NotNull(
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_USERID_NULL_ERROR_MESSAGE)
   @NotBlank(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_USERID_BLANK_ERROR_MESSAGE)
-  String userId;
+  Long userId;
 
   @DBRef
   @NotNull(
