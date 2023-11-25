@@ -37,4 +37,12 @@ public interface CourseTaskFacade {
    *     exist.
    */
   TaskDto createTaskWithCourse(TaskDto taskDto);
+
+  /**
+   * Adds a task to a course.
+   *
+   * @param courseId The ID of the course to which the task should be added.
+   * @param taskId The ID of the task to be added to the course.
+   */
+  void addTaskToCourse(String courseId, String taskId);
 }

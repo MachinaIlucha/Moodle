@@ -146,7 +146,7 @@ public class CourseController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PutMapping
   public ResponseEntity<CourseDto> updateCourse(@Valid @RequestBody final CourseDto courseDto) {
-    final var course = courseService.updateCourse(courseDto);
+    final var course = courseService.updateCourseFromDto(courseDto);
     final var courseResponse = courseMapper.courseToCourseDto(course);
 
     log.info("Course with id: {} was updated", course.getId());

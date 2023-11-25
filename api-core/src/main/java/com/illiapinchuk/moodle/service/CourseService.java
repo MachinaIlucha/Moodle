@@ -54,7 +54,15 @@ public interface CourseService {
    * @param courseDto The course DTO containing the updated course data.
    * @return The updated course.
    */
-  Course updateCourse(CourseDto courseDto);
+  Course updateCourseFromDto(CourseDto courseDto);
+
+  /**
+   * Updates an existing course.
+   *
+   * @param course The course containing the updated course data.
+   * @return The updated course.
+   */
+  Course updateCourse(Course course);
 
   /**
    * Deletes a course by its ID.
