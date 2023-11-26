@@ -3,8 +3,8 @@ spring:
   #Email sender settings
   mail:
     host: smtp.gmail.com
-    username: mailsendertelegram@gmail.com
-    password: kuszoulyjsjuccuo
+    username: mailsendermoodle@gmail.com
+    password: pdtk pwbc nawz mprr
     port: 587
     protocol: smtp
     properties:
