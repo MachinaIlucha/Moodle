@@ -34,9 +34,11 @@ class UserTokenServiceImplTest {
     String token = "nonexistent-token";
     when(userTokenRepository.getUserTokenByToken(token)).thenReturn(Optional.empty());
 
-    assertThrows(UserTokenNotFoundException.class, () -> {
-      userTokenService.setTokenUsed(token);
-    });
+    assertThrows(
+        UserTokenNotFoundException.class,
+        () -> {
+          userTokenService.setTokenUsed(token);
+        });
   }
 
   @Test
