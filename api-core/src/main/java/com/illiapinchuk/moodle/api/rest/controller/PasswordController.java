@@ -45,7 +45,8 @@ public class PasswordController {
    */
   @PostMapping(value = "/forgot")
   public ResponseEntity<Void> processForgotPasswordForm(
-          @RequestParam("email") @NotBlank @ValidEmail final String userEmail, final HttpServletRequest request) {
+      @RequestParam("email") @NotBlank @ValidEmail final String userEmail,
+      final HttpServletRequest request) {
     log.info("Got a request to initiate recovery password for email: {}", userEmail);
 
     final String scheme = request.getScheme(); // Capture the scheme
