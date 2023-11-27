@@ -17,13 +17,11 @@ public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
   Optional<UserToken> getUserTokenByToken(String token);
 
   @Modifying
-  @Transactional
   @Query("update UserToken ut set ut.userTokenStatus = :status where ut.token = :token")
   void updateUserTokenStatusByToken(
       @Param("token") String token, @Param("status") UserTokenStatus status);
 
   @Modifying
-  @Transactional
   @Query("delete from UserToken ut where ut.userTokenStatus = :status")
   void deleteUserTokensByUserTokenStatus(@Param("status") UserTokenStatus status);
 }

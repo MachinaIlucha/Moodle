@@ -2,6 +2,8 @@ package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
+import com.illiapinchuk.moodle.exception.UserTokenNotFoundException;
+import com.illiapinchuk.moodle.model.entity.UserTokenStatus;
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
 import com.illiapinchuk.moodle.persistence.repository.UserTokenRepository;
 import com.illiapinchuk.moodle.service.UserService;
@@ -26,6 +28,33 @@ class UserTokenServiceImplTest {
   @Mock private UserTokenRepository userTokenRepository;
 
   @Mock private UserService userService;
+
+  @Test
+  void setTokenUsed_WhenTokenNotFound_ShouldThrowException() {
+    String token = "nonexistent-token";
+    when(userTokenRepository.getUserTokenByToken(token)).thenReturn(Optional.empty());
+
+    assertThrows(UserTokenNotFoundException.class, () -> {
+      userTokenService.setTokenUsed(token);
+    });
+  }
+
+  @Test
+  void setTokenUsed_WhenTokenFound_ShouldUpdateTokenStatus() {
+    String token = "existing-token";
+    when(userTokenRepository.getUserTokenByToken(token)).thenReturn(Optional.of(new UserToken()));
+
+    userTokenService.setTokenUsed(token);
+
+    verify(userTokenRepository, times(1)).updateUserTokenStatusByToken(token, UserTokenStatus.USED);
+  }
+
+  @Test
+  void deleteUsedTokens_ShouldInvokeRepositoryMethod() {
+    userTokenService.deleteUsedTokens();
+
+    verify(userTokenRepository, times(1)).deleteUserTokensByUserTokenStatus(UserTokenStatus.USED);
+  }
 
   @Test
   void saveTokenShouldSaveToken() {
