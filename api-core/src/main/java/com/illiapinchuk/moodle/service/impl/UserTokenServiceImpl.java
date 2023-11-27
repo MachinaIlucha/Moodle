@@ -1,6 +1,8 @@
 package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
+import com.illiapinchuk.moodle.exception.UserTokenNotFoundException;
+import com.illiapinchuk.moodle.model.entity.UserTokenStatus;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
 import com.illiapinchuk.moodle.persistence.repository.UserTokenRepository;
@@ -8,6 +10,7 @@ import com.illiapinchuk.moodle.service.UserService;
 import com.illiapinchuk.moodle.service.UserTokenService;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,5 +59,22 @@ public class UserTokenServiceImpl implements UserTokenService {
     final var userId = userToken.getUserId();
 
     return userService.getUserById(userId);
+  }
+
+  @Override
+  @Transactional
+  public void setTokenUsed(@Nonnull final String token) {
+    if (userTokenRepository.getUserTokenByToken(token).isEmpty()) {
+      throw new UserTokenNotFoundException("No user token was found for this token.");
+    }
+
+    userTokenRepository.updateUserTokenStatusByToken(token, UserTokenStatus.USED);
+  }
+
+  @Override
+  @Transactional
+  @Scheduled(cron = "0 0 * * * *")
+  public void deleteUsedTokens() {
+    userTokenRepository.deleteUserTokensByUserTokenStatus(UserTokenStatus.USED);
   }
 }

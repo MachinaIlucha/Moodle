@@ -265,6 +265,7 @@
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/ActuatorSecurityConfig.class
                                 </exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/jwt/JwtUser.class</exclude>
+                                <exclude>/*com/illiapinchuk/moodle/configuration/scheduler/SchedulerConfig.class</exclude>
 
                                 <exclude>/*com/illiapinchuk/moodle/common/ApplicationConstants*.class</exclude>
                                 <exclude>/*com/illiapinchuk/moodle/configuration/security/basic/**</exclude>

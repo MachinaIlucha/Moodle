@@ -18,3 +18,12 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_user_tokens_users
                     references: users(id)
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    defaultValue: 'WAITING'
+        - sql:
+            dbms: mysql
+            sql: ALTER TABLE user_tokens ADD CONSTRAINT chk_status_values CHECK (status IN ('WAITING', 'USED'))

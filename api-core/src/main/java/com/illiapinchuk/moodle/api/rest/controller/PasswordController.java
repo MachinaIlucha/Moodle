@@ -81,8 +81,8 @@ public class PasswordController {
     // Find the user associated with the reset token
     final var user = userTokenService.getUserByToken(token);
 
-    // Delete token, so now no-one can use it one more time
-    userTokenService.deleteTokenByUserId(user.getId());
+    // Change token status to "USED"
+    userTokenService.setTokenUsed(token);
 
     // Update user
     userService.updateUserPassword(password, user.getId());

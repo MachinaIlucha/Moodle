@@ -2,6 +2,7 @@ package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.model.dto.EmailDto;
+import com.illiapinchuk.moodle.model.entity.UserTokenStatus;
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
 import com.illiapinchuk.moodle.service.EmailService;
 import com.illiapinchuk.moodle.service.PasswordRecoveryService;
@@ -9,6 +10,7 @@ import com.illiapinchuk.moodle.service.UserService;
 import com.illiapinchuk.moodle.service.UserTokenService;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
 
   private final UserService userService;
@@ -46,8 +49,15 @@ public class PasswordRecoveryServiceImpl implements PasswordRecoveryService {
 
     final var token = UUID.randomUUID().toString();
 
-    final var userToken = UserToken.builder().userId(user.getId()).token(token).build();
+    final var userToken =
+        UserToken.builder()
+            .userId(user.getId())
+            .token(token)
+            .userTokenStatus(UserTokenStatus.WAITING)
+            .build();
     userTokenService.saveToken(userToken);
+
+    log.info("User token was saved to the database: {}", userToken.getToken());
 
     final var resetUrlWithToken =
         scheme

@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 /** Submission class represents a submission in the task. */
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -29,7 +28,6 @@ public class Submission {
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_USERID_BLANK_ERROR_MESSAGE)
   Long userId;
 
-  @DBRef
   @NotNull(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_TASKID_BLANK_ERROR_MESSAGE)
