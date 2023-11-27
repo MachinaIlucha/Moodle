@@ -10,10 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-/** TaskSubmissionFile class represents a Task submissions files in the mongo db. */
-@Document(collection = "tasks-submission-files")
+/** TaskSubmissionFile class represents a Task submissions files. */
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 @AllArgsConstructor
