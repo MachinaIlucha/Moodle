@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
+import com.illiapinchuk.moodle.common.annotation.ValidEmail;
 import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
@@ -43,7 +44,7 @@ public class UserController {
   @GetMapping
   public ResponseEntity<UserDto> getUserByLoginOrEmail(
       @RequestParam(name = "login", required = false) final String login,
-      @RequestParam(name = "email", required = false) final String email) {
+      @RequestParam(name = "email", required = false) @ValidEmail final String email) {
 
     if (StringUtils.hasText(login) && StringUtils.hasText(email)) {
       throw new NotValidInputException("Either login or email must be provided");
@@ -115,7 +116,7 @@ public class UserController {
   @DeleteMapping
   public ResponseEntity<Void> deleteUserByLoginOrEmail(
       @RequestParam(name = "login", required = false) final String login,
-      @RequestParam(name = "email", required = false) final String email) {
+      @RequestParam(name = "email", required = false) @ValidEmail final String email) {
     userService.deleteUserByLoginOrEmail(login, email);
     log.info("User with login: {} or email: {} was deleted", login, email);
     return ResponseEntity.ok().build();

@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
+import com.illiapinchuk.moodle.common.annotation.ValidEmail;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.service.PasswordRecoveryService;
@@ -44,7 +45,8 @@ public class PasswordController {
    */
   @PostMapping(value = "/forgot")
   public ResponseEntity<Void> processForgotPasswordForm(
-      @RequestParam("email") @NotBlank final String userEmail, final HttpServletRequest request) {
+      @RequestParam("email") @NotBlank @ValidEmail final String userEmail,
+      final HttpServletRequest request) {
     log.info("Got a request to initiate recovery password for email: {}", userEmail);
 
     final String scheme = request.getScheme(); // Capture the scheme
