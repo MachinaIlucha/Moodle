@@ -13,6 +13,8 @@ import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.exception.CannotWriteToS3Exception;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import com.illiapinchuk.moodle.service.impl.business.S3FileUploadServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

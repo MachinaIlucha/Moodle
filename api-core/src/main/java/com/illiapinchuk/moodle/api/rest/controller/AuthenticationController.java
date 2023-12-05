@@ -1,7 +1,7 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.model.dto.AuthRequestDto;
-import com.illiapinchuk.moodle.service.AuthenticationService;
+import com.illiapinchuk.moodle.service.business.AuthenticationService;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
 import java.util.Map;

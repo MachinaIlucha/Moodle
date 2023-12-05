@@ -1,6 +1,7 @@
 package com.illiapinchuk.moodle.service.impl;
 
 import com.illiapinchuk.moodle.common.TestConstants;
+import com.illiapinchuk.moodle.service.impl.business.EmailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

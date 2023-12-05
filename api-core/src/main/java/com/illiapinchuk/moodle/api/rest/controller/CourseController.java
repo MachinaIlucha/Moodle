@@ -4,8 +4,9 @@ import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtUser;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
-import com.illiapinchuk.moodle.service.CourseService;
-import com.illiapinchuk.moodle.service.CourseTaskFacade;
+import com.illiapinchuk.moodle.service.business.CourseService;
+import com.illiapinchuk.moodle.service.business.CourseTaskFacade;
+import com.illiapinchuk.moodle.service.crud.CourseCRUDService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +33,12 @@ import java.util.List;
 @Slf4j
 public class CourseController {
 
-  private final CourseMapper courseMapper;
   private final CourseService courseService;
+  private final CourseCRUDService courseCRUDService;
+
   private final CourseTaskFacade courseTaskFacade;
+
+  private final CourseMapper courseMapper;
 
   /**
    * Retrieves the overall grade for a given student in a specific course.
@@ -46,16 +50,19 @@ public class CourseController {
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/{courseId}/students/{studentId}/overall-grade")
   public ResponseEntity<Integer> getOverallGradeForStudentInCourse(
-          @PathVariable("courseId") final String courseId,
-          @PathVariable("studentId") final Long studentId) {
+      @PathVariable("courseId") final String courseId,
+      @PathVariable("studentId") final Long studentId) {
 
     // Logic to fetch the overall grade from the service layer
-    final var overallGrade = courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId);
+    final var overallGrade =
+        courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId);
 
-    log.info("Retrieved overall grade for student with id: {} in course with id: {}", studentId, courseId);
+    log.info(
+        "Retrieved overall grade for student with id: {} in course with id: {}",
+        studentId,
+        courseId);
     return ResponseEntity.ok(overallGrade);
   }
-
 
   /**
    * Retrieves courses for a given student.
@@ -151,7 +158,7 @@ public class CourseController {
   @PostMapping
   public ResponseEntity<CourseDto> createCourse(@Valid @RequestBody final CourseDto courseDto) {
     final var courseRequest = courseMapper.courseDtoToCourse(courseDto);
-    final var course = courseService.createCourse(courseRequest);
+    final var course = courseCRUDService.createCourse(courseRequest);
     final var courseResponse = courseMapper.courseToCourseDto(course);
 
     log.info("New course was created with id: {}", course.getId());
@@ -167,7 +174,7 @@ public class CourseController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PutMapping
   public ResponseEntity<CourseDto> updateCourse(@Valid @RequestBody final CourseDto courseDto) {
-    final var course = courseService.updateCourseFromDto(courseDto);
+    final var course = courseCRUDService.updateCourseFromDto(courseDto);
     final var courseResponse = courseMapper.courseToCourseDto(course);
 
     log.info("Course with id: {} was updated", course.getId());

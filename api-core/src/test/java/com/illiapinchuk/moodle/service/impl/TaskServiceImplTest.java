@@ -21,11 +21,12 @@ import com.illiapinchuk.moodle.exception.TaskNotFoundException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.repository.TaskRepository;
-import com.illiapinchuk.moodle.service.FileUploadService;
-import com.illiapinchuk.moodle.service.TaskAttachmentService;
+import com.illiapinchuk.moodle.service.business.FileUploadService;
+import com.illiapinchuk.moodle.service.business.TaskAttachmentService;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.illiapinchuk.moodle.service.impl.business.TaskServiceImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -9,6 +9,7 @@ import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
+import com.illiapinchuk.moodle.service.impl.business.UserServiceImpl;
 import jakarta.persistence.EntityExistsException;
 import java.util.Optional;
 

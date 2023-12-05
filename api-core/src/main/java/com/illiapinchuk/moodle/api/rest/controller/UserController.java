@@ -5,7 +5,7 @@ import com.illiapinchuk.moodle.common.mapper.UserMapper;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
 import com.illiapinchuk.moodle.model.dto.UserDto;
 import com.illiapinchuk.moodle.persistence.entity.User;
-import com.illiapinchuk.moodle.service.UserService;
+import com.illiapinchuk.moodle.service.business.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
