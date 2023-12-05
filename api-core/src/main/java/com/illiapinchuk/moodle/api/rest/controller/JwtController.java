@@ -1,6 +1,6 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
-import com.illiapinchuk.moodle.service.JwtService;
+import com.illiapinchuk.moodle.service.business.JwtService;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

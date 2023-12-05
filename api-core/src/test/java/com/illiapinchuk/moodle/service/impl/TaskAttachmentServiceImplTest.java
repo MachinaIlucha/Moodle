@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.persistence.repository.TaskAttachmentRepository;
+import com.illiapinchuk.moodle.service.impl.business.TaskAttachmentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

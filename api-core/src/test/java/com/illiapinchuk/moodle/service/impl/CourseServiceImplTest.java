@@ -11,7 +11,7 @@ import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
-import com.illiapinchuk.moodle.service.TaskService;
+import com.illiapinchuk.moodle.service.business.TaskService;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.illiapinchuk.moodle.service.UserService;
+import com.illiapinchuk.moodle.service.business.UserService;
+import com.illiapinchuk.moodle.service.impl.business.CourseServiceImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

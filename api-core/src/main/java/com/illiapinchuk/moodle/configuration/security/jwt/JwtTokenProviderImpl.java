@@ -4,7 +4,7 @@ import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.model.entity.RoleName;
-import com.illiapinchuk.moodle.service.RedisService;
+import com.illiapinchuk.moodle.service.business.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;

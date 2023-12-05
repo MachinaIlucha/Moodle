@@ -3,8 +3,10 @@ package com.illiapinchuk.moodle.common.mapper;
 import com.illiapinchuk.moodle.model.dto.SubmissionDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
-import com.illiapinchuk.moodle.service.SubmissionService;
+import com.illiapinchuk.moodle.service.business.SubmissionService;
 import java.util.Collections;
+
+import com.illiapinchuk.moodle.service.crud.SubmissionCRUDService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,11 +18,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public abstract class TaskMapper {
 
-  @Autowired
-  private SubmissionService submissionService;
+  @Autowired private SubmissionCRUDService submissionCRUDService;
 
-  @Autowired
-  private SubmissionMapper submissionMapper;
+  @Autowired private SubmissionMapper submissionMapper;
 
   /**
    * Maps a {@link Task} object to a {@link TaskDto} object.
@@ -29,7 +29,9 @@ public abstract class TaskMapper {
    * @return The resulting {@link TaskDto} object.
    */
   @Mapping(source = "course.id", target = "courseId")
-  @Mapping(target = "submissions", expression = "java(mapSubmissionIdsToDtos(task.getSubmissionIds()))")
+  @Mapping(
+      target = "submissions",
+      expression = "java(mapSubmissionIdsToDtos(task.getSubmissionIds()))")
   public abstract TaskDto taskToTaskDto(Task task);
 
   /**
@@ -58,7 +60,7 @@ public abstract class TaskMapper {
     return submissionIds.stream()
         .map(
             id -> {
-              final var submission = submissionService.getSubmissionById(id);
+              final var submission = submissionCRUDService.getSubmissionById(id);
               return submissionMapper.submissionToSubmissionDto(submission);
             })
         .toList();

@@ -4,7 +4,7 @@ import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.model.entity.RoleName;
-import com.illiapinchuk.moodle.service.RedisService;
+import com.illiapinchuk.moodle.service.business.RedisService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.*;

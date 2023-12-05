@@ -5,10 +5,11 @@ import com.illiapinchuk.moodle.model.dto.GradeDto;
 import com.illiapinchuk.moodle.model.dto.SubmissionDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
-import com.illiapinchuk.moodle.service.CourseTaskFacade;
+import com.illiapinchuk.moodle.service.business.CourseTaskFacade;
 import com.illiapinchuk.moodle.service.business.GradeService;
-import com.illiapinchuk.moodle.service.TaskService;
-import com.illiapinchuk.moodle.service.TaskSubmissionFacade;
+import com.illiapinchuk.moodle.service.business.TaskService;
+import com.illiapinchuk.moodle.service.business.TaskSubmissionFacade;
+import com.illiapinchuk.moodle.service.crud.TaskCRUDService;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class TaskController {
 
+  private final TaskCRUDService taskCRUDService;
   private final TaskService taskService;
   private final CourseTaskFacade courseTaskFacade;
   private final GradeService gradeService;
@@ -50,7 +52,7 @@ public class TaskController {
    */
   @GetMapping("/{id}")
   public ResponseEntity<TaskDto> getTaskById(@PathVariable("id") final String taskId) {
-    final var task = taskService.getTaskById(taskId);
+    final var task = taskCRUDService.getTaskById(taskId);
     final var taskResponse = taskMapper.taskToTaskDto(task);
 
     log.info("Task with id: {} was found", taskId);
@@ -105,7 +107,8 @@ public class TaskController {
       @Valid @RequestParam(value = "submission") final String submissionJson,
       @RequestParam(value = "files", required = false) final List<MultipartFile> files,
       @PathVariable("taskId") final String taskId) {
-    final var taskWithSubmission = taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
+    final var taskWithSubmission =
+        taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
 
     log.info("Submission was added to task with id: {}", taskId);
     return ResponseEntity.ok(taskWithSubmission);
@@ -114,9 +117,9 @@ public class TaskController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PostMapping("/{taskId}/submissions/{submissionId}/grade")
   public ResponseEntity<Void> gradeSubmission(
-          @PathVariable("taskId") final String taskId,
-          @PathVariable("submissionId") final String submissionId,
-          @RequestBody @Valid final GradeDto gradeDto) {
+      @PathVariable("taskId") final String taskId,
+      @PathVariable("submissionId") final String submissionId,
+      @RequestBody @Valid final GradeDto gradeDto) {
 
     gradeService.gradeSubmission(taskId, submissionId, gradeDto);
     log.info("Submission with id: {} for task with id: {} was graded", submissionId, taskId);
@@ -132,7 +135,7 @@ public class TaskController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PutMapping
   public ResponseEntity<TaskDto> updateTask(@Valid @RequestBody final TaskDto taskDto) {
-    final var task = taskService.updateTask(taskDto);
+    final var task = taskCRUDService.updateTaskFromDto(taskDto);
     final var taskResponse = taskMapper.taskToTaskDto(task);
 
     log.info("Task with id: {} was updated", task.getId());
@@ -149,7 +152,7 @@ public class TaskController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteTaskById(@PathVariable("id") final String taskId) {
-    taskService.deleteTaskById(taskId);
+    taskCRUDService.deleteTaskById(taskId);
     log.info("Task with id: {} was deleted", taskId);
     return ResponseEntity.ok().build();
   }
