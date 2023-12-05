@@ -105,7 +105,8 @@ public class TaskController {
       @Valid @RequestParam(value = "submission") final String submissionJson,
       @RequestParam(value = "files", required = false) final List<MultipartFile> files,
       @PathVariable("taskId") final String taskId) {
-    final var taskWithSubmission = taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
+    final var taskWithSubmission =
+        taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
 
     log.info("Submission was added to task with id: {}", taskId);
     return ResponseEntity.ok(taskWithSubmission);
@@ -114,9 +115,9 @@ public class TaskController {
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PostMapping("/{taskId}/submissions/{submissionId}/grade")
   public ResponseEntity<Void> gradeSubmission(
-          @PathVariable("taskId") final String taskId,
-          @PathVariable("submissionId") final String submissionId,
-          @RequestBody @Valid final GradeDto gradeDto) {
+      @PathVariable("taskId") final String taskId,
+      @PathVariable("submissionId") final String submissionId,
+      @RequestBody @Valid final GradeDto gradeDto) {
 
     gradeService.gradeSubmission(taskId, submissionId, gradeDto);
     log.info("Submission with id: {} for task with id: {} was graded", submissionId, taskId);

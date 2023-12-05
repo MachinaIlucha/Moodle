@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface SubmissionService {
 
-    Submission saveSubmission(Submission submission);
+  Submission saveSubmission(Submission submission);
 
-    Submission getSubmissionById(String id);
+  Submission getSubmissionById(String id);
 
-    List<Submission> getSubmissionsByTaskIdAndStudentId(String taskId, Long studentId);
+  List<Submission> getSubmissionsByTaskIdAndStudentId(String taskId, Long studentId);
 }

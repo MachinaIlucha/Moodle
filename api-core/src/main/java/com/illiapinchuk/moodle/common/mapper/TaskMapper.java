@@ -16,11 +16,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public abstract class TaskMapper {
 
-  @Autowired
-  private SubmissionService submissionService;
+  @Autowired private SubmissionService submissionService;
 
-  @Autowired
-  private SubmissionMapper submissionMapper;
+  @Autowired private SubmissionMapper submissionMapper;
 
   /**
    * Maps a {@link Task} object to a {@link TaskDto} object.
@@ -29,7 +27,9 @@ public abstract class TaskMapper {
    * @return The resulting {@link TaskDto} object.
    */
   @Mapping(source = "course.id", target = "courseId")
-  @Mapping(target = "submissions", expression = "java(mapSubmissionIdsToDtos(task.getSubmissionIds()))")
+  @Mapping(
+      target = "submissions",
+      expression = "java(mapSubmissionIdsToDtos(task.getSubmissionIds()))")
   public abstract TaskDto taskToTaskDto(Task task);
 
   /**

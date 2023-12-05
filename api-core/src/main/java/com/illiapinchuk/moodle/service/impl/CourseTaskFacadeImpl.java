@@ -93,7 +93,7 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
     // Check if the student exists in the database
     if (!userValidator.isUserExistInDbById(studentId)) {
       throw new UserNotFoundException(
-              String.format("The student with id: %s does not exist.", studentId));
+          String.format("The student with id: %s does not exist.", studentId));
     }
 
     final var course = courseService.getCourseById(courseId);

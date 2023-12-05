@@ -26,7 +26,8 @@ public class SubmissionServiceImpl implements SubmissionService {
   }
 
   @Override
-  public List<Submission> getSubmissionsByTaskIdAndStudentId(@Nonnull final String taskId, @Nonnull final Long studentId) {
+  public List<Submission> getSubmissionsByTaskIdAndStudentId(
+      @Nonnull final String taskId, @Nonnull final Long studentId) {
     return submissionRepository.getSubmissionsByTaskIdAndAndUserId(taskId, studentId);
   }
 }
