@@ -14,4 +14,6 @@ public interface CourseRepository extends MongoRepository<Course, String> {
   List<Course> findByStudentsContains(Long studentId);
 
   List<Course> findByAuthorIdsContains(Long authorId);
+
+  String findCourseIdByTasksId(String taskId);
 }

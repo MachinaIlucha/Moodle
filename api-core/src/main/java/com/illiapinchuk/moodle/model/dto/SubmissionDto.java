@@ -45,8 +45,6 @@ public class SubmissionDto {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   List<TaskSubmissionFile> submissionFiles;
 
-  @Size(
-      max = ApplicationConstants.Web.DataValidation.MAX_SIZE_OF_TASK_GRADE,
-      message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_GRADE_SIZE_ERROR_MESSAGE)
-  int grade;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  GradeDto grade;
 }

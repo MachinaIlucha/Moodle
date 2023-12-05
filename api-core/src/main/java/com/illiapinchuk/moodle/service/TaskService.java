@@ -34,6 +34,14 @@ public interface TaskService {
   Task updateTask(TaskDto taskDto);
 
   /**
+   * Updates an existing task.
+   *
+   * @param task The task containing the updated task data.
+   * @return The updated task.
+   */
+  Task updateTask(Task task);
+
+  /**
    * Deletes a task by its ID.
    *
    * @param id The ID of the task to delete.
@@ -49,6 +57,4 @@ public interface TaskService {
   List<Task> getTasksByCourseId(String courseId);
 
   TaskDto addAttachmentToTask(MultipartFile file, String taskId);
-
-  TaskDto addSubmissionToTask(String submissionJson, List<MultipartFile> files, String taskId);
 }

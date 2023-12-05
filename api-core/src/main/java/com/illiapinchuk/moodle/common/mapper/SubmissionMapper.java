@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
  * This interface defines methods for mapping between the {@link Submission} and {@link
  * SubmissionDto}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = GradeMapper.class)
 public interface SubmissionMapper {
 
   ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -24,7 +24,7 @@ public interface SubmissionMapper {
    * @param submission the submission object to be mapped
    * @return the corresponding submission DTO object
    */
-  @Mapping(target = "submissionFiles", ignore = true)
+  @Mapping(target = "grade", source = "grade")
   SubmissionDto submissionToSubmissionDto(Submission submission);
 
   /**

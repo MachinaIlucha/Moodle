@@ -45,4 +45,6 @@ public interface CourseTaskFacade {
    * @param taskId The ID of the task to be added to the course.
    */
   void addTaskToCourse(String courseId, String taskId);
+
+  Integer getOverallGradeForStudentInCourse(String courseId, Long studentId);
 }

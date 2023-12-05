@@ -174,6 +174,11 @@ public class CourseServiceImpl implements CourseService {
     courseRepository.deleteById(id);
   }
 
+  @Override
+  public String getCourseIdByTaskId(@Nonnull final String taskId) {
+    return courseRepository.findCourseIdByTasksId(taskId);
+  }
+
   /**
    * Checks if the user identified by their JWT token has access to a specific course.
    *

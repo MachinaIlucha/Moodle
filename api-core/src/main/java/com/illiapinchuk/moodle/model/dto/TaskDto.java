@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -51,12 +51,12 @@ public class TaskDto {
 
   @FutureOrPresent(
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_DUEDATE_ERROR_MESSAGE)
-  Date dueDate;
+  LocalDateTime dueDate;
 
   @PastOrPresent(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_CREATIONDATE_ERROR_MESSAGE)
-  Date creationDate;
+  LocalDateTime creationDate;
 
   @NotBlank(
       message =
@@ -72,6 +72,8 @@ public class TaskDto {
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_STATUS_BLANK_ERROR_MESSAGE)
   TaskStatus status;
+
+  int maxScore;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   List<TaskAttachment> attachments;

@@ -1,11 +1,14 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.model.dto.GradeDto;
 import com.illiapinchuk.moodle.model.dto.SubmissionDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.service.CourseTaskFacade;
+import com.illiapinchuk.moodle.service.business.GradeService;
 import com.illiapinchuk.moodle.service.TaskService;
+import com.illiapinchuk.moodle.service.TaskSubmissionFacade;
 import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -32,9 +35,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class TaskController {
 
-  private final TaskMapper taskMapper;
   private final TaskService taskService;
   private final CourseTaskFacade courseTaskFacade;
+  private final GradeService gradeService;
+  private final TaskSubmissionFacade taskSubmissionFacade;
+
+  private final TaskMapper taskMapper;
 
   /**
    * Retrieves a task with the given id.
@@ -94,15 +100,27 @@ public class TaskController {
    * @param taskId The ID of the task to which the submission is being added.
    * @return A {@link ResponseEntity} containing the updated {@link TaskDto} object.
    */
-  @PostMapping("/{id}/submission")
+  @PostMapping("/{taskId}/submission")
   public ResponseEntity<TaskDto> addSubmissionToTask(
       @Valid @RequestParam(value = "submission") final String submissionJson,
       @RequestParam(value = "files", required = false) final List<MultipartFile> files,
-      @PathVariable("id") final String taskId) {
-    final var taskWithSubmission = taskService.addSubmissionToTask(submissionJson, files, taskId);
+      @PathVariable("taskId") final String taskId) {
+    final var taskWithSubmission = taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
 
     log.info("Submission was added to task with id: {}", taskId);
     return ResponseEntity.ok(taskWithSubmission);
+  }
+
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
+  @PostMapping("/{taskId}/submissions/{submissionId}/grade")
+  public ResponseEntity<Void> gradeSubmission(
+          @PathVariable("taskId") final String taskId,
+          @PathVariable("submissionId") final String submissionId,
+          @RequestBody @Valid final GradeDto gradeDto) {
+
+    gradeService.gradeSubmission(taskId, submissionId, gradeDto);
+    log.info("Submission with id: {} for task with id: {} was graded", submissionId, taskId);
+    return ResponseEntity.ok().build();
   }
 
   /**

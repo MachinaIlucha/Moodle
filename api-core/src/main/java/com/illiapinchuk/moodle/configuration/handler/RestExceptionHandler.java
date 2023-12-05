@@ -10,6 +10,7 @@ import com.illiapinchuk.moodle.exception.CannotWriteToS3Exception;
 import com.illiapinchuk.moodle.exception.InvalidJwtTokenException;
 import com.illiapinchuk.moodle.exception.JwtTokenExpiredException;
 import com.illiapinchuk.moodle.exception.NotValidInputException;
+import com.illiapinchuk.moodle.exception.SubmissionAlreadyGradedException;
 import com.illiapinchuk.moodle.exception.UserCantModifyAnotherUserException;
 import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.model.entity.ApiError;
@@ -159,12 +160,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   /**
-   * Handles NotValidInputException.
+   * Handles NotValidInputException, SubmissionAlreadyGradedException.
    *
-   * @param ex the NotValidInputException
+   * @param ex the NotValidInputException, SubmissionAlreadyGradedException
    * @return the ApiError object
    */
-  @ExceptionHandler(NotValidInputException.class)
+  @ExceptionHandler({NotValidInputException.class, SubmissionAlreadyGradedException.class})
   protected ResponseEntity<Object> handleNotValidInput(NotValidInputException ex) {
     final var apiError = new ApiError(BAD_REQUEST);
     apiError.setMessage(ex.getMessage());
