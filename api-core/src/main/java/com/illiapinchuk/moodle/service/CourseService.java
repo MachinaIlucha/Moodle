@@ -70,4 +70,12 @@ public interface CourseService {
    * @param id The ID of the course to delete.
    */
   void deleteCourseById(String id);
+
+  /**
+   * Retrieves the course ID associated with a given task ID.
+   *
+   * @param taskId The unique identifier of the task for which the course ID is needed.
+   * @return The course ID associated with the specified task ID, or null if not found.
+   */
+  String getCourseIdByTaskId(String taskId);
 }

@@ -3,12 +3,14 @@ package com.illiapinchuk.moodle.persistence.entity;
 import com.illiapinchuk.moodle.common.ApplicationConstants;
 import com.illiapinchuk.moodle.model.entity.TaskStatus;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import static com.illiapinchuk.moodle.common.ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_SCORE_ERROR_MESSAGE;
 
 /** Task class represents a Task in the mongo db. */
 @Document(collection = "tasks")
@@ -51,12 +55,12 @@ public class Task {
 
   @FutureOrPresent(
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_DUEDATE_ERROR_MESSAGE)
-  Date dueDate;
+  LocalDateTime dueDate;
 
   @PastOrPresent(
       message =
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_CREATIONDATE_ERROR_MESSAGE)
-  Date creationDate;
+  LocalDateTime creationDate;
 
   @NotNull(
       message =
@@ -74,7 +78,10 @@ public class Task {
           ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_STATUS_BLANK_ERROR_MESSAGE)
   TaskStatus status;
 
+  @Min(value = 0, message = TASK_SCORE_ERROR_MESSAGE)
+  int maxScore;
+
   List<TaskAttachment> attachments = new ArrayList<>();
 
-  List<Submission> submissions = new ArrayList<>();
+  List<String> submissionIds = new ArrayList<>();
 }

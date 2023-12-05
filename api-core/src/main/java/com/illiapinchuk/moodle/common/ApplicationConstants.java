@@ -136,6 +136,7 @@ public class ApplicationConstants {
       public static final int MAX_SIZE_OF_COURSE_DESCRIPTION = 2000;
       public static final int MAX_SIZE_OF_TASK_GRADE = 10;
       public static final int MAX_SIZE_OF_TASK_ANSWER = 1000;
+      public static final int MAX_SIZE_OF_GRADE_COMMENTS = 500;
 
       /** Inner utility class for dto validation errors. */
       @UtilityClass
@@ -200,6 +201,16 @@ public class ApplicationConstants {
             "Grade should be between 0 and 10";
         public static final String TASK_ANSWER_SIZE_ERROR_MESSAGE =
             "Answer should less then 1000 characters!";
+        public static final String GRADE_SCORE_ERROR_MESSAGE =
+            "Score must be greater than or equal to 0";
+        public static final String GRADE_COMMENTS_SIZE_ERROR_MESSAGE =
+            "Comments should have less then 500 characters!";
+        public static final String GRADE_COURSEID_BLANK_ERROR_MESSAGE = "Course ID cannot be blank";
+        public static final String GRADE_TASKID_BLANK_ERROR_MESSAGE = "Task ID cannot be blank";
+        public static final String GRADE_STUDENTID_NULL_ERROR_MESSAGE = "Student ID cannot be null";
+        public static final String GRADE_GRADED_AT_ERROR_MESSAGE = "Graded at must be in the past";
+        public static final String TASK_SCORE_ERROR_MESSAGE =
+                "Score must be greater than or equal to 0";
       }
     }
   }

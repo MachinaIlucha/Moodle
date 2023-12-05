@@ -37,6 +37,27 @@ public class CourseController {
   private final CourseTaskFacade courseTaskFacade;
 
   /**
+   * Retrieves the overall grade for a given student in a specific course.
+   *
+   * @param studentId the id of the student whose overall grade is to be retrieved
+   * @param courseId the id of the course for which the overall grade is to be retrieved
+   * @return a {@link ResponseEntity} containing the overall grade and a suitable HTTP status code
+   */
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/{courseId}/students/{studentId}/overall-grade")
+  public ResponseEntity<Integer> getOverallGradeForStudentInCourse(
+          @PathVariable("courseId") final String courseId,
+          @PathVariable("studentId") final Long studentId) {
+
+    // Logic to fetch the overall grade from the service layer
+    final var overallGrade = courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId);
+
+    log.info("Retrieved overall grade for student with id: {} in course with id: {}", studentId, courseId);
+    return ResponseEntity.ok(overallGrade);
+  }
+
+
+  /**
    * Retrieves courses for a given student.
    *
    * @param studentId the id of the student whose courses are to be retrieved
