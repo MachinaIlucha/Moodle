@@ -210,7 +210,7 @@ public class ApplicationConstants {
         public static final String GRADE_STUDENTID_NULL_ERROR_MESSAGE = "Student ID cannot be null";
         public static final String GRADE_GRADED_AT_ERROR_MESSAGE = "Graded at must be in the past";
         public static final String TASK_SCORE_ERROR_MESSAGE =
-                "Score must be greater than or equal to 0";
+            "Score must be greater than or equal to 0";
       }
     }
   }

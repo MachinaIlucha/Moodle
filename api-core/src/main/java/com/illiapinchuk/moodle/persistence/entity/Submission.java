@@ -44,8 +44,7 @@ public class Submission {
       message = ApplicationConstants.Web.DataValidation.ErrorMessage.TASK_ANSWER_SIZE_ERROR_MESSAGE)
   String answer;
 
-  @DBRef
-  Grade grade;
+  @DBRef Grade grade;
 
   List<TaskSubmissionFile> submissionFiles = new ArrayList<>();
 }

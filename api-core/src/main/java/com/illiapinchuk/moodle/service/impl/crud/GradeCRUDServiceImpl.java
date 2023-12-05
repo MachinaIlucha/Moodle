@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class GradeCRUDServiceImpl implements GradeCRUDService {
 
-    private final GradeRepository gradeRepository;
+  private final GradeRepository gradeRepository;
 
-    @Override
-    public Grade saveGrade(@Nonnull final Grade grade) {
-        return gradeRepository.save(grade);
-    }
+  @Override
+  public Grade saveGrade(@Nonnull final Grade grade) {
+    return gradeRepository.save(grade);
+  }
 }
