@@ -1,4 +1,4 @@
-package com.illiapinchuk.moodle.service.impl;
+package com.illiapinchuk.moodle.service.impl.business;
 
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.model.dto.EmailDto;
@@ -6,7 +6,6 @@ import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.business.EmailService;
 import com.illiapinchuk.moodle.service.business.UserService;
 import com.illiapinchuk.moodle.service.business.UserTokenService;
-import com.illiapinchuk.moodle.service.impl.business.PasswordRecoveryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

@@ -13,6 +13,7 @@ import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.entity.User;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
@@ -123,39 +124,39 @@ public class TestConstants {
             .id(TASK_ID)
             .title("Task 1")
             .description("Complete assignment")
-            .dueDate(new Date()) // Set the due date to the current date
-            .creationDate(new Date()) // Set the creation date to the current date
+            .dueDate(LocalDateTime.now()) // Set the due date to the current date
+            .creationDate(LocalDateTime.now()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
             .authorId(1L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
-            .submissions(new ArrayList<>()) // Add any submissions if necessary
+            .submissionIds(new ArrayList<>()) // Add any submissions if necessary
             .build();
     public static final Task VALID_TASK_2 =
         Task.builder()
             .id("2")
             .title("Task 2")
             .description("Review chapter 5")
-            .dueDate(new Date()) // Set the due date to the current date
-            .creationDate(new Date()) // Set the creation date to the current date
+            .dueDate(LocalDateTime.now()) // Set the due date to the current date
+            .creationDate(LocalDateTime.now()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
             .authorId(2L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
-            .submissions(new ArrayList<>()) // Add any submissions if necessary
+            .submissionIds(new ArrayList<>()) // Add any submissions if necessary
             .build();
     public static final Task VALID_TASK_3 =
         Task.builder()
             .id("3")
             .title("Task 3")
             .description("Prepare presentation")
-            .dueDate(new Date()) // Set the due date to the current date
-            .creationDate(new Date()) // Set the creation date to the current date
+            .dueDate(LocalDateTime.now()) // Set the due date to the current date
+            .creationDate(LocalDateTime.now()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
             .authorId(3L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
-            .submissions(new ArrayList<>()) // Add any submissions if necessary
+            .submissionIds(new ArrayList<>()) // Add any submissions if necessary
             .build();
     public static final List<Task> LIST_OF_VALID_TASKS =
         List.of(VALID_TASK_1, VALID_TASK_2, VALID_TASK_3);
@@ -164,8 +165,8 @@ public class TestConstants {
             .id(TASK_ID)
             .title("Sample Task")
             .description("This is a sample task")
-            .dueDate(new Date())
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now())
+            .creationDate(LocalDateTime.now())
             .courseId("course123")
             .authorId(1L)
             .status(TaskStatus.OPEN)

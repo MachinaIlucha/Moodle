@@ -1,4 +1,4 @@
-package com.illiapinchuk.moodle.service.impl;
+package com.illiapinchuk.moodle.service.impl.business;
 
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
@@ -7,7 +7,6 @@ import com.illiapinchuk.moodle.model.entity.UserTokenStatus;
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
 import com.illiapinchuk.moodle.persistence.repository.UserTokenRepository;
 import com.illiapinchuk.moodle.service.business.UserService;
-import com.illiapinchuk.moodle.service.impl.business.UserTokenServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
