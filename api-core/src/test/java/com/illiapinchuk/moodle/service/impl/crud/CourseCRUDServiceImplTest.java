@@ -44,7 +44,7 @@ class CourseCRUDServiceImplTest {
   @Test
   void getCourseById_ExistingCourseId_ReturnsCourse() {
     when(courseRepository.findById(VALID_COURSE_ID))
-            .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
+        .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
     final var actualCourse = courseCRUDService.getCourseById(VALID_COURSE_ID);
 
@@ -57,7 +57,7 @@ class CourseCRUDServiceImplTest {
   @Test
   void getCourseById_NonExistingCourseId_ThrowsCourseNotFoundException() {
     assertThrows(
-            CourseNotFoundException.class, () -> courseCRUDService.getCourseById(INVALID_COURSE_ID));
+        CourseNotFoundException.class, () -> courseCRUDService.getCourseById(INVALID_COURSE_ID));
 
     verify(courseRepository, times(1)).findById(INVALID_COURSE_ID);
   }
@@ -65,12 +65,11 @@ class CourseCRUDServiceImplTest {
   @Test
   void getCourseById_UserNotEnrolledAndNoRulingRole_ThrowsUserDontHaveAccessToResource() {
     doThrow(UserDontHaveAccessToResource.class)
-            .when(userValidator)
-            .checkIfUserHasAccessToCourse(VALID_COURSE_ID);
+        .when(userValidator)
+        .checkIfUserHasAccessToCourse(VALID_COURSE_ID);
 
     assertThrows(
-            UserDontHaveAccessToResource.class,
-            () -> courseCRUDService.getCourseById(VALID_COURSE_ID));
+        UserDontHaveAccessToResource.class, () -> courseCRUDService.getCourseById(VALID_COURSE_ID));
 
     verifyNoInteractions(courseRepository);
   }
@@ -78,7 +77,7 @@ class CourseCRUDServiceImplTest {
   @Test
   void getCourseById_UserEnrolled_ReturnsCourse() {
     when(courseRepository.findById(VALID_COURSE_ID))
-            .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
+        .thenReturn(Optional.of(VALID_COURSE_WITHOUT_TASKS));
 
     final var actualCourse = courseCRUDService.getCourseById(VALID_COURSE_ID);
 
@@ -90,7 +89,7 @@ class CourseCRUDServiceImplTest {
     when(courseValidator.isCourseExistsInDbById(VALID_COURSE_ID)).thenReturn(true);
 
     assertThrows(
-            CourseAlreadyExistsException.class, () -> courseCRUDService.createCourse(VALID_COURSE));
+        CourseAlreadyExistsException.class, () -> courseCRUDService.createCourse(VALID_COURSE));
 
     verify(courseValidator, times(1)).isCourseExistsInDbById(VALID_COURSE_ID);
     verifyNoInteractions(courseRepository);
@@ -100,14 +99,14 @@ class CourseCRUDServiceImplTest {
   void createCourse_InvalidAuthorIds_ThrowsUserNotFoundException() {
     when(courseValidator.isAuthorsExistsInDbByIds(
             TestConstants.CourseConstants.VALID_COURSE.getAuthorIds()))
-            .thenReturn(false);
+        .thenReturn(false);
 
     assertThrows(
-            UserNotFoundException.class,
-            () -> courseCRUDService.createCourse(TestConstants.CourseConstants.VALID_COURSE));
+        UserNotFoundException.class,
+        () -> courseCRUDService.createCourse(TestConstants.CourseConstants.VALID_COURSE));
 
     verify(courseValidator, times(1))
-            .isAuthorsExistsInDbByIds(TestConstants.CourseConstants.VALID_COURSE.getAuthorIds());
+        .isAuthorsExistsInDbByIds(TestConstants.CourseConstants.VALID_COURSE.getAuthorIds());
     verifyNoInteractions(courseRepository);
   }
 
@@ -123,7 +122,7 @@ class CourseCRUDServiceImplTest {
 
     verify(courseValidator, times(1)).isCourseExistsInDbById(VALID_COURSE_DTO.getId());
     verify(courseMapper, times(1))
-            .updateCourse(TestConstants.CourseConstants.VALID_COURSE, VALID_COURSE_DTO);
+        .updateCourse(TestConstants.CourseConstants.VALID_COURSE, VALID_COURSE_DTO);
     verify(courseRepository, times(1)).save(TestConstants.CourseConstants.VALID_COURSE);
   }
 
@@ -131,14 +130,16 @@ class CourseCRUDServiceImplTest {
   void updateCourse_NonExistingCourseDto_ThrowsCourseNotFoundException() {
     when(courseValidator.isCourseExistsInDbById(
             TestConstants.CourseConstants.INVALID_COURSE_DTO.getId()))
-            .thenReturn(false);
+        .thenReturn(false);
 
     assertThrows(
-            CourseNotFoundException.class,
-            () -> courseCRUDService.updateCourseFromDto(TestConstants.CourseConstants.INVALID_COURSE_DTO));
+        CourseNotFoundException.class,
+        () ->
+            courseCRUDService.updateCourseFromDto(
+                TestConstants.CourseConstants.INVALID_COURSE_DTO));
 
     verify(courseValidator, times(1))
-            .isCourseExistsInDbById(TestConstants.CourseConstants.INVALID_COURSE_DTO.getId());
+        .isCourseExistsInDbById(TestConstants.CourseConstants.INVALID_COURSE_DTO.getId());
     verifyNoInteractions(courseRepository);
   }
 }

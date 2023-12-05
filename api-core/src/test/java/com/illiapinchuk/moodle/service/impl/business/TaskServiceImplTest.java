@@ -69,11 +69,14 @@ class TaskServiceImplTest {
 
   @Test
   void addAttachmentToTask_FileUploadFails_ThrowsException() {
-    when(fileUploadService.uploadFile(file)).thenThrow(new CannotWriteToS3Exception("Upload failed"));
+    when(fileUploadService.uploadFile(file))
+        .thenThrow(new CannotWriteToS3Exception("Upload failed"));
 
-    assertThrows(CannotWriteToS3Exception.class, () -> {
-      taskService.addAttachmentToTask(file, TASK_ID);
-    });
+    assertThrows(
+        CannotWriteToS3Exception.class,
+        () -> {
+          taskService.addAttachmentToTask(file, TASK_ID);
+        });
 
     verify(fileUploadService).uploadFile(file);
     verify(taskCRUDService, never()).getTaskById(TASK_ID);
@@ -82,11 +85,14 @@ class TaskServiceImplTest {
   @Test
   void addAttachmentToTask_TaskNotFound_ThrowsException() {
     when(fileUploadService.uploadFile(file)).thenReturn("fileName");
-    when(taskCRUDService.getTaskById(TASK_ID)).thenThrow(new TaskNotFoundException("Task not found"));
+    when(taskCRUDService.getTaskById(TASK_ID))
+        .thenThrow(new TaskNotFoundException("Task not found"));
 
-    assertThrows(TaskNotFoundException.class, () -> {
-      taskService.addAttachmentToTask(file, TASK_ID);
-    });
+    assertThrows(
+        TaskNotFoundException.class,
+        () -> {
+          taskService.addAttachmentToTask(file, TASK_ID);
+        });
 
     verify(fileUploadService).uploadFile(file);
     verify(taskCRUDService).getTaskById(TASK_ID);
