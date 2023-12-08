@@ -13,6 +13,7 @@ import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
 import com.illiapinchuk.moodle.persistence.entity.User;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import com.illiapinchuk.moodle.persistence.entity.UserToken;
@@ -23,6 +24,21 @@ import org.springframework.web.multipart.MultipartFile;
 /** Test constants. */
 @UtilityClass
 public class TestConstants {
+
+  @UtilityClass
+  public class CourseTaskFacadeImplTestConstants {
+    public static final String VALID_COURSE_ID = "course1";
+    public static final String INVALID_COURSE_ID = "invalidCourseId";
+    public static final Course VALID_COURSE = Course.builder().id(VALID_COURSE_ID).build();
+    public static final CourseDto VALID_COURSE_DTO =
+        CourseDto.builder().id(VALID_COURSE_ID).build();
+    public static final TaskDto VALID_TASK_DTO =
+        TaskDto.builder().courseId("course1").authorId(1L).build();
+    public static final String VALID_TASK_ID = "task1";
+    public static final Task VALID_TASK = Task.builder().id(VALID_TASK_ID).authorId(2L).build();
+    public static final Long VALID_STUDENT_ID = 1L;
+    public static final Long INVALID_STUDENT_ID = 999L;
+  }
 
   @UtilityClass
   public class UserConstants {
@@ -123,39 +139,39 @@ public class TestConstants {
             .id(TASK_ID)
             .title("Task 1")
             .description("Complete assignment")
-            .dueDate(new Date()) // Set the due date to the current date
-            .creationDate(new Date()) // Set the creation date to the current date
+            .dueDate(LocalDateTime.now()) // Set the due date to the current date
+            .creationDate(LocalDateTime.now()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
             .authorId(1L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
-            .submissions(new ArrayList<>()) // Add any submissions if necessary
+            .submissionIds(new ArrayList<>()) // Add any submissions if necessary
             .build();
     public static final Task VALID_TASK_2 =
         Task.builder()
             .id("2")
             .title("Task 2")
             .description("Review chapter 5")
-            .dueDate(new Date()) // Set the due date to the current date
-            .creationDate(new Date()) // Set the creation date to the current date
+            .dueDate(LocalDateTime.now()) // Set the due date to the current date
+            .creationDate(LocalDateTime.now()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
             .authorId(2L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
-            .submissions(new ArrayList<>()) // Add any submissions if necessary
+            .submissionIds(new ArrayList<>()) // Add any submissions if necessary
             .build();
     public static final Task VALID_TASK_3 =
         Task.builder()
             .id("3")
             .title("Task 3")
             .description("Prepare presentation")
-            .dueDate(new Date()) // Set the due date to the current date
-            .creationDate(new Date()) // Set the creation date to the current date
+            .dueDate(LocalDateTime.now()) // Set the due date to the current date
+            .creationDate(LocalDateTime.now()) // Set the creation date to the current date
             .course(new Course()) // Set the course object accordingly
             .authorId(3L)
             .status(TaskStatus.OPEN) // Set the task status accordingly
             .attachments(new ArrayList<>()) // Add any attachments if necessary
-            .submissions(new ArrayList<>()) // Add any submissions if necessary
+            .submissionIds(new ArrayList<>()) // Add any submissions if necessary
             .build();
     public static final List<Task> LIST_OF_VALID_TASKS =
         List.of(VALID_TASK_1, VALID_TASK_2, VALID_TASK_3);
@@ -164,8 +180,8 @@ public class TestConstants {
             .id(TASK_ID)
             .title("Sample Task")
             .description("This is a sample task")
-            .dueDate(new Date())
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now())
+            .creationDate(LocalDateTime.now())
             .courseId("course123")
             .authorId(1L)
             .status(TaskStatus.OPEN)

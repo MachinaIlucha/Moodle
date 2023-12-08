@@ -55,7 +55,7 @@ public class TaskCRUDServiceImpl implements TaskCRUDService {
                     task.getSubmissionIds().stream()
                         .filter(
                             submissionId ->
-                                    submissionCRUDService
+                                submissionCRUDService
                                     .getSubmissionById(submissionId)
                                     .getUserId()
                                     .equals(userId))

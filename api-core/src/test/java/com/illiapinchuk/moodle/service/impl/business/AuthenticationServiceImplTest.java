@@ -1,11 +1,10 @@
-package com.illiapinchuk.moodle.service.impl;
+package com.illiapinchuk.moodle.service.impl.business;
 
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.validator.EmailValidator;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProviderImpl;
 import com.illiapinchuk.moodle.persistence.entity.User;
 import com.illiapinchuk.moodle.service.business.UserService;
-import com.illiapinchuk.moodle.service.impl.business.AuthenticationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

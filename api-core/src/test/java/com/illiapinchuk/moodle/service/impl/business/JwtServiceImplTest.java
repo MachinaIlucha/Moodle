@@ -1,4 +1,4 @@
-package com.illiapinchuk.moodle.service.impl;
+package com.illiapinchuk.moodle.service.impl.business;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.configuration.security.jwt.JwtTokenProvider;
 import com.illiapinchuk.moodle.service.business.RedisService;
-import com.illiapinchuk.moodle.service.impl.business.JwtServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

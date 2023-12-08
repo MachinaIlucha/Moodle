@@ -3,7 +3,6 @@ package com.illiapinchuk.moodle.common.mapper;
 import com.illiapinchuk.moodle.model.dto.SubmissionDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
-import com.illiapinchuk.moodle.service.business.SubmissionService;
 import java.util.Collections;
 
 import com.illiapinchuk.moodle.service.crud.SubmissionCRUDService;

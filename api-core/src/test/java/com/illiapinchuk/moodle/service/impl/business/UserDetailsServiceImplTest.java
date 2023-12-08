@@ -1,4 +1,4 @@
-package com.illiapinchuk.moodle.service.impl;
+package com.illiapinchuk.moodle.service.impl.business;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,7 +10,6 @@ import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
 import java.util.Optional;
 
-import com.illiapinchuk.moodle.service.impl.business.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
