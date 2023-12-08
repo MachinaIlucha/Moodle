@@ -103,6 +103,8 @@ class GradeServiceImplTest {
     when(taskCRUDService.getTaskById(taskId)).thenReturn(task);
     when(submissionCRUDService.getSubmissionById(submissionId)).thenReturn(submission);
 
-    assertThrows(NullPointerException.class, () -> gradeService.gradeSubmission(taskId, submissionId, gradeDto));
+    assertThrows(
+        NullPointerException.class,
+        () -> gradeService.gradeSubmission(taskId, submissionId, gradeDto));
   }
 }

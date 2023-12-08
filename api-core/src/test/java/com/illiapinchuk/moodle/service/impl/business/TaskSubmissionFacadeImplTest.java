@@ -35,27 +35,17 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TaskSubmissionFacadeImplTest {
 
-  @Mock
-  private TaskCRUDService taskCRUDService;
-  @Mock
-  private CourseService courseService;
-  @Mock
-  private FileUploadService fileUploadService;
-  @Mock
-  private GradeCRUDService gradeCRUDService;
-  @Mock
-  private SubmissionCRUDService submissionCRUDService;
-  @Mock
-  private SubmissionMapper submissionMapper;
-  @Mock
-  private TaskMapper taskMapper;
-  @Mock
-  private UserValidator userValidator;
-  @Mock
-  private TaskValidator taskValidator;
+  @Mock private TaskCRUDService taskCRUDService;
+  @Mock private CourseService courseService;
+  @Mock private FileUploadService fileUploadService;
+  @Mock private GradeCRUDService gradeCRUDService;
+  @Mock private SubmissionCRUDService submissionCRUDService;
+  @Mock private SubmissionMapper submissionMapper;
+  @Mock private TaskMapper taskMapper;
+  @Mock private UserValidator userValidator;
+  @Mock private TaskValidator taskValidator;
 
-  @InjectMocks
-  private TaskSubmissionFacadeImpl taskSubmissionFacade;
+  @InjectMocks private TaskSubmissionFacadeImpl taskSubmissionFacade;
 
   @Test
   void addSubmissionToTask_NullTaskId_ThrowsException() {
@@ -67,9 +57,12 @@ class TaskSubmissionFacadeImplTest {
     when(submissionMapper.fromJson(submissionJson)).thenReturn(submissionDto);
     when(taskValidator.isTaskExistsInDbById(null)).thenReturn(false);
 
-    final var exception = assertThrows(TaskNotFoundException.class, () -> {
-      taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
-    });
+    final var exception =
+        assertThrows(
+            TaskNotFoundException.class,
+            () -> {
+              taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
+            });
 
     final var expectedMessage = "Task with id: null does not exist.";
     final var actualMessage = exception.getMessage();
@@ -88,9 +81,12 @@ class TaskSubmissionFacadeImplTest {
     when(taskValidator.isTaskExistsInDbById(anyString())).thenReturn(true);
     when(userValidator.isUserExistInDbById(anyLong())).thenReturn(false);
 
-    final var exception = assertThrows(UserNotFoundException.class, () -> {
-      taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
-    });
+    final var exception =
+        assertThrows(
+            UserNotFoundException.class,
+            () -> {
+              taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
+            });
 
     final var expectedMessage = "User with id: 2 does not exist.";
     final var actualMessage = exception.getMessage();
@@ -111,9 +107,12 @@ class TaskSubmissionFacadeImplTest {
     when(userValidator.isUserExistInDbById(anyLong())).thenReturn(true);
     when(fileUploadService.uploadFile(file)).thenThrow(new RuntimeException("File upload failed"));
 
-    final var exception = assertThrows(RuntimeException.class, () -> {
-      taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
-    });
+    final var exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> {
+              taskSubmissionFacade.addSubmissionToTask(submissionJson, files, taskId);
+            });
 
     final var expectedMessage = "File upload failed";
     final var actualMessage = exception.getMessage();

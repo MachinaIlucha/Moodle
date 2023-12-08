@@ -237,7 +237,9 @@ class CourseTaskFacadeImplTest {
 
     when(userValidator.isUserExistInDbById(studentId)).thenReturn(false);
 
-    assertThrows(UserNotFoundException.class, () -> courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId));
+    assertThrows(
+        UserNotFoundException.class,
+        () -> courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId));
   }
 
   @Test
@@ -259,6 +261,8 @@ class CourseTaskFacadeImplTest {
     final var courseId = INVALID_COURSE_ID;
     final var studentId = VALID_STUDENT_ID;
 
-    assertThrows(RuntimeException.class, () -> courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId));
+    assertThrows(
+        RuntimeException.class,
+        () -> courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId));
   }
 }

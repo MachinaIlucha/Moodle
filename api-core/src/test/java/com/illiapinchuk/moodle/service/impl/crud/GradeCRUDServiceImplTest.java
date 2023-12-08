@@ -1,6 +1,5 @@
 package com.illiapinchuk.moodle.service.impl.crud;
 
-import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.persistence.entity.Grade;
 import com.illiapinchuk.moodle.persistence.repository.GradeRepository;
 import org.junit.jupiter.api.Test;
