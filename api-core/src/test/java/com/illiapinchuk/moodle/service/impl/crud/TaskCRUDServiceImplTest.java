@@ -59,6 +59,82 @@ class TaskCRUDServiceImplTest {
   }
 
   @Test
+  void testDeleteTaskById_ValidIdNoAttachments_TaskDeleted() {
+    final var taskId = TestConstants.TaskConstants.TASK_ID;
+
+    when(taskAttachmentService.getAttachmentsByTaskId(taskId)).thenReturn(new ArrayList<>());
+
+    taskCRUDService.deleteTaskById(taskId);
+
+    verify(taskAttachmentService).getAttachmentsByTaskId(taskId);
+    verify(taskRepository).deleteById(taskId);
+  }
+
+  @Test
+  void testUpdateTaskFromDto_ValidTaskDto_TaskUpdated() {
+    final var taskDto = TestConstants.TaskConstants.VALID_TASK_DTO;
+    final var task = TestConstants.TaskConstants.VALID_TASK_1;
+
+    when(taskValidator.isTaskExistsInDbById(taskDto.getId())).thenReturn(true);
+    when(taskRepository.findById(taskDto.getId())).thenReturn(Optional.of(task));
+    when(taskRepository.save(task)).thenReturn(task);
+
+    final var result = taskCRUDService.updateTaskFromDto(taskDto);
+
+    assertEquals(task, result);
+    verify(taskValidator).isTaskExistsInDbById(taskDto.getId());
+    verify(taskRepository).findById(taskDto.getId());
+    verify(taskMapper).updateTask(task, taskDto);
+    verify(taskRepository).save(task);
+  }
+
+  @Test
+  void testUpdateTask_NullTask_ThrowsException() {
+    assertThrows(NullPointerException.class, () -> taskCRUDService.updateTask(null));
+  }
+
+  @Test
+  void testUpdateTaskFromDto_NullTaskDto_ThrowsException() {
+    assertThrows(NullPointerException.class, () -> taskCRUDService.updateTaskFromDto(null));
+  }
+
+  @Test
+  void testUpdateTask_ValidTask_TaskUpdated() {
+    final var task = TestConstants.TaskConstants.VALID_TASK_1;
+
+    when(taskValidator.isTaskExistsInDbById(task.getId())).thenReturn(true);
+    when(taskRepository.save(task)).thenReturn(task);
+
+    final var result = taskCRUDService.updateTask(task);
+
+    assertEquals(task, result);
+    verify(taskValidator).isTaskExistsInDbById(task.getId());
+    verify(taskRepository).save(task);
+  }
+
+  @Test
+  void testUpdateTask_InvalidTask_TaskNotFound() {
+    final var task = TestConstants.TaskConstants.VALID_TASK_1;
+
+    when(taskValidator.isTaskExistsInDbById(task.getId())).thenReturn(false);
+
+    assertThrows(TaskNotFoundException.class, () -> taskCRUDService.updateTask(task));
+    verify(taskValidator).isTaskExistsInDbById(task.getId());
+  }
+
+  @Test
+  void testGetTaskById_UserEnrolledWithoutRulingRole_TaskFound() {
+    when(taskRepository.findById(TASK_ID)).thenReturn(Optional.of(VALID_TASK_1));
+    when(courseValidator.isStudentEnrolledInCourseWithTask(eq(TASK_ID), any())).thenReturn(true);
+    when(taskAttachmentService.getAttachmentsByTaskId(TASK_ID)).thenReturn(new ArrayList<>());
+
+    final var result = taskCRUDService.getTaskById(TASK_ID);
+
+    assertEquals(VALID_TASK_1, result);
+    verify(taskAttachmentService).getAttachmentsByTaskId(TASK_ID);
+  }
+
+  @Test
   void testGetTaskById_ValidId_TaskFound() {
     when(taskRepository.findById(TASK_ID)).thenReturn(Optional.of(VALID_TASK_1));
     when(taskAttachmentService.getAttachmentsByTaskId(TASK_ID)).thenReturn(new ArrayList<>());

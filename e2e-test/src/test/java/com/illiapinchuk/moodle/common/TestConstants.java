@@ -8,6 +8,7 @@ import com.illiapinchuk.moodle.persistence.entity.Course;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import lombok.experimental.UtilityClass;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,47 +60,47 @@ public class TestConstants {
             .id("1")
             .title("Task 1")
             .description("Complete assignment")
-            .dueDate(new Date())
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now())
+            .creationDate(LocalDateTime.now())
             .course(new Course())
             .authorId(1L)
             .status(TaskStatus.OPEN)
             .attachments(new ArrayList<>())
-            .submissions(new ArrayList<>())
+            .submissionIds(new ArrayList<>())
             .build();
     public static final Task VALID_TASK_2 =
         Task.builder()
             .id("2")
             .title("Task 2")
             .description("Review chapter 5")
-            .dueDate(new Date())
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now())
+            .creationDate(LocalDateTime.now())
             .course(new Course())
             .authorId(1L)
             .status(TaskStatus.OPEN)
             .attachments(new ArrayList<>())
-            .submissions(new ArrayList<>())
+            .submissionIds(new ArrayList<>())
             .build();
     public static final Task VALID_TASK_3 =
         Task.builder()
             .id("3")
             .title("Task 3")
             .description("Prepare presentation")
-            .dueDate(new Date())
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now())
+            .creationDate(LocalDateTime.now())
             .course(new Course())
             .authorId(2L)
             .status(TaskStatus.OPEN)
             .attachments(new ArrayList<>())
-            .submissions(new ArrayList<>())
+            .submissionIds(new ArrayList<>())
             .build();
     public static final TaskDto VALID_TASK_DTO =
         TaskDto.builder()
             .title("Valid task title")
             .description("Valid task description")
             // due date is set to 1 day from now
-            .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now().plusDays(1))
+            .creationDate(LocalDateTime.now())
             .courseId("1")
             .authorId(1L)
             .status(TaskStatus.OPEN)
@@ -109,8 +110,8 @@ public class TestConstants {
             .title("Valid task title")
             .description("Valid task description")
             // due date is set to 1 day from now
-            .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now().plusDays(1))
+            .creationDate(LocalDateTime.now())
             .courseId(INVALID_COURSE_ID)
             .authorId(1L)
             .status(TaskStatus.OPEN)
@@ -120,8 +121,8 @@ public class TestConstants {
             .title("Valid task title")
             .description("Valid task description")
             // due date is set to 1 day from now
-            .dueDate(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
-            .creationDate(new Date())
+            .dueDate(LocalDateTime.now().plusDays(1))
+            .creationDate(LocalDateTime.now())
             .courseId("1")
             .authorId(123456789L)
             .status(TaskStatus.OPEN)

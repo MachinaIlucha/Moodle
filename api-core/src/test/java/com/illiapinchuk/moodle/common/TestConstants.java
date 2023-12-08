@@ -26,6 +26,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class TestConstants {
 
   @UtilityClass
+  public class CourseTaskFacadeImplTestConstants {
+    public static final String VALID_COURSE_ID = "course1";
+    public static final String INVALID_COURSE_ID = "invalidCourseId";
+    public static final Course VALID_COURSE = Course.builder().id(VALID_COURSE_ID).build();
+    public static final CourseDto VALID_COURSE_DTO = CourseDto.builder().id(VALID_COURSE_ID).build();
+    public static final TaskDto VALID_TASK_DTO = TaskDto.builder().courseId("course1").authorId(1L).build();
+    public static final String VALID_TASK_ID = "task1";
+    public static final Task VALID_TASK = Task.builder().id(VALID_TASK_ID).authorId(2L).build();
+    public static final Long VALID_STUDENT_ID = 1L;
+    public static final Long INVALID_STUDENT_ID = 999L;
+  }
+
+  @UtilityClass
   public class UserConstants {
     public static final Long USER_ID = 1L;
     public static final Long INVALID_USER_ID = 99L;
