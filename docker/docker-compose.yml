@@ -8,6 +8,9 @@ services:
     #      - "4510-4559:4510-4559"  # external services port range
     environment:
       - SERVICES=s3,cloudwatch
+      - AWS_ACCESS_KEY_ID=moodle_access_key
+      - AWS_SECRET_ACCESS_KEY=moodle_secret_key
+      - DEFAULT_REGION=eu-central-1
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - ./localstack-script:/etc/localstack/init/ready.d
