@@ -53,8 +53,8 @@ spring:
         bucket-name: s3://s3-image-bucket/  # Name of the S3 bucket
         bucket-url: http://s3-image-bucket.s3.localhost.localstack.cloud:4566  # URL of the S3 bucket
       credentials:
-        access-key: none  # AWS access key
-        secret-key: none  # AWS secret key
+        access-key: moodle_access_key  # AWS access key
+        secret-key: moodle_secret_key  # AWS secret key
       region:
         static: eu-central-1  # AWS region
 
