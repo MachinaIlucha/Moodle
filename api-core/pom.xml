@@ -23,9 +23,9 @@
         <jedis.version>4.4.1</jedis.version>
         <springdoc.version>2.1.0</springdoc.version>
         <spring.cloud.aws.version>3.0.1</spring.cloud.aws.version>
-        <jackson.databind.version>2.12.4</jackson.databind.version>
+        <jackson.databind.version>2.12.7.1</jackson.databind.version>
         <mockito.inline.version>3.12.4</mockito.inline.version>
-        <postgres.version>42.6.0</postgres.version>
+        <postgres.version>42.6.1</postgres.version>
         <embedded.mongo.version>4.7.0</embedded.mongo.version>
         <spring-boot-dependencies>3.0.9</spring-boot-dependencies>
     </properties>
