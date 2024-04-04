@@ -8,4 +8,6 @@ import java.util.List;
 public interface SubmissionRepository extends MongoRepository<Submission, String> {
 
   List<Submission> getSubmissionsByTaskIdAndAndUserId(String taskId, Long userId);
+
+  List<Submission> getSubmissionsByTaskId(String taskId);
 }

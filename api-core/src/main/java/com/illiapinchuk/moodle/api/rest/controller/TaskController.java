@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.api.rest.controller;
 
+import com.illiapinchuk.moodle.common.mapper.SubmissionMapper;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
 import com.illiapinchuk.moodle.model.dto.GradeDto;
 import com.illiapinchuk.moodle.model.dto.SubmissionDto;
@@ -7,6 +8,7 @@ import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.service.business.CourseTaskFacade;
 import com.illiapinchuk.moodle.service.business.GradeService;
+import com.illiapinchuk.moodle.service.business.SubmissionService;
 import com.illiapinchuk.moodle.service.business.TaskService;
 import com.illiapinchuk.moodle.service.business.TaskSubmissionFacade;
 import com.illiapinchuk.moodle.service.crud.TaskCRUDService;
@@ -37,12 +39,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class TaskController {
 
   private final TaskCRUDService taskCRUDService;
+
   private final TaskService taskService;
-  private final CourseTaskFacade courseTaskFacade;
   private final GradeService gradeService;
+  private final SubmissionService submissionService;
+
   private final TaskSubmissionFacade taskSubmissionFacade;
+  private final CourseTaskFacade courseTaskFacade;
 
   private final TaskMapper taskMapper;
+  private final SubmissionMapper submissionMapper;
 
   /**
    * Retrieves a task with the given id.
@@ -114,6 +120,14 @@ public class TaskController {
     return ResponseEntity.ok(taskWithSubmission);
   }
 
+  /**
+   * Grades a submission for a task.
+   *
+   * @param taskId The ID of the task for which the submission is being graded.
+   * @param submissionId The ID of the submission being graded.
+   * @param gradeDto The {@link GradeDto} object containing the grade information.
+   * @return A {@link ResponseEntity} with an HTTP status of OK.
+   */
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
   @PostMapping("/{taskId}/submissions/{submissionId}/grade")
   public ResponseEntity<Void> gradeSubmission(
@@ -124,6 +138,49 @@ public class TaskController {
     gradeService.gradeSubmission(taskId, submissionId, gradeDto);
     log.info("Submission with id: {} for task with id: {} was graded", submissionId, taskId);
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Retrieves all submissions for a task.
+   *
+   * @param taskId The ID of the task for which submissions are being retrieved.
+   * @return A {@link ResponseEntity} containing a list of {@link SubmissionDto} objects.
+   */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
+  @PostMapping("/{taskId}/submissions")
+  public ResponseEntity<List<SubmissionDto>> getAllSubmissionsForTask(
+      @PathVariable("taskId") final String taskId) {
+    final var submissionsForTask = submissionService.getAllSubmissionsForTask(taskId);
+
+    final var submissionsForTaskResponse =
+        submissionsForTask.stream().map(submissionMapper::submissionToSubmissionDto).toList();
+
+    log.info("Retrieved all submissions for task with id: {}", taskId);
+    return ResponseEntity.ok(submissionsForTaskResponse);
+  }
+
+  /**
+   * Retrieves all submissions for a task and student.
+   *
+   * @param taskId The ID of the task for which submissions are being retrieved.
+   * @param studentId The ID of the student for which submissions are being retrieved.
+   * @return A {@link ResponseEntity} containing a list of {@link SubmissionDto} objects.
+   */
+  @PostMapping("/{taskId}/students/{studentId}/submissions")
+  public ResponseEntity<List<SubmissionDto>> getAllSubmissionsForTaskAndStudent(
+      @PathVariable("taskId") final String taskId,
+      @PathVariable("studentId") final Long studentId) {
+    final var submissionsForTask =
+        submissionService.getSubmissionsByTaskIdAndStudentId(taskId, studentId);
+
+    final var submissionsForTaskResponse =
+        submissionsForTask.stream().map(submissionMapper::submissionToSubmissionDto).toList();
+
+    log.info(
+        "Retrieved all submissions for task with id: {} and student with id: {}",
+        taskId,
+        studentId);
+    return ResponseEntity.ok(submissionsForTaskResponse);
   }
 
   /**
