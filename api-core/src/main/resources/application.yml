@@ -14,7 +14,7 @@ spring:
           starttls:
             enable: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/moodle_postgresDB # JDBC URL for docker database
+    url: jdbc:postgresql://postgres:5432/moodle_postgresDB # JDBC URL for docker database
     username: illiapinchuk  # Database username
     password: moodle_password  # Database password
   jpa:
@@ -33,10 +33,10 @@ spring:
 # Data Configuration
   data:
     redis:
-      host: localhost  # Redis host
+      host: redis  # Redis host
       port: 6379  # Redis port
     mongodb:
-      uri: mongodb://localhost:27017/moodle_mongoDB
+      uri: mongodb://mongo:27017/moodle_mongoDB
 
   # Liquibase Configuration
   liquibase:
@@ -46,7 +46,7 @@ spring:
   cloud:
     aws:
       cloudwatch:
-        uri: http://localhost:4566  # AWS CloudWatch URI
+        uri: http://localstack:4566  # AWS CloudWatch URI
       s3:
         endpoint: http://s3.localhost.localstack.cloud:4566  # AWS S3 endpoint
         region: eu-central-1  # AWS S3 region
