@@ -155,24 +155,24 @@ public class TestConstants {
             .build();
     public static final String VALID_COURSE_DTO_AS_STRING =
         """
-                                      {
-                                          "id": "1",
-                                          "name": "Java Programming Course 2",
-                                          "description": "A comprehensive course on Java programming 2",
-                                          "authorIds": ["1", "2"],
-                                          "students": []
-                                      }
-                                      """;
+        {
+            "id": "1",
+            "name": "Java Programming Course 2",
+            "description": "A comprehensive course on Java programming 2",
+            "authorIds": ["1", "2"],
+            "students": []
+        }
+        """;
     public static final String COURSE_DTO_INVALID_ID_AS_STRING =
         """
-                                          {
-                                              "id": "invalid ID",
-                                              "name": "Java Programming Course 2",
-                                              "description": "A comprehensive course on Java programming 2",
-                                              "authorIds": ["1", "2"],
-                                              "students": []
-                                          }
-                                          """;
+        {
+            "id": "invalid ID",
+            "name": "Java Programming Course 2",
+            "description": "A comprehensive course on Java programming 2",
+            "authorIds": ["1", "2"],
+            "students": []
+        }
+        """;
   }
 
   @UtilityClass

@@ -33,23 +33,23 @@ public class ApplicationConstants {
       public static final String LETTER_SUBJECT = "Password reset";
       public static final String RESET_PASSWORD_LETTER =
           """
-        Hi there,
+Hi there,
 
-        We have received a request to reset the password for your account.
-        If you did not make this request, please ignore this email.
+We have received a request to reset the password for your account.
+If you did not make this request, please ignore this email.
 
-        To reset your password, please click on the following link: %s .
-        If the link is not working, you can also copy and paste it into your browser's address bar
+To reset your password, please click on the following link: %s .
+If the link is not working, you can also copy and paste it into your browser's address bar
 
-        Once you have reset your password,
-        we recommend that you keep it in a safe place and do not share it with anyone.
-        If you have any questions, please don't hesitate to contact our support team.
+Once you have reset your password,
+we recommend that you keep it in a safe place and do not share it with anyone.
+If you have any questions, please don't hesitate to contact our support team.
 
-        Best regards,
-        Support team
+Best regards,
+Support team
 
-        P.S. This is an automated message. Please do not reply to this email.
-        """;
+P.S. This is an automated message. Please do not reply to this email.
+""";
     }
 
     /** Inner utility class for metrics constants. */
