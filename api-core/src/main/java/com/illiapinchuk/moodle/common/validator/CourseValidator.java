@@ -1,5 +1,6 @@
 package com.illiapinchuk.moodle.common.validator;
 
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.persistence.repository.CourseRepository;
 import com.illiapinchuk.moodle.persistence.repository.UserRepository;
 import jakarta.annotation.Nonnull;
@@ -58,5 +59,31 @@ public class CourseValidator {
   public boolean isStudentEnrolledInCourseWithTask(
       @Nonnull final String taskId, @Nonnull final Long studentId) {
     return courseRepository.existsByTasksIdAndStudentsContains(taskId, studentId);
+  }
+
+  /**
+   * Check if the teacher can modify the course.
+   *
+   * @param courseId the id of the course to check
+   * @return true if the teacher can modify the course, false otherwise
+   */
+  public boolean isTeacherCanModifyCourse(@Nonnull final String courseId) {
+    return courseRepository
+        .findById(courseId)
+        .map(course -> course.getAuthorIds().contains(UserPermissionService.getJwtUser().getId()))
+        .orElse(false);
+  }
+
+  /**
+   * Check if the student has access to the course.
+   *
+   * @param courseId the id of the course to check
+   * @return true if the student has access to the course, false otherwise
+   */
+  public boolean isStudentHasAccessToCourse(@Nonnull final String courseId) {
+    return courseRepository
+        .findById(courseId)
+        .map(course -> course.getStudents().contains(UserPermissionService.getJwtUser().getId()))
+        .orElse(false);
   }
 }

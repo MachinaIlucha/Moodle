@@ -78,6 +78,11 @@ public class TaskCRUDServiceImpl implements TaskCRUDService {
     if (!taskValidator.isTaskExistsInDbById(taskId)) {
       throw new TaskNotFoundException(String.format("Task with id: %s not found", taskId));
     }
+
+    if (UserPermissionService.hasTeacherRole() && !taskValidator.isTeacherCanModifyTask(taskId)) {
+      throw new UserDontHaveAccessToResource("User doesn't have access to this task.");
+    }
+
     final var task = getTaskById(taskId);
     taskMapper.updateTask(task, taskDto);
 
@@ -91,11 +96,23 @@ public class TaskCRUDServiceImpl implements TaskCRUDService {
       throw new TaskNotFoundException(String.format("Task with id: %s not found", taskId));
     }
 
+    if (UserPermissionService.hasTeacherRole() && !taskValidator.isTeacherCanModifyTask(taskId)) {
+      throw new UserDontHaveAccessToResource("User doesn't have access to this task.");
+    }
+
     return taskRepository.save(task);
   }
 
   @Override
   public void deleteTaskById(@Nonnull final String id) {
+    if (!taskValidator.isTaskExistsInDbById(id)) {
+      throw new TaskNotFoundException(String.format("Task with id: %s not found", id));
+    }
+
+    if (UserPermissionService.hasTeacherRole() && !taskValidator.isTeacherCanModifyTask(id)) {
+      throw new UserDontHaveAccessToResource("User doesn't have access to this task.");
+    }
+
     final var taskAttachments = taskAttachmentService.getAttachmentsByTaskId(id);
 
     // Delete task attachments

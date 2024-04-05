@@ -2,7 +2,10 @@ package com.illiapinchuk.moodle.service.impl.business;
 
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.CourseDto;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
@@ -31,6 +34,8 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
   private final SubmissionCRUDService submissionCRUDService;
 
   private final UserValidator userValidator;
+  private final CourseValidator courseValidator;
+
   private final TaskMapper taskMapper;
   private final CourseMapper courseMapper;
 
@@ -58,6 +63,11 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
 
     final var courseId = taskDto.getCourseId();
     final var course = courseCRUDService.getCourseById(courseId);
+
+    if (UserPermissionService.hasTeacherRole()
+        && !courseValidator.isTeacherCanModifyCourse(courseId)) {
+      throw new UserDontHaveAccessToResource("User does not have access to this resource.");
+    }
 
     task.setCourse(course);
 
@@ -97,6 +107,17 @@ public class CourseTaskFacadeImpl implements CourseTaskFacade {
     }
 
     final var course = courseCRUDService.getCourseById(courseId);
+
+    if (UserPermissionService.hasUserRole()
+        && !courseValidator.isStudentHasAccessToCourse(courseId)) {
+      throw new UserDontHaveAccessToResource("User does not have access to this resource.");
+    }
+
+    if (UserPermissionService.hasTeacherRole()
+        && !courseValidator.isTeacherCanModifyCourse(courseId)) {
+      throw new UserDontHaveAccessToResource("User does not have access to this resource.");
+    }
+
     final var tasks = course.getTasks();
 
     final var bestSubmissions =

@@ -9,7 +9,6 @@ import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.persistence.entity.Submission;
 import com.illiapinchuk.moodle.persistence.repository.SubmissionRepository;
 import com.illiapinchuk.moodle.service.business.SubmissionService;
-import com.illiapinchuk.moodle.service.crud.TaskCRUDService;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class SubmissionServiceImpl implements SubmissionService {
 
   private final SubmissionRepository submissionRepository;
-
-  private final TaskCRUDService taskCRUDService;
 
   private final UserValidator userValidator;
   private final TaskValidator taskValidator;
@@ -40,21 +37,11 @@ public class SubmissionServiceImpl implements SubmissionService {
       throw new UserNotFoundException("User with id: " + studentId + " does not exist.");
     }
 
-    if (UserPermissionService.hasTeacherRole()
-        || !taskCRUDService
-            .getTaskById(taskId)
-            .getCourse()
-            .getAuthorIds()
-            .contains(UserPermissionService.getJwtUser().getId())) {
-      throw new UserDontHaveAccessToResource("User does not have access to this resource.");
+    if (UserPermissionService.hasTeacherRole() && !taskValidator.isTeacherCanModifyTask(taskId)) {
+      throw new UserDontHaveAccessToResource("Teacher does not have access to this resource.");
     }
 
-    if (UserPermissionService.hasUserRole()
-        || !taskCRUDService
-            .getTaskById(taskId)
-            .getCourse()
-            .getStudents()
-            .contains(UserPermissionService.getJwtUser().getId())) {
+    if (UserPermissionService.hasUserRole() && !taskValidator.isStudentHaveAccessToTask(taskId)) {
       throw new UserDontHaveAccessToResource("User does not have access to this resource.");
     }
 
@@ -68,10 +55,7 @@ public class SubmissionServiceImpl implements SubmissionService {
       throw new TaskNotFoundException("Task with id: " + taskId + " does not exist.");
     }
 
-    final var task = taskCRUDService.getTaskById(taskId);
-
-    if (!UserPermissionService.hasTeacherRole()
-        || !task.getCourse().getAuthorIds().contains(UserPermissionService.getJwtUser().getId())) {
+    if (UserPermissionService.hasTeacherRole() && !taskValidator.isTeacherCanModifyTask(taskId)) {
       throw new UserDontHaveAccessToResource("User does not have access to this resource.");
     }
 

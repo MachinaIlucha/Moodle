@@ -56,6 +56,7 @@ public class TaskController {
    * @param taskId the id of the Task to retrieve
    * @return a {@link ResponseEntity} containing the {@link TaskDto} object and an HTTP status code
    */
+  @PreAuthorize("isAuthenticated()")
   @GetMapping("/{id}")
   public ResponseEntity<TaskDto> getTaskById(@PathVariable("id") final String taskId) {
     final var task = taskCRUDService.getTaskById(taskId);
@@ -108,6 +109,7 @@ public class TaskController {
    * @param taskId The ID of the task to which the submission is being added.
    * @return A {@link ResponseEntity} containing the updated {@link TaskDto} object.
    */
+  @PreAuthorize("isAuthenticated()")
   @PostMapping("/{taskId}/submission")
   public ResponseEntity<TaskDto> addSubmissionToTask(
       @Valid @RequestParam(value = "submission") final String submissionJson,
@@ -147,7 +149,7 @@ public class TaskController {
    * @return A {@link ResponseEntity} containing a list of {@link SubmissionDto} objects.
    */
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER', 'TEACHER')")
-  @PostMapping("/{taskId}/submissions")
+  @GetMapping("/{taskId}/submissions")
   public ResponseEntity<List<SubmissionDto>> getAllSubmissionsForTask(
       @PathVariable("taskId") final String taskId) {
     final var submissionsForTask = submissionService.getAllSubmissionsForTask(taskId);
@@ -166,7 +168,8 @@ public class TaskController {
    * @param studentId The ID of the student for which submissions are being retrieved.
    * @return A {@link ResponseEntity} containing a list of {@link SubmissionDto} objects.
    */
-  @PostMapping("/{taskId}/students/{studentId}/submissions")
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/{taskId}/students/{studentId}/submissions")
   public ResponseEntity<List<SubmissionDto>> getAllSubmissionsForTaskAndStudent(
       @PathVariable("taskId") final String taskId,
       @PathVariable("studentId") final Long studentId) {
