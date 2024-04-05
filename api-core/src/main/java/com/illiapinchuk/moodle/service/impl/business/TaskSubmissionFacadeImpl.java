@@ -18,10 +18,10 @@ import com.illiapinchuk.moodle.service.crud.GradeCRUDService;
 import com.illiapinchuk.moodle.service.crud.SubmissionCRUDService;
 import com.illiapinchuk.moodle.service.crud.TaskCRUDService;
 import jakarta.annotation.Nonnull;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class TaskSubmissionFacadeImpl implements TaskSubmissionFacade {
   private final TaskValidator taskValidator;
 
   @Override
-  @Transactional(rollbackOn = Exception.class)
+  @Transactional(rollbackFor = Exception.class)
   public TaskDto addSubmissionToTask(
       @Nonnull final String submissionJson,
       @Nonnull final List<MultipartFile> files,
