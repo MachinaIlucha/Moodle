@@ -28,4 +28,18 @@ public class AdminServiceImpl implements AdminService {
     user.getRoles().addAll(grantRoleDto.getRoles()); // Add new roles to the existing ones
     userRepository.save(user); // Save the updated user
   }
+
+  @Override
+  public void removeRole(@Nonnull final GrantRoleDto grantRoleDto) {
+    final var user =
+        userRepository
+            .findById(grantRoleDto.getUserId())
+            .orElseThrow(
+                () ->
+                    new UserNotFoundException(
+                        "User not found with id: " + grantRoleDto.getUserId()));
+
+    user.getRoles().removeAll(grantRoleDto.getRoles());
+    userRepository.save(user);
+  }
 }

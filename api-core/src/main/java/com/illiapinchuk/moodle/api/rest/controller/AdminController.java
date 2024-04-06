@@ -28,11 +28,26 @@ public class AdminController {
    * @return a {@link ResponseEntity} with a suitable HTTP status code
    */
   @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER')")
-  @PostMapping
+  @PostMapping("/grant-role")
   public ResponseEntity<Void> grantRole(@RequestBody @Valid final GrantRoleDto grantRoleDto) {
     adminService.grantRole(grantRoleDto);
 
     log.info("Role granted to user with id: {}", grantRoleDto.getUserId());
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Remove a role from a user.
+   *
+   * @param grantRoleDto the DTO to remove a role from a user
+   * @return a {@link ResponseEntity} with a suitable HTTP status code
+   */
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'DEVELOPER')")
+  @PostMapping("/remove-role")
+  public ResponseEntity<Void> removeRole(@RequestBody @Valid final GrantRoleDto grantRoleDto) {
+    adminService.removeRole(grantRoleDto);
+
+    log.info("Role removed from user with id: {}", grantRoleDto.getUserId());
     return ResponseEntity.ok().build();
   }
 }
