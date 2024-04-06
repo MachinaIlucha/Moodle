@@ -1,7 +1,6 @@
 package com.illiapinchuk.moodle.model.dto;
 
 import com.illiapinchuk.moodle.model.entity.RoleName;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
@@ -20,9 +19,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 public class GrantRoleDto {
 
-  @NotNull
-  Long userId;
+  @NotNull Long userId;
 
-  @NotEmpty
-  Set<RoleName> roles;
+  @NotEmpty Set<RoleName> roles;
 }
