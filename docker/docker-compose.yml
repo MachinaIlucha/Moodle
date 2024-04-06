@@ -34,3 +34,15 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
+
+  api-moodle:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+      - mongo
+      - localstack

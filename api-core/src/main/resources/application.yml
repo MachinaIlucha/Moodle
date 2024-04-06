@@ -20,17 +20,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none  # Hibernate DDL auto-generation mode
-#    show-sql: true  # Show SQL statements in the console
+  #    show-sql: true  # Show SQL statements in the console
   h2:
     console:
       enabled: true  # Enable H2 console for database administration
 
-# Security Configuration
+  # Security Configuration
   security:
     secret: moodle_secret_key_for_user_authentication  # Secret key for JWT token signing
     expirationTime: 36000000  # JWT token validity time in milliseconds
 
-# Data Configuration
+  # Data Configuration
   data:
     redis:
       host: localhost  # Redis host
@@ -42,7 +42,7 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml  # Liquibase changelog file location
 
-# AWS Configuration
+  # AWS Configuration
   cloud:
     aws:
       cloudwatch:
@@ -52,6 +52,7 @@ spring:
         region: eu-central-1  # AWS S3 region
         bucket-name: s3://s3-image-bucket/  # Name of the S3 bucket
         bucket-url: http://s3-image-bucket.s3.localhost.localstack.cloud:4566  # URL of the S3 bucket
+        path-style-access-enabled: true # Enable path-style access for S3 bucket
       credentials:
         access-key: moodle_access_key  # AWS access key
         secret-key: moodle_secret_key  # AWS secret key
