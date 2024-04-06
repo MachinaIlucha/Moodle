@@ -15,10 +15,10 @@ RUN mvn clean package -B -DskipTests -pl '!e2e-test'
 FROM openjdk:17-slim
 
 # Copy the built jar file from the builder stage to the final image
-COPY --from=builder /app/api-core/target/api-moodle-0.0.1.jar /app/api-moodle-0.0.1.jar
+COPY --from=builder /app/api-core/target/*.jar /app/app.jar
 
 # Set the working directory in the container to /app
 WORKDIR /app
 
 # Command to run the application
-CMD ["java", "-jar", "api-moodle-0.0.1.jar"]
+CMD ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]

@@ -14,44 +14,45 @@ spring:
           starttls:
             enable: true
   datasource:
-    url: jdbc:postgresql://postgres:5432/moodle_postgresDB # JDBC URL for docker database
+    url: jdbc:postgresql://localhost:5432/moodle_postgresDB # JDBC URL for docker database
     username: illiapinchuk  # Database username
     password: moodle_password  # Database password
   jpa:
     hibernate:
       ddl-auto: none  # Hibernate DDL auto-generation mode
-#    show-sql: true  # Show SQL statements in the console
+  #    show-sql: true  # Show SQL statements in the console
   h2:
     console:
       enabled: true  # Enable H2 console for database administration
 
-# Security Configuration
+  # Security Configuration
   security:
     secret: moodle_secret_key_for_user_authentication  # Secret key for JWT token signing
     expirationTime: 36000000  # JWT token validity time in milliseconds
 
-# Data Configuration
+  # Data Configuration
   data:
     redis:
-      host: redis  # Redis host
+      host: localhost  # Redis host
       port: 6379  # Redis port
     mongodb:
-      uri: mongodb://mongo:27017/moodle_mongoDB
+      uri: mongodb://localhost:27017/moodle_mongoDB
 
   # Liquibase Configuration
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml  # Liquibase changelog file location
 
-# AWS Configuration
+  # AWS Configuration
   cloud:
     aws:
       cloudwatch:
-        uri: http://localstack:4566  # AWS CloudWatch URI
+        uri: http://localhost:4566  # AWS CloudWatch URI
       s3:
         endpoint: http://s3.localhost.localstack.cloud:4566  # AWS S3 endpoint
         region: eu-central-1  # AWS S3 region
         bucket-name: s3://s3-image-bucket/  # Name of the S3 bucket
         bucket-url: http://s3-image-bucket.s3.localhost.localstack.cloud:4566  # URL of the S3 bucket
+        path-style-access-enabled: true # Enable path-style access for S3 bucket
       credentials:
         access-key: moodle_access_key  # AWS access key
         secret-key: moodle_secret_key  # AWS secret key

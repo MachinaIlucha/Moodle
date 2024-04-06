@@ -1,0 +1,21 @@
+# Database Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/moodle_postgresDB # JDBC URL for docker database
+
+  # Data Configuration
+  data:
+    redis:
+      host: redis  # Redis host
+      port: 6379  # Redis port
+    mongodb:
+      uri: mongodb://mongo:27017/moodle_mongoDB
+
+  # AWS Configuration
+  cloud:
+    aws:
+      cloudwatch:
+        uri: http://localstack:4566  # AWS CloudWatch URI using LocalStack
+      s3:
+        endpoint: http://localstack:4566  # AWS S3 endpoint
+        bucket-url: http://localstack:4566/s3-image-bucket  # URL of the S3 bucket
