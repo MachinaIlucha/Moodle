@@ -16,4 +16,12 @@ public interface SubmissionService {
    *     empty list if no submissions are found.
    */
   List<Submission> getSubmissionsByTaskIdAndStudentId(String taskId, Long studentId);
+
+  /**
+   * Retrieves all submissions for a given task.
+   *
+   * @param taskId the id of the task for which submissions are to be retrieved
+   * @return a list of {@link Submission} objects
+   */
+  List<Submission> getAllSubmissionsForTask(String taskId);
 }

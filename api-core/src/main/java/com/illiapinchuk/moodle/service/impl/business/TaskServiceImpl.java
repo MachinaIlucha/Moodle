@@ -1,6 +1,9 @@
 package com.illiapinchuk.moodle.service.impl.business;
 
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.common.validator.TaskValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
+import com.illiapinchuk.moodle.exception.UserDontHaveAccessToResource;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Task;
 import com.illiapinchuk.moodle.persistence.entity.TaskAttachment;
@@ -33,10 +36,16 @@ public class TaskServiceImpl implements TaskService {
 
   private final TaskMapper taskMapper;
 
+  private final TaskValidator taskValidator;
+
   @Override
   @Transactional
   public TaskDto addAttachmentToTask(
       @Nonnull final MultipartFile file, @Nonnull final String taskId) {
+    if (UserPermissionService.hasTeacherRole() && !taskValidator.isTeacherCanModifyTask(taskId)) {
+      throw new UserDontHaveAccessToResource("Teacher can't modify the task.");
+    }
+
     // Upload the file and get the file name
     final var fileName = fileUploadService.uploadFile(file);
 

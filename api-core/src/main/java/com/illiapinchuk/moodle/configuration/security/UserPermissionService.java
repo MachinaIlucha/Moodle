@@ -47,6 +47,17 @@ public class UserPermissionService {
   }
 
   /**
+   * Checks if the current authenticated user has the 'TEACHER' role.
+   *
+   * @return {@code true} if the user has the 'TEACHER' role, {@code false} otherwise.
+   */
+  public boolean hasTeacherRole() {
+    return getJwtUser().getAuthorities().stream()
+        .anyMatch(
+            grantedAuthority -> grantedAuthority.getAuthority().equals(RoleName.TEACHER.name()));
+  }
+
+  /**
    * Determines if the authenticated user has any of the ruling roles (ADMIN, TEACHER, or
    * DEVELOPER).
    *
