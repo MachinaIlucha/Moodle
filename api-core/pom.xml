@@ -28,6 +28,8 @@
         <postgres.version>42.6.1</postgres.version>
         <embedded.mongo.version>4.7.0</embedded.mongo.version>
         <spring-boot-dependencies>3.0.9</spring-boot-dependencies>
+        <sonar.organization>illia-pinchuk</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
