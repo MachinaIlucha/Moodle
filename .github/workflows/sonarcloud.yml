@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to run sonarcloud on'
+        description: 'Branch to run SonarCloud on'
         required: true
         default: 'master'
 
