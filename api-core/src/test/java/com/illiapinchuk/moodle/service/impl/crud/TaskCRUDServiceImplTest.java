@@ -211,8 +211,8 @@ class TaskCRUDServiceImplTest {
 
     verify(taskAttachmentService).getAttachmentsByTaskId(TASK_ID);
     verify(
-        taskAttachmentService,
-        times(TestConstants.TaskAttachmentConstants.LIST_OF_VALID_ATTACHMENTS.size()))
+            taskAttachmentService,
+            times(TestConstants.TaskAttachmentConstants.LIST_OF_VALID_ATTACHMENTS.size()))
         .deleteTaskAttachment(any(TaskAttachment.class));
     verify(taskRepository).deleteById(TASK_ID);
   }

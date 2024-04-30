@@ -1,6 +1,5 @@
 package com.illiapinchuk.moodle.service.impl.business;
 
-import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.validator.TaskValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
 import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
@@ -16,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.TASK_ID;
@@ -24,8 +22,6 @@ import static com.illiapinchuk.moodle.common.TestConstants.UserConstants.USER_ID
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
