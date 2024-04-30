@@ -6,6 +6,8 @@ import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.VALID_T
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.VALID_TASK_DTO;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.illiapinchuk.moodle.common.TestConstants;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.common.validator.TaskValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.CannotWriteToS3Exception;
 import com.illiapinchuk.moodle.exception.TaskNotFoundException;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
@@ -27,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,55 +52,70 @@ class TaskServiceImplTest {
 
   @Mock private MultipartFile file;
 
+  @Mock private TaskValidator taskValidator;
+
   @InjectMocks private TaskServiceImpl taskService;
 
   @Test
   void addAttachmentToTask_Success() {
-    when(fileUploadService.uploadFile(file)).thenReturn(VALID_FILENAME);
-    when(taskCRUDService.getTaskById(TASK_ID)).thenReturn(VALID_TASK_1);
-    when(taskMapper.taskToTaskDto(any(Task.class))).thenReturn(VALID_TASK_DTO);
-    when(taskCRUDService.updateTaskFromDto(any(TaskDto.class))).thenReturn(VALID_TASK_1);
+    try (MockedStatic<UserPermissionService> mocked = mockStatic(UserPermissionService.class)) {
+      mocked.when(UserPermissionService::hasTeacherRole).thenReturn(true);
+      when(taskValidator.isTeacherCanModifyTask(anyString())).thenReturn(true);
 
-    final var result = taskService.addAttachmentToTask(file, TASK_ID);
+      when(fileUploadService.uploadFile(file)).thenReturn(VALID_FILENAME);
+      when(taskCRUDService.getTaskById(TASK_ID)).thenReturn(VALID_TASK_1);
+      when(taskMapper.taskToTaskDto(any(Task.class))).thenReturn(VALID_TASK_DTO);
+      when(taskCRUDService.updateTaskFromDto(any(TaskDto.class))).thenReturn(VALID_TASK_1);
 
-    assertThat(result).isNotNull();
+      final var result = taskService.addAttachmentToTask(file, TASK_ID);
 
-    verify(fileUploadService).uploadFile(file);
-    verify(taskCRUDService).getTaskById(TASK_ID);
-    verify(taskCRUDService).updateTaskFromDto(any(TaskDto.class));
-    verify(taskAttachmentService).saveTaskAttachment(any(TaskAttachment.class));
-    verify(taskAttachmentService).getAttachmentsByTaskId(TASK_ID);
+      assertThat(result).isNotNull();
+
+      verify(fileUploadService).uploadFile(file);
+      verify(taskCRUDService).getTaskById(TASK_ID);
+      verify(taskCRUDService).updateTaskFromDto(any(TaskDto.class));
+      verify(taskAttachmentService).saveTaskAttachment(any(TaskAttachment.class));
+      verify(taskAttachmentService).getAttachmentsByTaskId(TASK_ID);
+    }
   }
 
   @Test
   void addAttachmentToTask_FileUploadFails_ThrowsException() {
-    when(fileUploadService.uploadFile(file))
-        .thenThrow(new CannotWriteToS3Exception("Upload failed"));
+    try (MockedStatic<UserPermissionService> mocked = mockStatic(UserPermissionService.class)) {
+      mocked.when(UserPermissionService::hasTeacherRole).thenReturn(true);
+      when(taskValidator.isTeacherCanModifyTask(anyString())).thenReturn(true);
+      when(fileUploadService.uploadFile(file))
+          .thenThrow(new CannotWriteToS3Exception("Upload failed"));
 
-    assertThrows(
-        CannotWriteToS3Exception.class,
-        () -> {
-          taskService.addAttachmentToTask(file, TASK_ID);
-        });
+      assertThrows(
+          CannotWriteToS3Exception.class,
+          () -> {
+            taskService.addAttachmentToTask(file, TASK_ID);
+          });
 
-    verify(fileUploadService).uploadFile(file);
-    verify(taskCRUDService, never()).getTaskById(TASK_ID);
+      verify(fileUploadService).uploadFile(file);
+      verify(taskCRUDService, never()).getTaskById(TASK_ID);
+    }
   }
 
   @Test
   void addAttachmentToTask_TaskNotFound_ThrowsException() {
-    when(fileUploadService.uploadFile(file)).thenReturn("fileName");
-    when(taskCRUDService.getTaskById(TASK_ID))
-        .thenThrow(new TaskNotFoundException("Task not found"));
+    try (MockedStatic<UserPermissionService> mocked = mockStatic(UserPermissionService.class)) {
+      mocked.when(UserPermissionService::hasTeacherRole).thenReturn(true);
+      when(taskValidator.isTeacherCanModifyTask(anyString())).thenReturn(true);
+      when(fileUploadService.uploadFile(file)).thenReturn("fileName");
+      when(taskCRUDService.getTaskById(TASK_ID))
+          .thenThrow(new TaskNotFoundException("Task not found"));
 
-    assertThrows(
-        TaskNotFoundException.class,
-        () -> {
-          taskService.addAttachmentToTask(file, TASK_ID);
-        });
+      assertThrows(
+          TaskNotFoundException.class,
+          () -> {
+            taskService.addAttachmentToTask(file, TASK_ID);
+          });
 
-    verify(fileUploadService).uploadFile(file);
-    verify(taskCRUDService).getTaskById(TASK_ID);
+      verify(fileUploadService).uploadFile(file);
+      verify(taskCRUDService).getTaskById(TASK_ID);
+    }
   }
 
   @Test

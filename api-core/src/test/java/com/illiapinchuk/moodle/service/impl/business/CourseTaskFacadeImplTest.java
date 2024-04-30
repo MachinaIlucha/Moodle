@@ -2,7 +2,9 @@ package com.illiapinchuk.moodle.service.impl.business;
 
 import com.illiapinchuk.moodle.common.mapper.CourseMapper;
 import com.illiapinchuk.moodle.common.mapper.TaskMapper;
+import com.illiapinchuk.moodle.common.validator.CourseValidator;
 import com.illiapinchuk.moodle.common.validator.UserValidator;
+import com.illiapinchuk.moodle.configuration.security.UserPermissionService;
 import com.illiapinchuk.moodle.exception.UserNotFoundException;
 import com.illiapinchuk.moodle.model.dto.TaskDto;
 import com.illiapinchuk.moodle.persistence.entity.Course;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -26,6 +29,9 @@ import static com.illiapinchuk.moodle.common.TestConstants.CourseTaskFacadeImplT
 import static com.illiapinchuk.moodle.common.TestConstants.CourseTaskFacadeImplTestConstants.VALID_TASK_DTO;
 import static com.illiapinchuk.moodle.common.TestConstants.CourseTaskFacadeImplTestConstants.VALID_TASK_ID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +43,7 @@ class CourseTaskFacadeImplTest {
   @Mock private TaskCRUDService taskCRUDService;
   @Mock private UserValidator userValidator;
   @Mock private TaskMapper taskMapper;
-
+  @Mock private CourseValidator courseValidator;
   @InjectMocks private CourseTaskFacadeImpl courseTaskFacade;
 
   @Test
@@ -103,32 +109,47 @@ class CourseTaskFacadeImplTest {
 
   @Test
   void createTaskWithCourse_AuthorDoesNotExist_ThrowsException() {
-    final var taskDto = VALID_TASK_DTO;
-    final var task = VALID_TASK;
-    final var course = VALID_COURSE;
+    try (MockedStatic<UserPermissionService> mocked = mockStatic(UserPermissionService.class)) {
+      mocked.when(UserPermissionService::hasTeacherRole).thenReturn(true);
+      when(courseValidator.isTeacherCanModifyCourse(anyString())).thenReturn(true);
+      final var taskDto = VALID_TASK_DTO;
+      final var task = VALID_TASK;
+      final var course = VALID_COURSE;
 
-    when(taskMapper.taskDtoToTask(taskDto)).thenReturn(task);
-    when(courseCRUDService.getCourseById(taskDto.getCourseId())).thenReturn(course);
-    when(userValidator.isUserExistInDbById(task.getAuthorId())).thenReturn(false);
+      when(taskMapper.taskDtoToTask(taskDto)).thenReturn(task);
+      when(courseCRUDService.getCourseById(taskDto.getCourseId())).thenReturn(course);
+      when(userValidator.isUserExistInDbById(task.getAuthorId())).thenReturn(false);
 
-    assertThrows(UserNotFoundException.class, () -> courseTaskFacade.createTaskWithCourse(taskDto));
+      assertThrows(
+          UserNotFoundException.class, () -> courseTaskFacade.createTaskWithCourse(taskDto));
+    }
   }
 
   @Test
   void createTaskWithCourse_ValidCourseAndAuthor_CreatesTask() {
-    final var taskDto = VALID_TASK_DTO;
-    final var task = VALID_TASK;
-    final var course = Course.builder().id(VALID_COURSE_ID).tasks(new ArrayList<>()).build();
+    try (MockedStatic<UserPermissionService> mocked = mockStatic(UserPermissionService.class)) {
+      mocked.when(UserPermissionService::hasTeacherRole).thenReturn(true);
+      when(courseValidator.isTeacherCanModifyCourse(anyString())).thenReturn(true);
 
-    when(courseCRUDService.getCourseById(taskDto.getCourseId())).thenReturn(course);
-    when(userValidator.isUserExistInDbById(task.getAuthorId())).thenReturn(true);
-    when(taskMapper.taskDtoToTask(taskDto)).thenReturn(task);
-    when(taskCRUDService.createTask(task)).thenReturn(task);
-    when(taskMapper.taskToTaskDto(task)).thenReturn(taskDto);
+      final var taskDto = VALID_TASK_DTO;
+      final var task = VALID_TASK;
+      final var course = Course.builder().id(VALID_COURSE_ID).tasks(new ArrayList<>()).build();
 
-    final var result = courseTaskFacade.createTaskWithCourse(taskDto);
+      when(courseCRUDService.getCourseById(taskDto.getCourseId())).thenReturn(course);
+      when(userValidator.isUserExistInDbById(task.getAuthorId())).thenReturn(true);
+      when(taskMapper.taskDtoToTask(taskDto)).thenReturn(task);
+      when(taskCRUDService.createTask(task)).thenReturn(task);
+      when(taskMapper.taskToTaskDto(task)).thenReturn(taskDto);
 
-    assertEquals(taskDto, result);
+      final var result = courseTaskFacade.createTaskWithCourse(taskDto);
+
+      assertEquals(taskDto, result);
+      verify(courseCRUDService, times(2)).getCourseById(taskDto.getCourseId());
+      verify(userValidator).isUserExistInDbById(task.getAuthorId());
+      verify(taskMapper).taskDtoToTask(taskDto);
+      verify(taskCRUDService).createTask(task);
+      verify(taskMapper).taskToTaskDto(task);
+    }
   }
 
   @Test
@@ -244,16 +265,20 @@ class CourseTaskFacadeImplTest {
 
   @Test
   void getOverallGradeForStudentInCourse_ValidCourseAndStudent_ReturnsGrade() {
-    final var courseId = VALID_COURSE_ID;
-    final var studentId = VALID_STUDENT_ID;
-    final var course = Course.builder().id(VALID_COURSE_ID).tasks(new ArrayList<>()).build();
+    try (MockedStatic<UserPermissionService> mocked = mockStatic(UserPermissionService.class)) {
+      mocked.when(UserPermissionService::hasTeacherRole).thenReturn(true);
+      when(courseValidator.isTeacherCanModifyCourse(anyString())).thenReturn(true);
+      final var courseId = VALID_COURSE_ID;
+      final var studentId = VALID_STUDENT_ID;
+      final var course = Course.builder().id(VALID_COURSE_ID).tasks(new ArrayList<>()).build();
 
-    when(courseCRUDService.getCourseById(courseId)).thenReturn(course);
-    when(userValidator.isUserExistInDbById(studentId)).thenReturn(true);
+      when(courseCRUDService.getCourseById(courseId)).thenReturn(course);
+      when(userValidator.isUserExistInDbById(studentId)).thenReturn(true);
 
-    final var result = courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId);
+      final var result = courseTaskFacade.getOverallGradeForStudentInCourse(courseId, studentId);
 
-    assertNotNull(result);
+      assertNotNull(result);
+    }
   }
 
   @Test
