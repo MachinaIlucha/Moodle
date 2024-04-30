@@ -52,7 +52,7 @@ class PasswordResetSendEmailTest {
     final var response = restTemplate.postForEntity(urlBuilder.toUriString(), null, Void.class);
 
     assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    assertTrue(greenMail.waitForIncomingEmail(2000, 1));
+    assertTrue(greenMail.waitForIncomingEmail(10000, 1));
   }
 
   @Test

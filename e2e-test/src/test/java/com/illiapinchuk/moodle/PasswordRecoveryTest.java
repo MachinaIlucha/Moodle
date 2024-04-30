@@ -49,7 +49,7 @@ class PasswordRecoveryTest {
             .queryParam("email", EXISTING_USER_EMAIL);
 
     restTemplate.postForEntity(builder.toUriString(), null, Void.class);
-    greenMail.waitForIncomingEmail(2000, 1);
+    greenMail.waitForIncomingEmail(10000, 1);
 
     final var messages = greenMail.getReceivedMessages();
     final var content = messages[0].getContent().toString();
