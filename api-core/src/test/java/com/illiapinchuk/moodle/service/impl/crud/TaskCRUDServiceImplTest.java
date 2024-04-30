@@ -26,6 +26,7 @@ import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.VALID_T
 import static com.illiapinchuk.moodle.common.TestConstants.TaskConstants.VALID_TASK_DTO;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -60,6 +61,8 @@ class TaskCRUDServiceImplTest {
 
   @Test
   void testDeleteTaskById_ValidIdNoAttachments_TaskDeleted() {
+    when(taskValidator.isTaskExistsInDbById(anyString())).thenReturn(true);
+
     final var taskId = TestConstants.TaskConstants.TASK_ID;
 
     when(taskAttachmentService.getAttachmentsByTaskId(taskId)).thenReturn(new ArrayList<>());
@@ -200,6 +203,7 @@ class TaskCRUDServiceImplTest {
 
   @Test
   void testDeleteTaskById_ValidId_TaskDeleted() {
+    when(taskValidator.isTaskExistsInDbById(anyString())).thenReturn(true);
     when(taskAttachmentService.getAttachmentsByTaskId(TASK_ID))
         .thenReturn(TestConstants.TaskAttachmentConstants.LIST_OF_VALID_ATTACHMENTS);
 
